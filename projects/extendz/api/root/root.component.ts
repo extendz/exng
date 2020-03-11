@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-root',
+  selector: 'ext-root',
   templateUrl: './root.component.html',
   styleUrls: ['./root.component.css']
 })

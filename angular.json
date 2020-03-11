@@ -7,7 +7,7 @@
       "projectType": "library",
       "root": "projects/extendz",
       "sourceRoot": "projects/extendz/src",
-      "prefix": "lib",
+      "prefix": "ext",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",

@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        ".**": true,
+        "*.json": true,
+        "**.md": true,
+        "dist": true,
+        "node_modules": true
+    },
+    "workbench.colorTheme": "GitHub Sharp Dark"
+}
