@@ -6,4 +6,4 @@ import { DataTableComponent } from "./data-table.component";
   declarations: [DataTableComponent],
   imports: [CommonModule]
 })
-export class DataTableModule {}
+export class ExtDataTableModule {}

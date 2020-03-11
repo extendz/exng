@@ -7,4 +7,4 @@ import { RootComponent } from "./root.component";
   exports: [RootComponent],
   imports: [CommonModule]
 })
-export class RootModule {}
+export class ExtRootModule {}
