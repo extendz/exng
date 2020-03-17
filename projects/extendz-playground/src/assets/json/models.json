@@ -1,0 +1,200 @@
+{
+  "owner": {
+    "name": "owner",
+    "displayName": "Owner",
+    "url": "owners",
+    "sorts": ["createdDate,desc"],
+    "properties": [
+      {
+        "name": "email",
+        "type": "string"
+      },
+      {
+        "name": "profilePicture",
+        "type": "image",
+        "ratio": 1.0
+      },
+      {
+        "name": "createdDate",
+        "required": false,
+        "type": "timestamp",
+        "generated": true
+      }
+    ],
+    "projections": {}
+  },
+  "car": {
+    "name": "car",
+    "displayName": "Car",
+    "url": "cars",
+    "sorts": ["createdDate,desc"],
+    "properties": [
+      {
+        "name": "number",
+        "type": "string"
+      },
+      {
+        "name": "expense",
+        "type": "elementCollection",
+        "relationShipType": "MULTIPLE",
+        "reference": "list",
+        "embeddedEntityMeta": {
+          "title": "reason",
+          "properties": [
+            {
+              "name": "reason",
+              "type": "string"
+            },
+            {
+              "name": "date",
+              "type": "timestamp"
+            },
+            {
+              "name": "ammount",
+              "type": "number",
+              "reference": "number"
+            }
+          ]
+        }
+      },
+      {
+        "name": "category",
+        "type": "object",
+        "relationShipType": "SINGLE",
+        "reference": "category"
+      },
+      {
+        "name": "subCategory",
+        "type": "object",
+        "relationShipType": "SINGLE",
+        "reference": "subcategory",
+        "filterOn": ["category"]
+      },
+      {
+        "name": "owners",
+        "mappedBy": "",
+        "type": "set",
+        "iggnoreOnRead": true,
+        "relationShipType": "MULTIPLE",
+        "reference": "owner"
+      },
+      {
+        "name": "image",
+        "type": "image",
+        "ratio": 1.0
+      },
+      {
+        "name": "images",
+        "type": "image",
+        "relationShipType": "MULTIPLE",
+        "reference": "set",
+        "cropper": false
+      },
+      {
+        "name": "createdDate",
+        "required": false,
+        "type": "timestamp",
+        "generated": true
+      }
+    ],
+    "projections": {
+      "dataTable": [
+        {
+          "name": "image",
+          "type": "image"
+        },
+        {
+          "name": "createdDate",
+          "type": "timestamp"
+        },
+        {
+          "name": "number"
+        }
+      ]
+    }
+  },
+  "employee": {
+    "name": "employee",
+    "displayName": "Employee",
+    "url": "employees",
+    "properties": [
+      {
+        "name": "name",
+        "max": 20,
+        "min": 3,
+        "type": "string"
+      },
+      {
+        "name": "birthDay",
+        "type": "timestamp"
+      },
+      {
+        "name": "gender",
+        "type": "enum",
+        "enums": ["MALE", "FEMALE"],
+        "relationShipType": "ENUM",
+        "reference": "gender"
+      },
+      {
+        "name": "number",
+        "type": "number",
+        "reference": "number"
+      },
+      {
+        "name": "car",
+        "type": "object",
+        "relationShipType": "SINGLE",
+        "reference": "car"
+      },
+      {
+        "name": "oldCars",
+        "mappedBy": "",
+        "type": "set",
+        "iggnoreOnRead": true,
+        "relationShipType": "MULTIPLE",
+        "reference": "car"
+      }
+    ],
+    "projections": {
+      "dataTable": [
+        {
+          "name": "birthDay",
+          "type": "timestamp"
+        },
+        {
+          "name": "name"
+        }
+      ]
+    }
+  },
+  "category": {
+    "name": "category",
+    "displayName": "Category",
+    "url": "categories",
+    "properties": [
+      {
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "projections": {}
+  },
+  "subcategory": {
+    "name": "subcategory",
+    "displayName": "SubCategory",
+    "url": "subCategories",
+    "properties": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "category",
+        "type": "object",
+        "relationShipType": "SINGLE",
+        "reference": "category"
+      }
+    ],
+    "projections": {}
+  }
+}

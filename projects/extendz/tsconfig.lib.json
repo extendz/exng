@@ -6,18 +6,18 @@
     "declaration": true,
     "inlineSources": true,
     "types": [],
-    "lib": [
-      "dom",
-      "es2018"
-    ]
+    "lib": ["dom", "es2018"]
+  },
+  "paths": {
+    "extendz/core/*": ["core/public_api.ts"],
+    "extendz/api/*": ["api/public_api.ts"],
+    "extendz/sevice/*": ["sevice/public_api.ts"],
+    "extedz/pipes": ["pipes/public_api.ts"]
   },
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,
     "strictMetadataEmit": true,
     "enableResourceInlining": true
   },
-  "exclude": [
-    "src/test.ts",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["src/test.ts", "**/*.spec.ts"]
 }

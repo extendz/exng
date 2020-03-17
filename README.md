@@ -1,27 +1,38 @@
-# ExtendzNg
+# ExtNg - Extendz Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.3.
+The purpose of this library is to automate most of the views associated with CRUD operations in REST APIs.
 
-## Development server
+## Developer setup
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Prerequieties
 
-## Code scaffolding
+1. NodeJS v 12.14.0
+2. Angular CLI 9.x.x or later
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Start developing
 
-## Build
+1. Start a new terminal
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```bash
+ng build extendz --watch
+```
 
-## Running unit tests
+2. In other tab/terminal,
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+ng s
+```
 
-## Running end-to-end tests
+## Project structure
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Under the **_projects_** dir there are two main dirs.
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- extendz (Library)
+  - api (API related components/modules)
+    - data-table
+    - root (show available api endpoints with an icon)
+  - core (core application models)
+    - models
+  - service (common services)
+    - entity-meta
+- extendz-playground (Test application)
