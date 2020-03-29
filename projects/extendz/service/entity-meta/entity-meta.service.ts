@@ -4,15 +4,18 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { EntityMetaResponse, ExtApiConfig, EXTENDZ_API_CONFIG } from 'extendz/core';
 import { Observable, of } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class EntityMetaService {
+  /***
+   *
+   */
   private entityMetaResponse: EntityMetaResponse;
 
   constructor(
-    private http: HttpClient,
     @Inject(EXTENDZ_API_CONFIG) private apiConfig: ExtApiConfig,
+    private http: HttpClient,
     private iconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer
   ) {
@@ -20,7 +23,7 @@ export class EntityMetaService {
       'api-root',
       this.sanitizer.bypassSecurityTrustResourceUrl(this.apiConfig.svgIconSet)
     );
-  }
+  } //constructor
 
   public getRoot(): Observable<EntityMetaResponse> {
     if (this.entityMetaResponse) return of(this.entityMetaResponse);
@@ -29,4 +32,8 @@ export class EntityMetaService {
       take(1)
     );
   } // getRoot()
+
+  public getModel(name: string) {
+    return this.getRoot().pipe(map(models => models[name]));
+  } // getModel()
 } // class

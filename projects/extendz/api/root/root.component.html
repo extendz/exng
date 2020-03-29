@@ -1,23 +1,12 @@
-<div
-  class="full-height"
-  *ngIf="models$ | async as m; else loading"
-  fxLayoutAlign="center center"
-  fxLayoutAlign.xs="center"
-  fxLayout="row wrap"
-  fxLayout.xs="column"
->
-  <div style="margin: 1%" fxFlex="15%" *ngFor="let item of m | keyvalue">
-    <mat-card
-      matRipple
-      class="mat-elevation-z2"
-      fxLayout="column"
-      fxLayoutAlign="center center"
-      (click)="onSelect(item.value)"
-    >
-      <mat-icon class="primary" mat-card-avatar svgIcon="api-root:{{ item.key }}"></mat-icon>
-      <span style="text-align: center">{{ item.value.displayName | camelCase }}</span>
+<div *ngIf="models$ | async as m; else loading" fxLayoutAlign="space-between center" fxLayoutAlign.xs="center"
+  fxLayout="row wrap" fxLayout.xs="column">
+
+  <mat-card fxFlex="20%" *ngFor="let item of m | keyvalue" matRipple class="mat-elevation-z2 container"
+    fxLayout="column" fxLayoutAlign="center center" (click)="onSelect(item.value)">
+    <mat-icon class="primary" mat-card-avatar svgIcon="api-root:{{ item.key }}"></mat-icon>
+    <span style="text-align: center">{{ item.value.displayName | camelCase }}</span>
   </mat-card>
-  </div>
+
 </div>
 
 <ng-template #loading>

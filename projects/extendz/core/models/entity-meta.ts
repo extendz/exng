@@ -2,6 +2,11 @@ import { Property } from './property';
 
 export class EntityMeta {
   /***
+   * html template
+   * TODO: this should be defined ones
+   */
+  public view: string;
+  /***
    * Name for the Entity meta
    */
   name: string;
@@ -14,7 +19,7 @@ export class EntityMeta {
    */
   url: string;
   /***
-   * 
+   *
    */
   dataUrl: string;
   /***
@@ -34,11 +39,11 @@ export class EntityMeta {
    */
   sorts?: string[];
   /***
-   * 
+   *
    */
   properties?: Property[];
   /***
-   * 
+   *
    */
   projections?: {
     [key: string]: Property[];

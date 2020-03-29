@@ -1,0 +1,68 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "email": "hrandika0@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 2,
+      "email": "osanda89@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 3,
+      "email": "prasad08@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 4,
+      "email": "hrandika0@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 5,
+      "email": "osanda89@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 6,
+      "email": "prasad08@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 7,
+      "email": "hrandika0@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 9,
+      "email": "osanda89@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 9,
+      "email": "prasad08@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    },
+    {
+      "id": 10,
+      "email": "prasad08@gmail.com",
+      "cretedDate": "",
+      "profilePicture": "assets/img/person.png"
+    }
+  ],
+  "page": {
+    "length": 12,
+    "pageIndex": 1
+  }
+}

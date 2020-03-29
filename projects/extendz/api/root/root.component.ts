@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'ext-root',
   templateUrl: './root.component.html',
-  styleUrls: ['./root.component.css']
+  styleUrls: ['./root.component.scss']
 })
 export class RootComponent implements OnInit {
   @Output()

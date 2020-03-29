@@ -1,0 +1,24 @@
+$avatar-height: 10vw;
+
+.avatar-container {
+  margin: 2vh 0 2vh 0;
+  height: $avatar-height;
+}
+
+.avatar {
+  width: $avatar-height;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.bottom-right {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+}
+
+
+.form-wrapper{
+  margin: 0 2vw 0 2vw;
+}

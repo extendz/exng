@@ -1,18 +1,74 @@
 {
   "owner": {
+    "view": "avatar",
     "name": "owner",
+    "title": "email",
     "displayName": "Owner",
     "url": "owners",
     "sorts": ["createdDate,desc"],
     "properties": [
       {
-        "name": "email",
-        "type": "string"
-      },
-      {
         "name": "profilePicture",
         "type": "image",
         "ratio": 1.0
+      },
+      {
+        "name": "email",
+        "type": "email"
+      },
+      {
+        "name": "firstName",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "active",
+        "type": "boolean"
+      },
+      { "name": "age", "type": "number" },
+      {
+        "name": "middleName",
+        "type": "string"
+      },
+      {
+        "name": "lastName",
+        "type": "string"
+      },
+      {
+        "name": "gender",
+        "type": "enum",
+        "enums": ["MALE", "FEMALE"],
+        "relationShipType": "ENUM",
+        "reference": "gender"
+      },
+      {
+        "name": "expense",
+        "type": "embedded",
+        "relationShipType": "MULTIPLE",
+        "reference": "list",
+        "entityMeta": {
+          "name": "reason",
+          "properties": [
+            {
+              "name": "reason",
+              "type": "string"
+            },
+            {
+              "name": "date",
+              "type": "timestamp"
+            },
+            {
+              "name": "amount",
+              "type": "number",
+              "reference": "number"
+            }
+          ]
+        }
+      },
+      {
+        "name": "birthDay",
+        "required": false,
+        "type": "date"
       },
       {
         "name": "createdDate",
@@ -21,7 +77,19 @@
         "generated": true
       }
     ],
-    "projections": {}
+    "projections": {
+      "dataTable": [
+        {
+          "name": "profilePicture",
+          "type": "image",
+          "ratio": 1.0
+        },
+        {
+          "name": "email",
+          "type": "email"
+        }
+      ]
+    }
   },
   "car": {
     "name": "car",
@@ -132,7 +200,7 @@
         "name": "gender",
         "type": "enum",
         "enums": ["MALE", "FEMALE"],
-        "relationShipType": "ENUM",
+        "relationshipType": "enum",
         "reference": "gender"
       },
       {
@@ -141,18 +209,16 @@
         "reference": "number"
       },
       {
-        "name": "car",
+        "name": "owner",
         "type": "object",
-        "relationShipType": "SINGLE",
-        "reference": "car"
+        "relationshipType": "oneToOne",
+        "reference": "owner"
       },
       {
-        "name": "oldCars",
-        "mappedBy": "",
-        "type": "set",
-        "iggnoreOnRead": true,
-        "relationShipType": "MULTIPLE",
-        "reference": "car"
+        "name": "oldBosses",
+        "type": "object",
+        "relationshipType": "oneToMany",
+        "reference": "owner"
       }
     ],
     "projections": {

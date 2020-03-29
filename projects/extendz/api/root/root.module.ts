@@ -17,9 +17,9 @@ import { RootComponent } from './root.component';
     ExtPipesModule,
     FlexLayoutModule,
     // Material
+    MatCardModule,
     MatIconModule,
     MatRippleModule,
-    MatCardModule,
     MatProgressSpinnerModule
   ]
 })

@@ -5,6 +5,11 @@
   "projects": {
     "extendz": {
       "projectType": "library",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "projects/extendz",
       "sourceRoot": "projects/extendz/src",
       "prefix": "ext",
@@ -36,9 +41,7 @@
               "projects/extendz/tsconfig.lib.json",
               "projects/extendz/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -67,9 +70,7 @@
               "projects/extendz-playground/src/favicon.ico",
               "projects/extendz-playground/src/assets"
             ],
-            "styles": [
-              "projects/extendz-playground/src/styles.scss"
-            ],
+            "styles": ["projects/extendz-playground/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -131,9 +132,7 @@
               "projects/extendz-playground/src/favicon.ico",
               "projects/extendz-playground/src/assets"
             ],
-            "styles": [
-              "projects/extendz-playground/src/styles.scss"
-            ],
+            "styles": ["projects/extendz-playground/src/styles.scss"],
             "scripts": []
           }
         },
@@ -145,9 +144,7 @@
               "projects/extendz-playground/tsconfig.spec.json",
               "projects/extendz-playground/e2e/tsconfig.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "e2e": {

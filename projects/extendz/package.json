@@ -2,11 +2,13 @@
   "name": "extendz",
   "version": "0.0.1",
   "peerDependencies": {
+    "@angular/cdk": "^9.1.0",
     "@angular/common": "^9.0.5",
     "@angular/core": "^9.0.5",
-    "@angular/material": "^9.1.0",
-    "@angular/cdk": "^9.1.0",
     "@angular/flex-layout": "^9.0.0-beta.29",
-    "tslib": "^1.10.0"
+    "@angular/material": "^9.1.0",
+    "@angular/material-moment-adapter": "^9.0.5",
+    "tslib": "^1.10.0",
+    "moment": "^2.24.0"
   }
 }

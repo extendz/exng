@@ -1,1 +1,128 @@
-<p>data-table works!</p>
+<mat-toolbar>
+  <span fxFlex>
+    {{entityMeta?.displayName | camelCase}}
+  </span>
+  <form fxFlex>
+    <input class="search mat-elevation-z1" placeholder="Search">
+  </form>
+
+  <span fxFlex fxLayout="row">
+    <span fxFlex> </span>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-spinner *ngIf="loading" diameter=20></mat-spinner>
+      <!-- Add -->
+      <button mat-icon-button *ngIf="selected?.length <= 0" class="scale-in-center" matTooltip="Add new" (click)="onNew()">
+        <ng-container *ngTemplateOutlet="add"> </ng-container>
+      </button>
+      <!-- Detele -->
+      <button mat-icon-button *ngIf="selected?.length > 0" matTooltip="Delete selected" (click)="onDelete()"
+        class="scale-in-center">
+        <ng-container *ngTemplateOutlet="deleteIcon"> </ng-container>
+      </button>
+    </div>
+  </span>
+</mat-toolbar>
+<div fxLayout="column" class="container">
+  <mat-table [dataSource]="data">
+
+    <!-- Select Column -->
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef fxFlex="48px">
+        <ng-container [ngTemplateOutlet]="selectAll"></ng-container>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row" fxFlex="48px">
+        <mat-checkbox (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row[config.idFeild]) : null; selectionChange()"
+          [checked]="selection.isSelected(row[config.idFeild])">
+        </mat-checkbox>
+      </mat-cell>
+
+    </ng-container>
+
+    <ng-container *ngFor="let p of properties" [matColumnDef]="p.name">
+      <mat-header-cell *matHeaderCellDef>
+        <span>{{ p.name | camelCase }}</span>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let e">
+        <span [ngSwitch]="p.type">
+          <span *ngSwitchCase="'timestamp'">
+            {{ e[p.name] | date: config.dateFormat }}
+          </span>
+          <span *ngSwitchCase="'image'">
+            <img class="image" [src]="e[p.name]" alt="Image" />
+          </span>
+          <span *ngSwitchDefault>
+            {{ e[p.name] }}
+          </span>
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Edit Column -->
+    <ng-container matColumnDef="edit">
+      <mat-header-cell *matHeaderCellDef fxFlex="48px">
+        <span>Edit</span>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row" fxFlex="48px">
+        <button mat-icon-button (click)="editRow(row)">
+          <ng-container *ngTemplateOutlet="edit"> </ng-container>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Disclaimer column -->
+    <ng-container matColumnDef="page">
+      <mat-footer-cell *matFooterCellDef>
+        <span fxFlex></span>
+        <mat-paginator *ngIf="page?.length" (page)="onPage($event)" [length]="page.length" [pageSize]="page.pageSize"
+          [pageSizeOptions]="dataTableConfig.pageSizeOptions"
+          [showFirstLastButtons]="dataTableConfig.showFirstLastButtons">
+        </mat-paginator>
+      </mat-footer-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="allColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
+    <mat-footer-row *matFooterRowDef="['page'];sticky: true"></mat-footer-row>
+  </mat-table>
+
+  <span fxFlex></span>
+
+
+</div>
+
+<ng-template #selectAll>
+  <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+    [indeterminate]="selection.hasValue() && !isAllSelected()">
+  </mat-checkbox>
+</ng-template>
+
+<ng-template #deleteIcon>
+  <mat-icon>
+    <svg id="delete" class="icon-button" viewBox="0 0 24 24">
+      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+      <path d="M0 0h24v24H0z" fill="none" />
+    </svg>
+  </mat-icon>
+</ng-template>
+
+<ng-template #edit>
+  <mat-icon>
+    <svg id="edit" class="icon-button" viewBox="0 0 24 24">
+      <path
+        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+      <path d="M0 0h24v24H0z" fill="none" />
+    </svg>
+  </mat-icon>
+</ng-template>
+
+
+<ng-template #add>
+  <mat-icon>
+    <svg id="add" viewBox="0 0 24 24">
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+      <path d="M0 0h24v24H0z" fill="none" />
+    </svg>
+  </mat-icon>
+</ng-template>
