@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtPipesModule } from 'extendz/pipes';
+import { ExtImageModule } from '../../../../api/image/image.module';
 import { ExtEmbeddedModule } from '../../../embedded/embedded.module';
 import { ExtSelectModule } from '../../../select/select.module';
 import { ExtAvatarComponent } from './avatar.component';
@@ -26,6 +27,7 @@ import { ExtAvatarComponent } from './avatar.component';
     ExtPipesModule,
     ExtEmbeddedModule,
     ExtSelectModule,
+    ExtImageModule,
     // Mat
     MatButtonModule,
     MatDatepickerModule,

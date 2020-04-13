@@ -1,30 +1,58 @@
 import { EntityMeta } from './entity-meta';
 
+export class ImageMeta {
+  /***
+   * This will be selected as the avatar image
+   */
+  public avatar?: boolean;
+  /***
+   * Image cropper enabled?
+   */
+  public cropper?: boolean;
+  /***
+   *
+   */
+  public ratio?: number;
+  /***
+   *
+   */
+  public resizeToWidth?: number;
+  /***
+   *
+   */
+  public format?: string;
+}
+
 export enum RelationshipType {
   enum = 'enum',
   oneToOne = 'oneToOne',
-  oneToMany = 'oneToMany'
+  oneToMany = 'oneToMany',
 }
 
 export enum PropertyType {
-  string = 'string',
-  image = 'image',
-  enum = 'enum',
   boolean = 'boolean',
-  number = 'number',
+  date = 'date',
   embedded = 'embedded',
   email = 'email',
+  enum = 'enum',
+  file = 'file',
+  image = 'image',
+  number = 'number',
   object = 'object',
-  date = 'date',
-  time = 'time'
+  string = 'string',
+  time = 'time',
 }
 
 export class Property {
-  name: string;
-  type: PropertyType;
   required?: boolean;
   generated?: boolean;
-  entityMeta?: EntityMeta;
   reference?: string;
+  type: PropertyType;
+  name: string;
   relationshipType?: RelationshipType;
+  entityMeta?: EntityMeta;
+  /***
+   * Only for the type image.
+   */
+  imageMeta?: ImageMeta;
 }

@@ -1,11 +1,10 @@
 <mat-form-field fxFlex>
     <input [formControl]="autoCompleteControl" matInput [placeholder]="property?.name | camelCase"
-        [value]="displayValue" [matAutocomplete]="auto" />
-
+        [matAutocomplete]="auto" />
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplayValue"
         (optionSelected)="onOptionSelected($event)">
-        <mat-option *ngFor="let option of  autoCompleteData$ | async" [value]="option">
-            {{ option[entityMeta.title]}}
+        <mat-option *ngFor="let o of  autoCompleteData$ | async" [value]="o">
+            {{ o[entityMeta.title]}}
         </mat-option>
     </mat-autocomplete>
 
@@ -13,7 +12,7 @@
         <ng-container *ngTemplateOutlet="clear"></ng-container>
     </button>
 
-    <button mat-icon-button matSuffix (click)="onEdit($event, true)" matTooltip="Advance Select">
+    <button mat-icon-button matSuffix (click)="onAdvanceSearch($event, true)" matTooltip="Advance Select">
         <ng-container *ngTemplateOutlet="openInNew"> </ng-container>
     </button>
 </mat-form-field>

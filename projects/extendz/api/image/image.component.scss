@@ -1,0 +1,23 @@
+.field_set {
+  border-style: none;
+}
+
+.upload-base {
+  background-blend-mode: multiply;
+  height: 12vw;
+  width: 12vw;
+  color: white;
+  background-size: cover;
+  background-position: center center;
+  margin-bottom: 1vh;
+}
+
+.upload-button {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.gray {
+  -webkit-filter: grayscale(100%);
+  /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}

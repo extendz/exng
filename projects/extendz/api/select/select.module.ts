@@ -4,10 +4,12 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExtPipesModule } from 'extendz/pipes';
+import { ExtAdvanceSelectModule } from './dialog/advance-select/advance-select.module';
 import { ExtSelectComponent } from './select.component';
 
 @NgModule({
@@ -19,9 +21,11 @@ import { ExtSelectComponent } from './select.component';
     ReactiveFormsModule,
     // Extendz
     ExtPipesModule,
+    ExtAdvanceSelectModule,
     //Mat
     MatAutocompleteModule,
     MatButtonModule,
+    MatDialogModule,
     MatIconModule,
     MatInputModule,
     MatTooltipModule

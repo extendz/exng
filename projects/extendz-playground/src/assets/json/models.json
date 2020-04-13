@@ -1,33 +1,11 @@
 {
-  "owner": {
-    "view": "avatar",
-    "name": "owner",
-    "title": "email",
-    "displayName": "Owner",
-    "url": "owners",
-    "sorts": ["createdDate,desc"],
+  "customer": {
+    "name": "customer",
+    "displayName": "Customers",
+    "url": "customers",
     "properties": [
       {
-        "name": "profilePicture",
-        "type": "image",
-        "ratio": 1.0
-      },
-      {
-        "name": "email",
-        "type": "email"
-      },
-      {
         "name": "firstName",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "active",
-        "type": "boolean"
-      },
-      { "name": "age", "type": "number" },
-      {
-        "name": "middleName",
         "type": "string"
       },
       {
@@ -35,232 +13,54 @@
         "type": "string"
       },
       {
-        "name": "gender",
-        "type": "enum",
-        "enums": ["MALE", "FEMALE"],
-        "relationShipType": "ENUM",
-        "reference": "gender"
-      },
-      {
-        "name": "expense",
-        "type": "embedded",
-        "relationShipType": "MULTIPLE",
-        "reference": "list",
-        "entityMeta": {
-          "name": "reason",
-          "properties": [
-            {
-              "name": "reason",
-              "type": "string"
-            },
-            {
-              "name": "date",
-              "type": "timestamp"
-            },
-            {
-              "name": "amount",
-              "type": "number",
-              "reference": "number"
-            }
-          ]
-        }
-      },
-      {
-        "name": "birthDay",
-        "required": false,
-        "type": "date"
-      },
-      {
-        "name": "createdDate",
-        "required": false,
-        "type": "timestamp",
-        "generated": true
+        "name": ""
       }
-    ],
-    "projections": {
-      "dataTable": [
-        {
-          "name": "profilePicture",
-          "type": "image",
-          "ratio": 1.0
-        },
-        {
-          "name": "email",
-          "type": "email"
-        }
-      ]
-    }
+    ]
   },
-  "car": {
-    "name": "car",
-    "displayName": "Car",
-    "url": "cars",
-    "sorts": ["createdDate,desc"],
+  "shop": {
+    "name": "shop",
+    "displayName": "Shops",
+    "url": "shops",
     "properties": [
+      { "name": "name", "type": "string", "required": true },
+      { "name": "status", "type": "enum", "enums": ["Open", "Closed"] },
+      { "name": "images", "type": "image", "relationshipType": "oneToMany" },
+      { "name": "owner", "type": "object", "relationshipType": "oneToOne", "reference": "owner" },
       {
-        "name": "number",
-        "type": "string"
-      },
-      {
-        "name": "expense",
-        "type": "elementCollection",
-        "relationShipType": "MULTIPLE",
-        "reference": "list",
-        "embeddedEntityMeta": {
-          "title": "reason",
-          "properties": [
-            {
-              "name": "reason",
-              "type": "string"
-            },
-            {
-              "name": "date",
-              "type": "timestamp"
-            },
-            {
-              "name": "ammount",
-              "type": "number",
-              "reference": "number"
-            }
-          ]
-        }
-      },
-      {
-        "name": "category",
-        "type": "object",
-        "relationShipType": "SINGLE",
-        "reference": "category"
-      },
-      {
-        "name": "subCategory",
-        "type": "object",
-        "relationShipType": "SINGLE",
-        "reference": "subcategory",
-        "filterOn": ["category"]
-      },
-      {
-        "name": "owners",
-        "mappedBy": "",
-        "type": "set",
-        "iggnoreOnRead": true,
-        "relationShipType": "MULTIPLE",
-        "reference": "owner"
-      },
-      {
-        "name": "image",
-        "type": "image",
-        "ratio": 1.0
-      },
-      {
-        "name": "images",
-        "type": "image",
-        "relationShipType": "MULTIPLE",
-        "reference": "set",
-        "cropper": false
-      },
-      {
-        "name": "createdDate",
-        "required": false,
-        "type": "timestamp",
-        "generated": true
-      }
-    ],
-    "projections": {
-      "dataTable": [
-        {
-          "name": "image",
-          "type": "image"
-        },
-        {
-          "name": "createdDate",
-          "type": "timestamp"
-        },
-        {
-          "name": "number"
-        }
-      ]
-    }
-  },
-  "employee": {
-    "name": "employee",
-    "displayName": "Employee",
-    "url": "employees",
-    "properties": [
-      {
-        "name": "name",
-        "max": 20,
-        "min": 3,
-        "type": "string"
-      },
-      {
-        "name": "birthDay",
-        "type": "timestamp"
-      },
-      {
-        "name": "gender",
-        "type": "enum",
-        "enums": ["MALE", "FEMALE"],
-        "relationshipType": "enum",
-        "reference": "gender"
-      },
-      {
-        "name": "number",
-        "type": "number",
-        "reference": "number"
-      },
-      {
-        "name": "owner",
-        "type": "object",
-        "relationshipType": "oneToOne",
-        "reference": "owner"
-      },
-      {
-        "name": "oldBosses",
+        "name": "stockKeepingUnits",
         "type": "object",
         "relationshipType": "oneToMany",
-        "reference": "owner"
+        "reference": "stockKeepingUnits"
       }
     ],
     "projections": {
       "dataTable": [
-        {
-          "name": "birthDay",
-          "type": "timestamp"
-        },
-        {
-          "name": "name"
-        }
+        { "name": "name", "type": "string", "required": true },
+        { "name": "status", "type": "enum", "enums": ["Open", "Closed"] },
+        { "name": "owner", "type": "string" }
       ]
     }
   },
-  "category": {
-    "name": "category",
-    "displayName": "Category",
-    "url": "categories",
-    "properties": [
-      {
-        "name": "name",
-        "type": "string"
-      }
-    ],
-    "projections": {}
+  "stockKeepingunits": {
+    "name": "stockKeepingunits",
+    "displayName": "Stock Keeping Units",
+    "url": "stockKeepingUnits",
+    "properties": [{ "name": "price", "type": "number" }]
   },
-  "subcategory": {
-    "name": "subcategory",
-    "displayName": "SubCategory",
-    "url": "subCategories",
+  "owner": {
+    "name": "owner",
+    "displayName": "Owners",
+    "title": "name",
+    "url": "owners",
     "properties": [
       {
         "name": "name",
         "type": "string"
       },
       {
-        "name": "category",
-        "type": "object",
-        "relationShipType": "SINGLE",
-        "reference": "category"
+        "name": "email",
+        "type": "email"
       }
-    ],
-    "projections": {}
+    ]
   }
 }

@@ -21,8 +21,8 @@ const ownerIdReg = new RegExp(
 export class FakeBackendInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const { url, method, headers, body, params } = request;
+    console.log(url, params.toString());
 
-   
     // wrap in delayed observable to simulate server api call
     return of(null)
       .pipe(mergeMap(handleRoute))

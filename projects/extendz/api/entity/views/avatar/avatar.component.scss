@@ -8,7 +8,12 @@ $avatar-height: 10vw;
 .avatar {
   width: $avatar-height;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 5%;
+}
+
+.avatar:hover {
+  background-blend-mode: multiply;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .bottom-right {
@@ -18,7 +23,10 @@ $avatar-height: 10vw;
   z-index: 100;
 }
 
-
-.form-wrapper{
+.form-wrapper {
   margin: 0 2vw 0 2vw;
+}
+
+.image-container{
+  max-width:  90vw;
 }

@@ -3,7 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityMeta, Property } from 'extendz/core';
 import { filter, take } from 'rxjs/operators';
-import { BaseSelectComponent } from '../base-select/base-select.component';
+import { ExtBaseSelectComponent } from '../base-select/base-select.component';
 import { ExtEditEmbeddedComponent } from './dialog/edit-embedded/edit-embedded.component';
 
 export interface ExtEditEmbeddedComponentData {
@@ -23,7 +23,7 @@ export interface ExtEditEmbeddedComponentData {
     }
   ]
 })
-export class ExtEmbeddedComponent extends BaseSelectComponent
+export class ExtEmbeddedComponent extends ExtBaseSelectComponent
   implements OnInit, ControlValueAccessor {
   constructor(private dialog: MatDialog) {
     super();

@@ -38,3 +38,25 @@ body {
   margin: 0;
   font-family: 'Play', 'Helvetica Neue', sans-serif;
 }
+
+.image-cropper-dialog .mat-dialog-container {
+  padding: 0;
+}
+
+.snack-bar-info {
+  background: rgb(33, 150, 243);
+  background: linear-gradient(360deg, rgba(33, 150, 243, 1) 0%, rgba(50, 50, 50, 1) 10%);
+  color: white;
+}
+
+.snack-bar-success {
+  background: rgb(127, 255, 0);
+  background: linear-gradient(360deg, rgba(127, 255, 0, 1) 0%, rgba(50, 50, 50, 1) 10%);
+  color: white;
+}
+
+.snack-bar-error {
+  background: rgb(204, 0, 0);
+  background: linear-gradient(360deg, rgba(204, 0, 0, 1) 0%, rgba(50, 50, 50, 1) 10%);
+  color: white;
+}

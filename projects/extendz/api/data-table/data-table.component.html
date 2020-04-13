@@ -2,8 +2,9 @@
   <span fxFlex>
     {{entityMeta?.displayName | camelCase}}
   </span>
-  <form fxFlex>
-    <input class="search mat-elevation-z1" placeholder="Search">
+  <form fxFlex [formGroup]="searchFormGroup">
+    <input formControlName="text" type="search" class="search mat-elevation-z1"
+      [placeholder]="'Search by '+searchField">
   </form>
 
   <span fxFlex fxLayout="row">
@@ -11,12 +12,13 @@
     <div fxLayout="row" fxLayoutAlign="center center">
       <mat-spinner *ngIf="loading" diameter=20></mat-spinner>
       <!-- Add -->
-      <button mat-icon-button *ngIf="selected?.length <= 0" class="scale-in-center" matTooltip="Add new" (click)="onNew()">
+      <button mat-icon-button *ngIf="selection?.selected?.length <= 0 && !allowNew" class="scale-in-center"
+        matTooltip="Add new" (click)="onNew()">
         <ng-container *ngTemplateOutlet="add"> </ng-container>
       </button>
       <!-- Detele -->
-      <button mat-icon-button *ngIf="selected?.length > 0" matTooltip="Delete selected" (click)="onDelete()"
-        class="scale-in-center">
+      <button mat-icon-button *ngIf="selection?.selected?.length > 0 && !allowNew" matTooltip="Delete selected"
+        (click)="onDelete()" class="scale-in-center">
         <ng-container *ngTemplateOutlet="deleteIcon"> </ng-container>
       </button>
     </div>
@@ -32,8 +34,7 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row" fxFlex="48px">
         <mat-checkbox (click)="$event.stopPropagation()"
-          (change)="$event ? selection.toggle(row[config.idFeild]) : null; selectionChange()"
-          [checked]="selection.isSelected(row[config.idFeild])">
+          (change)="$event ? selection.toggle(row) : null; selectionChange()" [checked]="selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
 
@@ -70,17 +71,16 @@
       </mat-cell>
     </ng-container>
 
-    <!-- Disclaimer column -->
+    <!-- Pagination column -->
     <ng-container matColumnDef="page">
       <mat-footer-cell *matFooterCellDef>
         <span fxFlex></span>
-        <mat-paginator *ngIf="page?.length" (page)="onPage($event)" [length]="page.length" [pageSize]="page.pageSize"
-          [pageSizeOptions]="dataTableConfig.pageSizeOptions"
+        <mat-paginator class="mat-elevation-z0" *ngIf="page?.length" (page)="onPage($event)" [length]="page.length"
+          [pageSize]="page.pageSize" [pageSizeOptions]="dataTableConfig.pageSizeOptions"
           [showFirstLastButtons]="dataTableConfig.showFirstLastButtons">
         </mat-paginator>
       </mat-footer-cell>
     </ng-container>
-
 
     <mat-header-row *matHeaderRowDef="allColumns; sticky: true"></mat-header-row>
     <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
@@ -88,7 +88,6 @@
   </mat-table>
 
   <span fxFlex></span>
-
 
 </div>
 

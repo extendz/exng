@@ -1,0 +1,27 @@
+<fieldset class="field_set">
+    <input [multiple]="multiple" hidden type="file" #imgFileInput (change)="handleFile($event)" />
+    <legend>{{ property.name | camelCase }}</legend>
+{{multiple}}
+    <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1.25vw">
+        <button mat-button class="upload-base upload-button" (click)="imgFileInput.click()"
+            *ngIf="multiple || displayImages?.length === 0">
+            <ng-container *ngTemplateOutlet="add"> </ng-container>
+        </button>
+        <button mat-button class="upload-base" *ngFor="let image of displayImages" [matMenuTriggerFor]="appMenu"
+            [style.background-image]="image">
+        </button>
+    </div>
+    <mat-menu #appMenu="matMenu" yPosition="above" xPosition="after" hasBackdrop>
+        <button disabled mat-menu-item>Remove</button>
+        <button (click)="imgFileInput.click()" mat-menu-item>Replace</button>
+    </mat-menu>
+</fieldset>
+
+<ng-template #add>
+    <mat-icon>
+        <svg id="add" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            <path d="M0 0h24v24H0z" fill="none" />
+        </svg>
+    </mat-icon>
+</ng-template>

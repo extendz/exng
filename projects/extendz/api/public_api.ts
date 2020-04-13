@@ -1,5 +1,4 @@
 export * from './base-select/base-select.component';
-export * from './base-select/base-select.module';
 //
 export * from './data-table/data-table.component';
 export * from './data-table/data-table.module';

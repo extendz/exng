@@ -1,4 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
+import { HttpParams } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
@@ -6,8 +7,9 @@ import {
   Input,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import {
   AbstractDataTableService,
@@ -17,36 +19,38 @@ import {
   EXTENDZ_API_CONFIG,
   EXT_DATA_TABLE_CONFIG,
   EXT_DATA_TABLE_SERVICE,
-  Property
+  Property,
 } from 'extendz/core';
-import { finalize, flatMap, map, take, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { debounceTime, finalize, flatMap, map, take, tap } from 'rxjs/operators';
 import { INPUT_ENTITY_META } from '../api.consts';
 
 @Component({
   selector: 'ext-data-table',
   templateUrl: './data-table.component.html',
-  styleUrls: ['./data-table.component.css']
+  styleUrls: ['./data-table.component.css'],
 })
 export class ExtDataTableComponent implements OnInit {
   /***
    * Entity meta data
    */
   @Input() public entityMeta: EntityMeta;
-
   /***
    * Data to be shown
    */
   @Input() public data: any[] = [];
-
   /***
    * Selected Items
    */
   @Input() public selected: any[];
-
   /***
    * Multi select in the table enable/dissable
    */
-  @Input() public multiSelect: boolean = true;
+  @Input() public multiSelect: boolean;
+  /***
+   * Allow to create new entity
+   */
+  @Input() public allowNew: boolean;
   /***
    * Selection change event
    */
@@ -63,37 +67,76 @@ export class ExtDataTableComponent implements OnInit {
    * Columns that based on the Entity meta model. It take propery/projection name only here.
    */
   public properties: Property[];
-
   /***
    * All the columns including selec,entity metal model,edit
    */
   public allColumns: string[];
-
   /***
    * Pagination data
    */
   public page: PageEvent;
-
+  /***
+   * Selection model
+   */
+  public selection: SelectionModel<object>;
+  /***
+   * loading indicator
+   */
+  public loading: boolean = false;
+  /***
+   * Default search placeholder
+   */
+  public searchField: string;
   /***
    *
    */
-  public selection: SelectionModel<object>;
-
-  public loading: boolean = false;
+  public searchFormGroup: FormGroup;
+  /***
+   *
+   */
+  private searchSubscription: Subscription;
+  /***
+   *
+   */
+  private searchParams: HttpParams;
 
   constructor(
     @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig,
     @Inject(EXT_DATA_TABLE_CONFIG) public dataTableConfig: ExtDatatableConfig,
-    @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService
+    @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService,
+    private formBuilder: FormBuilder
   ) {
-    this.page = { pageIndex: 1, pageSize: dataTableConfig.defaultPageSize, length: 0 };
+    this.page = { pageIndex: 0, pageSize: dataTableConfig.defaultPageSize, length: 0 };
+    this.searchFormGroup = this.formBuilder.group({
+      text: [null, Validators.required],
+    });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.searchSubscription = this.searchFormGroup.valueChanges
+      .pipe(
+        debounceTime(500),
+        flatMap((v) => {
+          this.searchParams = new HttpParams();
+          this.searchParams = this.searchParams.append(this.searchField, v.text);
+          return this.getData(this.entityMeta, this.page).pipe(take(1));
+        })
+      )
+      .subscribe();
+  } //ngOnInit()
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) this.searchSubscription.unsubscribe();
+  } // ngOnDestroy()
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes[INPUT_ENTITY_META] && changes[INPUT_ENTITY_META].currentValue) {
+      if (this.multiSelect === undefined) this.multiSelect = true;
       this.selection = new SelectionModel<object>(this.multiSelect, []);
+
+      // Set search
+      if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
+      else this.searchField = this.entityMeta.properties[0].name;
 
       // Get the table headers based on the projection
       let properties = this.entityMeta.properties;
@@ -104,19 +147,19 @@ export class ExtDataTableComponent implements OnInit {
 
       // Get only the name since that is diplayed
       this.properties = properties;
-      this.allColumns = ['select', ...this.properties.map(p => p.name), 'edit'];
-      // console.log(this.entityMeta);
+      this.allColumns = ['select', ...this.properties.map((p) => p.name)];
+      if (!this.allowNew) this.allColumns = [...this.allColumns, 'edit'];
       this.getData(this.entityMeta, this.page).subscribe();
     }
   } // ngOnChanges()
 
   private getData(entityMeta: EntityMeta, pageEvent: PageEvent) {
     this.loading = true;
-    return this.dataTableService.getData(entityMeta, pageEvent).pipe(
+    return this.dataTableService.getData(entityMeta, this.searchParams, pageEvent).pipe(
       take(1),
-      tap(pagedData => (this.page = pagedData.page)),
-      map(d => d.data),
-      tap(d => (this.data = d)),
+      tap((pagedData) => (this.page = pagedData.page)),
+      map((d) => d.data),
+      tap((d) => (this.data = d)),
       finalize(() => (this.loading = false))
     );
   } //getData()
@@ -128,9 +171,10 @@ export class ExtDataTableComponent implements OnInit {
     this.dataTableService
       .delete(this.entityMeta, this.selection.selected)
       .pipe(
-        flatMap(d => this.getData(this.entityMeta, this.page)),
+        flatMap((d) => this.getData(this.entityMeta, this.page)),
         finalize(() => {
           this.selection.clear();
+          console.log(this.selected.length);
         })
       )
       .subscribe();
@@ -156,7 +200,6 @@ export class ExtDataTableComponent implements OnInit {
     this.pageChange.emit(pageEvent);
     this.getData(this.entityMeta, pageEvent).subscribe();
   }
-
   /***
    *
    */
@@ -164,7 +207,6 @@ export class ExtDataTableComponent implements OnInit {
     this.selected = this.selection.selected;
     this.selectedChange.emit(this.selected);
   }
-
   /***
    *
    */
@@ -173,13 +215,12 @@ export class ExtDataTableComponent implements OnInit {
     const numRows = this.page.pageSize;
     return numSelected === numRows;
   } // isAllSelected()
-
   /***
    *  Selects all rows if they are not all selected; otherwise clear selection.
    */
   public masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.data.forEach(row => this.selection.select(row[this.config.idFeild]));
+      : this.data.forEach((row) => this.selection.select(row[this.config.idFeild]));
   } // masterToggle()
 } // class

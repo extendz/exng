@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BaseSelectComponent } from './base-select.component';
+import { ImageCropperDialogComponent } from './image-cropper-dialog.component';
 
-describe('BaseSelectComponent', () => {
-  let component: BaseSelectComponent;
-  let fixture: ComponentFixture<BaseSelectComponent>;
+describe('ImageCropperDialogComponent', () => {
+  let component: ImageCropperDialogComponent;
+  let fixture: ComponentFixture<ImageCropperDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BaseSelectComponent ]
+      declarations: [ ImageCropperDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BaseSelectComponent);
+    fixture = TestBed.createComponent(ImageCropperDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,0 +1,20 @@
+<div fxLayout="column" fxLayoutAlign="center center" class="image-wrapper">
+
+  <!-- <mat-spinner ></mat-spinner> -->
+  <mat-progress-bar class="short-progress" *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <image-cropper class="image-cropper" [imageChangedEvent]="imageCroppedEvent" [maintainAspectRatio]="true"
+    [aspectRatio]="imageMeta.ratio" [resizeToWidth]="imageMeta.resizeToWidth" [cropperMinWidth]="128"
+    [onlyScaleDown]="true" [roundCropper]="false" [format]="imageMeta.format" (imageCropped)="imageCropped($event)"
+    (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()" (loadImageFailed)="loadImageFailed()"
+    [alignImage]="'center'">
+  </image-cropper>
+
+  <div mat-dialog-actions fxLayout="row" class="actions">
+    <span fxFlex></span>
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <span fxFlex="2"></span>
+    <button mat-raised-button (click)="onCrop()" cdkFocusInitial>Crop</button>
+    <span fxFlex="5"></span>
+  </div>
+</div>

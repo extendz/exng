@@ -1,0 +1,10 @@
+<mat-dialog-content>
+    <ext-data-table [entityMeta]="data.entityMeta" [multiSelect]="multiSelect" [(selected)]="selected" allowNew="false">
+    </ext-data-table>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <span fxFlex></span>
+    <button mat-button color="primary" (click)="onOkay()">Done</button>
+</mat-dialog-actions>

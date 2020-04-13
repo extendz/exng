@@ -3,10 +3,9 @@ import { Property } from 'extendz/core';
 
 @Component({
   selector: 'ext-base-select',
-  templateUrl: './base-select.component.html',
-  styleUrls: ['./base-select.component.scss']
+  template: '<p>Please extends me</p>',
 })
-export class BaseSelectComponent implements OnInit {
+export class ExtBaseSelectComponent implements OnInit {
   /***
    *
    */
