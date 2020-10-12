@@ -14,7 +14,7 @@ import { TypeComponent } from './views/type/type.component';
   ]
 })
 export class ExtEntityModule {
-  static forRoot(config: ExtEntityConfig, service: Type<any>): ModuleWithProviders {
+  static forRoot(config: ExtEntityConfig, service: Type<any>): ModuleWithProviders<ExtEntityModule> {
     return {
       ngModule: ExtEntityModule,
       providers: [
