@@ -8,7 +8,8 @@ import {
   Property,
   PropertyType,
 } from 'extendz/core';
-import { finalize } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { finalize, flatMap, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'ext-base-view',
@@ -29,11 +30,11 @@ export class ExtBaseViewComponent implements OnInit {
    */
   public originalEntity: any;
   /***
-   * List of files to be uploaded
+   * Files map arranged by property name
    */
-  public fileList: FileProperty[];
+  public filesMap: Map<string, FileProperty[]> = new Map();
   /***
-   *
+   * Defualt form group
    */
   public formGroup: FormGroup = new FormGroup({});
   /***
@@ -69,13 +70,16 @@ export class ExtBaseViewComponent implements OnInit {
       if (p.required) validators.push(Validators.required);
       if (p.type == PropertyType.email) validators.push(Validators.email);
       ctrl.setValidators(validators);
-
       if (p.generated) ctrl.disable({});
       this.formGroup.addControl(p.name, ctrl);
     });
     if (this.entity) this.formGroup.patchValue(this.entity);
-    this.originalEntity = deepCopy(this.entity);
+    this.deepCopy(this.entity);
   } // handleEntity()
+
+  private deepCopy(entity: any) {
+    this.originalEntity = deepCopy(entity);
+  }
 
   private handleEntityMeta(propties: Property[]) {
     this.stringProperties = propties.filter((p) => p.type === PropertyType.string);
@@ -93,8 +97,11 @@ export class ExtBaseViewComponent implements OnInit {
    * Add Event fired from file handlers
    */
   public onAdd(event: FileProperty) {
-    if (!this.fileList) this.fileList = [];
-    this.fileList.push(event);
+    const key = event.property.name;
+    let files = this.filesMap.get(key);
+    if (!files) files = [];
+    files.push(event);
+    this.filesMap.set(key, files);
   } //onAdd()
   /***
    *
@@ -104,7 +111,13 @@ export class ExtBaseViewComponent implements OnInit {
       this.loading = true;
       this.entityService
         .save(this.entityMeta, this.formGroup.value, this.originalEntity)
-        .pipe(finalize(() => (this.loading = false)))
+        .pipe(
+          // Get the saved object and deepCopy
+          tap((d) => this.deepCopy(d)),
+          // Upload file save
+          flatMap((d) => this.entityService.uploadFiles(d, this.filesMap)),
+          finalize(() => (this.loading = false))
+        )
         .subscribe();
     } else this.formGroup.markAsDirty();
   } //onSave()

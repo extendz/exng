@@ -44,15 +44,40 @@ export enum PropertyType {
 }
 
 export class Property {
+  /***
+   *
+   */
   required?: boolean;
+  /***
+   *
+   */
   generated?: boolean;
+  /***
+   *
+   */
   reference?: string;
+  /***
+   *
+   */
   type: PropertyType;
+  /***
+   *
+   */
   name: string;
+  /***
+   *
+   */
   relationshipType?: RelationshipType;
+  /***
+   *
+   */
   entityMeta?: EntityMeta;
   /***
    * Only for the type image.
    */
   imageMeta?: ImageMeta;
+  /***
+   * Default seach in data table
+   */
+  defaultSearch?: boolean;
 }

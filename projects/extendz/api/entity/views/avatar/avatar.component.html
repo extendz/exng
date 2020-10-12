@@ -84,19 +84,19 @@
 
   <!-- Images -->
   <div class="form-wrapper" fxLayout="column" fxLayoutAlign="center start" fxFlex="100%">
-    <ext-image *ngFor="let prop of imageProperties" [property]="prop" (add)="onAdd($event)"></ext-image>
+    <ext-image *ngFor="let prop of imageProperties" [property]="prop" [entity]="entity" (add)="onAdd($event)"></ext-image>
   </div>
 
   <ng-container *ngTemplateOutlet="saveButton"></ng-container>
 </form>
 
-<div class="form-wrapper">
+<!-- <div class="form-wrapper">
   {{formGroup.value|json}}
 
   <hr>
 
   {{originalEntity | json}}
-</div>
+</div> -->
 
 
 <ng-template #saveButton>

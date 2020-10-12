@@ -13,6 +13,8 @@ import { ImageCropperDialogComponent } from './image-cropper-dialog/image-croppe
 export class ExtImageComponent implements OnInit {
   @Input() public property: Property;
 
+  @Input() public entity: any;
+
   @Output() public add: EventEmitter<FileProperty> = new EventEmitter<FileProperty>();
 
   public displayImages: SafeUrl[] = [];
@@ -21,8 +23,22 @@ export class ExtImageComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer, private dialog: MatDialog) {}
 
   ngOnInit(): void {
+    // Show existing images
+    if (this.entity) {
+      let name = this.property.name;
+      if (this.property.relationshipType === RelationshipType.oneToMany) {
+        let urls = this.entity[name] as string[];
+        if (urls)
+          this.displayImages = urls.map((path) =>
+            this.sanitizer.bypassSecurityTrustStyle(`url(${path})`)
+          );
+      } else {
+        let url = this.entity[name] as string;
+        if (url) this.displayImages = [this.sanitizer.bypassSecurityTrustStyle(`url(${url})`)];
+      }
+    }
     this.multiple = this.property.relationshipType === RelationshipType.oneToMany;
-  }
+  } //ngOnInit()
 
   public handleFile(data: FileProperty) {
     let im = this.property.imageMeta;

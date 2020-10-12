@@ -24,11 +24,26 @@ import {
 import { Subscription } from 'rxjs';
 import { debounceTime, finalize, flatMap, map, take, tap } from 'rxjs/operators';
 import { INPUT_ENTITY_META } from '../api.consts';
+import { trigger, transition, style, sequence, animate } from '@angular/animations';
+
+export const rowsAnimation = trigger('rowsAnimation', [
+  transition('void => *', [
+    style({ height: '*', opacity: '0', transform: 'translateX(-550px)', 'box-shadow': 'none' }),
+    sequence([
+      animate(
+        '.35s ease',
+        style({ height: '*', opacity: '.2', transform: 'translateX(0)', 'box-shadow': 'none' })
+      ),
+      animate('.35s ease', style({ height: '*', opacity: 1, transform: 'translateX(0)' })),
+    ]),
+  ]),
+]);
 
 @Component({
   selector: 'ext-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.css'],
+  animations: [rowsAnimation],
 })
 export class ExtDataTableComponent implements OnInit {
   /***
@@ -150,6 +165,7 @@ export class ExtDataTableComponent implements OnInit {
       this.allColumns = ['select', ...this.properties.map((p) => p.name)];
       if (!this.allowNew) this.allColumns = [...this.allColumns, 'edit'];
       this.getData(this.entityMeta, this.page).subscribe();
+      console.log(this.entityMeta);
     }
   } // ngOnChanges()
 
@@ -157,7 +173,7 @@ export class ExtDataTableComponent implements OnInit {
     this.loading = true;
     return this.dataTableService.getData(entityMeta, this.searchParams, pageEvent).pipe(
       take(1),
-      tap((pagedData) => (this.page = pagedData.page)),
+      tap((p) => (this.page = p.page)),
       map((d) => d.data),
       tap((d) => (this.data = d)),
       finalize(() => (this.loading = false))
@@ -171,10 +187,9 @@ export class ExtDataTableComponent implements OnInit {
     this.dataTableService
       .delete(this.entityMeta, this.selection.selected)
       .pipe(
-        flatMap((d) => this.getData(this.entityMeta, this.page)),
+        flatMap((_) => this.getData(this.entityMeta, this.page)),
         finalize(() => {
           this.selection.clear();
-          console.log(this.selected.length);
         })
       )
       .subscribe();

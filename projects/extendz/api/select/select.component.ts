@@ -59,7 +59,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
 
     this.entityMetaService.getModel(this.property.reference).subscribe((d) => {
       this.entityMeta = d;
-
       // Set search
       if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
       else this.searchField = this.entityMeta.properties[0].name;

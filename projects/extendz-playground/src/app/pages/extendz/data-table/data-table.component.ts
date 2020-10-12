@@ -31,8 +31,8 @@ export class DataTableComponent implements OnInit {
       .subscribe();
   } // ngOnInit()
 
-  public onSelectEntity(entity: ObjectWithLinks) {
-    let id: string = 'new';
+  public onSelectEntity(entity: ObjectWithLinks): void {
+    let id: string = 'newx';
     if (entity) id = getId(entity._links.self.href);
     this.router.navigate([id], { relativeTo: this.activatedRoute });
   } // onSelectEntity()

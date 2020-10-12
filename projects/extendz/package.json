@@ -1,6 +1,6 @@
 {
   "name": "extendz",
-  "version": "0.0.1",
+  "version": "9.0.0",
   "peerDependencies": {
     "@angular/cdk": "^9.1.0",
     "@angular/common": "^9.0.5",

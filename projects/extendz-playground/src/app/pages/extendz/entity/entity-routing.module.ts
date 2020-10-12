@@ -4,11 +4,11 @@ import { EntityComponentResolverService } from './entity-component-resolver.serv
 import { EntityComponent } from './entity.component';
 
 const routes: Routes = [
-  { path: '', component: EntityComponent, resolve: { extendz: EntityComponentResolverService } }
+  { path: '', component: EntityComponent, resolve: { extendz: EntityComponentResolverService } },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class EntityRoutingModule {}

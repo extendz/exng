@@ -32,7 +32,9 @@ export class DataTableService extends AbstractDataTableService {
       params = params.append('pageIndex', `${pageEvent.pageIndex}`);
       params = params.append('pageSize', `${pageEvent.pageSize}`);
     }
-    return this.http.get<PagedData>(entityMeta.url, { params });
+    return this.http
+      .get<PagedData>(entityMeta.url, { params })
+      .pipe(take(1));
   } // getData()
 
   public delete(entityMeta: EntityMeta, objects: object[]): Observable<any> {
@@ -46,7 +48,7 @@ export class DataTableService extends AbstractDataTableService {
       panelClass: ['snack-bar-info'],
     });
     let reqs: Observable<Object>[] = [];
-    urls.forEach((ulr) => reqs.push(this.http.delete(ulr)));
+    urls.forEach((ulr) => reqs.push(this.http.delete(ulr).pipe(take(1))));
     return ref.afterDismissed().pipe(
       filter((d: MatSnackBarDismiss) => d.dismissedByAction),
       flatMap((_) => forkJoin(reqs)),

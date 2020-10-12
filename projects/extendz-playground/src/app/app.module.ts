@@ -10,10 +10,12 @@ import {
   EXT_DATA_TABLE_SERVICE,
 } from 'extendz/core';
 import { environment } from '../environments/environment';
+import { IndexedDBModule } from '../shared/indexdb/indexed-db.module';
+import { API_TOKEN, ApiInterceptorService } from '../shared/interceptors/api-interceptor.services';
+import { fakeBackendProvider } from '../shared/interceptors/fake-backend-provider';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DataTableHateosService } from './pages/extendz/data-table/data-table-hateos.service';
-import { ApiInterceptorService, API_TOKEN } from './services/api-interceptor.service';
 
 const extendzConfig: ExtApiConfig = {
   modelsJson: 'assets/json/models.json',
@@ -39,6 +41,18 @@ const extendzDataTable = {
     BrowserAnimationsModule,
     // Mat
     MatSnackBarModule,
+    IndexedDBModule.forRoot([
+      {
+        name: 'extendz',
+        stores: [
+          { name: 'customers' },
+          { name: 'owners' },
+          { name: 'shops' },
+          { name: 'stockKeepingUnits' },
+          { name: 'products' },
+        ],
+      },
+    ]),
   ],
   providers: [
     {
@@ -50,10 +64,9 @@ const extendzDataTable = {
       useClass: DataTableHateosService,
     },
     { provide: EXT_DATA_TABLE_CONFIG, useValue: extendzDataTable },
-
     { provide: API_TOKEN, useValue: environment.basePath },
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptorService, multi: true },
-    // fakeBackendProvider
+    fakeBackendProvider,
   ],
   bootstrap: [AppComponent],
 })

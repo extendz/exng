@@ -24,16 +24,14 @@ export class EntityComponentResolverService implements Resolve<EntityComponentRe
     let entityMeta: EntityMeta;
 
     return this.entityMetaService.getModel(model).pipe(
-      tap(em => (entityMeta = em)),
-      flatMap(m => {
-        let data: Observable<any>;
-        if (id == 'new') data = of(null);
-        else data = this.entityService.getOne(m, id);
-        return data;
+      tap((em) => (entityMeta = em)),
+      flatMap((m) => {
+        if (id == 'new') return of(null);
+        return this.entityService.getOne(m, id);
       }),
-      map(entity => ({
+      map((entity) => ({
         entityMeta,
-        entity
+        entity,
       }))
     );
   } //resolve

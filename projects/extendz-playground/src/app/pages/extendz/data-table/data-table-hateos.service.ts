@@ -35,6 +35,7 @@ export class DataTableHateosService extends DataTableService {
       params = params.append('size', `${pageEvent.pageSize}`);
       params = params.append('projection', 'dataTable');
     }
+
     return this.http
       .get<HateosPagedResponse>(entityMeta.url, { params })
       .pipe(

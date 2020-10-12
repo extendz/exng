@@ -1,10 +1,15 @@
 <mat-toolbar>
+  <mat-icon *ngIf="entityMeta" svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
+  <span fxFlex="0.5" fxFlex.xs="1"></span>
   <span fxFlex>
     {{entityMeta?.displayName | camelCase}}
   </span>
-  <form fxFlex [formGroup]="searchFormGroup">
+  <form fxFlex [formGroup]="searchFormGroup" fxHide.xs>
     <input formControlName="text" type="search" class="search mat-elevation-z1"
-      [placeholder]="'Search by '+searchField">
+      placeholder="Search by {{searchField | camelCase}}">
+    <button mat-icon-button class="scale-in-center" matTooltip="Filter" (click)="onNew()">
+      <ng-container *ngTemplateOutlet="filter"> </ng-container>
+    </button>
   </form>
 
   <span fxFlex fxLayout="row">
@@ -24,8 +29,10 @@
     </div>
   </span>
 </mat-toolbar>
+
 <div fxLayout="column" class="container">
-  <mat-table [dataSource]="data">
+
+  <mat-table *ngIf="page?.length >0; else nothig" [dataSource]="data">
 
     <!-- Select Column -->
     <ng-container matColumnDef="select">
@@ -37,7 +44,6 @@
           (change)="$event ? selection.toggle(row) : null; selectionChange()" [checked]="selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
-
     </ng-container>
 
     <ng-container *ngFor="let p of properties" [matColumnDef]="p.name">
@@ -83,13 +89,23 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="allColumns; sticky: true"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
+    <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: allColumns"></mat-row>
     <mat-footer-row *matFooterRowDef="['page'];sticky: true"></mat-footer-row>
   </mat-table>
 
   <span fxFlex></span>
 
 </div>
+
+<ng-template #nothig>
+  <div fxLayout="row" fxLayoutAlign="center center" class="nothing">
+    <div fxLayout="column" fxLayoutAlign="center center">
+      <mat-icon *ngIf="entityMeta" class="font-64" mat-card-avatar svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
+      <h1 *ngIf="loading">Loading</h1>
+      <h1 *ngIf="!loading">No {{entityMeta?.displayName | camelCase}} found !</h1>
+    </div>
+  </div>
+</ng-template>
 
 <ng-template #selectAll>
   <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
@@ -123,5 +139,13 @@
       <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
       <path d="M0 0h24v24H0z" fill="none" />
     </svg>
+  </mat-icon>
+</ng-template>
+
+<ng-template #filter>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" /></svg>
   </mat-icon>
 </ng-template>

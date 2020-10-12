@@ -1,5 +1,6 @@
 import { Property } from './property';
 import { Search } from './search';
+import { Config } from './config';
 
 export class EntityMeta {
   /**
@@ -53,4 +54,8 @@ export class EntityMeta {
    *
    */
   search?: Search;
+  /***
+   *
+   */
+  config?: Config;
 }

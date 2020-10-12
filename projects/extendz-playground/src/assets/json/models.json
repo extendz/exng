@@ -3,7 +3,12 @@
     "name": "customer",
     "displayName": "Customers",
     "url": "customers",
+    "search": { "default": "firstName" },
     "properties": [
+      {
+        "name": "profilePicture",
+        "type": "image"
+      },
       {
         "name": "firstName",
         "type": "string"
@@ -11,9 +16,25 @@
       {
         "name": "lastName",
         "type": "string"
+      }
+    ]
+  },
+  "product": {
+    "name": "product",
+    "displayName": "Products",
+    "url": "products",
+    "properties": [
+      {
+        "name": "image",
+        "type": "image"
       },
       {
-        "name": ""
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "code",
+        "type": "string"
       }
     ]
   },
@@ -21,6 +42,12 @@
     "name": "shop",
     "displayName": "Shops",
     "url": "shops",
+    "config": {
+      "entity": {
+        "enableProjection": true,
+        "projection": "entity"
+      }
+    },
     "properties": [
       { "name": "name", "type": "string", "required": true },
       { "name": "status", "type": "enum", "enums": ["Open", "Closed"] },
@@ -41,8 +68,8 @@
       ]
     }
   },
-  "stockKeepingunits": {
-    "name": "stockKeepingunits",
+  "stockKeepingUnits": {
+    "name": "stockKeepingUnits",
     "displayName": "Stock Keeping Units",
     "url": "stockKeepingUnits",
     "properties": [{ "name": "price", "type": "number" }]
