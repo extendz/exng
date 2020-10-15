@@ -1,7 +1,7 @@
 <div *ngIf="models$ | async as m; else loading" fxLayoutAlign="space-between center" fxLayoutAlign.xs="center"
   fxLayout="row wrap" fxLayout.xs="column">
 
-  <mat-card fxFlex="20%" *ngFor="let item of m | keyvalue" matRipple class="mat-elevation-z2 container"
+  <mat-card fxFlex="20%" *ngFor="let item of m | keyvalue" matRipple class="mat-elevation-z2 root-container"
     fxLayout="column" fxLayoutAlign="center center" (click)="onSelect(item.value)">
     <mat-icon class="primary" mat-card-avatar svgIcon="api-root:{{ item.key }}"></mat-icon>
     <span style="text-align: center">{{ item.value.displayName | camelCase }}</span>
