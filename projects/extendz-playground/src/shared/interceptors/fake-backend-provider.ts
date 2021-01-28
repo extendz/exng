@@ -7,8 +7,8 @@ import {
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable, of, range } from 'rxjs';
-import { delay, map, mergeMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { IdGenerator } from '../indexdb/core/id-generator/id-generator';
 import { IndexedDB } from '../indexdb/core/indexed-db.service';
 import { API_TOKEN } from './api-interceptor.services';
@@ -56,9 +56,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           if (id) {
             return this.indexedDbService.get(entity, id).pipe(mergeMap((d) => ok(d)));
           } else {
-            const page = +params.get('page');
-            const size = +params.get('size');
-
+            const page = params.has('page') ? +params.get('page') : undefined;
+            const size = params.has('size') ? +params.get('size') : undefined;
             return this.indexedDbService.list(entity).pipe(
               // delay(500),
               mergeMap((d) => ok(toHateos(d, entity, page, size)))
@@ -75,9 +74,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
   } // intercept
 } // class
 
-function toHateos(data: any[], entity: string, page: number, size: number) {
-  const out = { _embedded: {}, page: { totalElements: data.length, number: 0, size } };
+function toHateos(data: any[], entity: string, page: number = 0, size: number = 20) {
+  const out = { _embedded: {}, page: { totalElements: data.length, number: page, size } };
   out['_embedded'][entity] = data.slice(page * size, page * size + size);
+
   return out;
 }
 

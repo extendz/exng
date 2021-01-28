@@ -1,7 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
+import { ActivatedRoute } from '@angular/router';
 import {
   AbstractEntityService,
+  ExtApiConfig,
+  EXTENDZ_API_CONFIG,
   ExtEntityConfig,
   EXT_ENTITY_CONFIG,
   EXT_ENTITY_SERVICE,
@@ -24,10 +27,12 @@ export class ExtAvatarComponent extends ExtBaseViewComponent implements OnInit, 
 
   constructor(
     @Inject(EXT_ENTITY_CONFIG) private entityConfig: ExtEntityConfig,
+    @Inject(EXTENDZ_API_CONFIG) apiConfig: ExtApiConfig,
     @Inject(EXT_ENTITY_SERVICE) entityService: AbstractEntityService,
+    activatedRoute: ActivatedRoute,
     public media: MediaObserver
   ) {
-    super(entityService);
+    super(apiConfig, entityService, activatedRoute);
   }
 
   ngOnInit(): void {

@@ -36,3 +36,8 @@ Under the **_projects_** dir there are two main dirs.
   - service (common services)
     - entity-meta
 - extendz-playground (Test application)
+
+
+## release
+
+npm publish --ignore-scripts

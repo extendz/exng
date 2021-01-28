@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityMeta, ExtApiConfig, EXTENDZ_API_CONFIG, getId } from 'extendz/core';
 import { ObjectWithLinks } from 'extendz/core/models/hateos/object-with-links';
 import { EntityMetaService } from 'extendz/service';
-import { flatMap, map, tap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-data-table',
@@ -24,7 +24,7 @@ export class DataTableComponent implements OnInit {
     this.activatedRoute.params
       .pipe(
         map((p) => p.model),
-        flatMap((name) => this.entityMetaService.getModel(name)),
+        mergeMap((name) => this.entityMetaService.getModel(name)),
         tap((model) => (this.entityMeta = model))
         // flatMap(model => this.getData(model))
       )
@@ -32,7 +32,7 @@ export class DataTableComponent implements OnInit {
   } // ngOnInit()
 
   public onSelectEntity(entity: ObjectWithLinks): void {
-    let id: string = 'newx';
+    let id: string = 'new';
     if (entity) id = getId(entity._links.self.href);
     this.router.navigate([id], { relativeTo: this.activatedRoute });
   } // onSelectEntity()

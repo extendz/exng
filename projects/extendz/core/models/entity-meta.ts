@@ -1,6 +1,7 @@
 import { Property } from './property';
 import { Search } from './search';
 import { Config } from './config';
+import { Command } from './command';
 
 export class EntityMeta {
   /**
@@ -16,6 +17,10 @@ export class EntityMeta {
    */
   projections?: {
     [key: string]: Property[];
+  };
+  /*** */
+  commands?: {
+    [key: string]: Command;
   };
   /***
    *

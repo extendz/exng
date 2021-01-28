@@ -28,12 +28,12 @@ export class EntityMetaService {
   public getRoot(): Observable<EntityMetaResponse> {
     if (this.entityMetaResponse) return of(this.entityMetaResponse);
     return this.http.get<EntityMetaResponse>(this.apiConfig.modelsJson).pipe(
-      tap(res => (this.entityMetaResponse = res)),
+      tap((res) => (this.entityMetaResponse = res)),
       take(1)
     );
   } // getRoot()
 
   public getModel(name: string) {
-    return this.getRoot().pipe(map(models => models[name]));
+    return this.getRoot().pipe(map((models) => models[name], take(1)));
   } // getModel()
 } // class

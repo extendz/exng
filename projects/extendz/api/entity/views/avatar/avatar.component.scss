@@ -11,10 +11,10 @@ $avatar-height: 10vw;
   border-radius: 5%;
 }
 
-.avatar:hover {
-  background-blend-mode: multiply;
-  background-color: rgba(0, 0, 0, 0.4);
-}
+// .avatar:hover {
+//   background-blend-mode: multiply;
+//   background-color: rgba(0, 0, 0, 0.4);
+// }
 
 .bottom-right {
   position: fixed;
@@ -24,7 +24,7 @@ $avatar-height: 10vw;
 }
 
 .form-wrapper {
-  margin: 0 2vw 0 2vw;
+  margin: 2vh 2vw 2vh 2vw;
 }
 
 .image-container{

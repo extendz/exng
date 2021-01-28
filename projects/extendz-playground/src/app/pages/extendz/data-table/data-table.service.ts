@@ -32,6 +32,7 @@ export class DataTableService extends AbstractDataTableService {
       params = params.append('pageIndex', `${pageEvent.pageIndex}`);
       params = params.append('pageSize', `${pageEvent.pageSize}`);
     }
+   
     return this.http
       .get<PagedData>(entityMeta.url, { params })
       .pipe(take(1));

@@ -1,22 +1,30 @@
 <div>
   <span fxFlex></span>
   <div class="avatar-container" fxFlex fxLayoutAlign="center center">
-    <img [src]="imageUrl" alt="avatar" class="avatar mat-elevation-z6">
+    <img [src]="imageUrl" alt="avatar" class="avatar mat-elevation-z1" />
   </div>
   <span fxFlex>
-    <button mat-icon-button>
-
-    </button>
+    <button mat-icon-button></button>
   </span>
-  <span fxFlex=2></span>
+  <span fxFlex="2"></span>
 </div>
 
 <form [formGroup]="formGroup" fxLayout="column">
   <div class="form-wrapper" fxLayoutGap="1vw" fxLayout="row wrap" fxLayoutAlign="start center">
     <!-- String -->
-    <div fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of stringProperties">
-      <mat-form-field style="width: 100%;">
-        <input autocomplete="off" matInput [placeholder]="prop.name | camelCase" [formControlName]="prop.name" />
+    <div
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of stringProperties"
+    >
+      <mat-form-field style="width: 100%">
+        <input
+          autocomplete="off"
+          matInput
+          [placeholder]="prop.name | camelCase"
+          [formControlName]="prop.name"
+        />
         <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
           {{ prop.name | camelCase }} is
           <strong>required</strong>
@@ -25,9 +33,19 @@
     </div>
 
     <!-- Email -->
-    <div fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of emailProperties">
-      <mat-form-field style="width: 100%;">
-        <input type="email" matInput [placeholder]="prop.name | camelCase" [formControlName]="prop.name" />
+    <div
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of emailProperties"
+    >
+      <mat-form-field style="width: 100%">
+        <input
+          type="email"
+          matInput
+          [placeholder]="prop.name | camelCase"
+          [formControlName]="prop.name"
+        />
         <mat-error *ngIf="formGroup.controls[prop.name].hasError('email')">
           {{ prop.name | camelCase }} is
           <strong>not valid</strong>
@@ -36,9 +54,19 @@
     </div>
 
     <!-- Number -->
-    <mat-form-field fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of numberProperties">
-      <input autocomplete="off" matInput type="number" [placeholder]="prop.name | camelCase"
-        [formControlName]="prop.name" />
+    <mat-form-field
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of numberProperties"
+    >
+      <input
+        autocomplete="off"
+        matInput
+        type="number"
+        [placeholder]="prop.name | camelCase"
+        [formControlName]="prop.name"
+      />
       <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
         {{ prop.name | camelCase }}
         <strong>required</strong>
@@ -46,7 +74,12 @@
     </mat-form-field>
 
     <!--Enum -->
-    <mat-form-field fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of enumProperties">
+    <mat-form-field
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of enumProperties"
+    >
       <mat-select [placeholder]="prop.name | camelCase" [formControlName]="prop.name">
         <mat-option *ngFor="let enum of prop.enums" [value]="enum">
           {{ enum }}
@@ -55,9 +88,19 @@
     </mat-form-field>
 
     <!-- Date -->
-    <mat-form-field fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of dateProperties">
-      <input matInput autocomplete="off" [matDatepicker]="picker" [placeholder]="prop.name | camelCase"
-        [formControlName]="prop.name" />
+    <mat-form-field
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of dateProperties"
+    >
+      <input
+        matInput
+        autocomplete="off"
+        [matDatepicker]="picker"
+        [placeholder]="prop.name | camelCase"
+        [formControlName]="prop.name"
+      />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker [touchUi]="media.isActive('xs')" #picker></mat-datepicker>
       <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
@@ -66,25 +109,53 @@
       </mat-error>
     </mat-form-field>
 
-    <ext-embedded fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of embeddedProperties"
-      [property]="prop" [(entity)]="entity" [formControlName]="prop.name">
+    <ext-embedded
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of embeddedProperties"
+      [property]="prop"
+      [(entity)]="entity"
+      [formControlName]="prop.name"
+    >
     </ext-embedded>
 
-    <ext-select fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of objectProperties"
-      [property]="prop" [formControlName]="prop.name">
+    <ext-select
+      fxLayout.xs="column"
+      fxFlex.xs="100%"
+      fxFlex.lg="30vw"
+      *ngFor="let prop of objectProperties"
+      [property]="prop"
+      [formControlName]="prop.name"
+    >
     </ext-select>
+  </div>
 
-    <!--Boolean -->
-    <div fxLayoutAlign="center center" fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw">
-      <mat-slide-toggle *ngFor="let prop of booleanProperties" [formControlName]="prop.name">
-        {{ prop.name | camelCase }}
-      </mat-slide-toggle>
-    </div>
+  <!--Boolean -->
+  <div
+    class="form-wrapper"
+    fxLayoutAlign="space-arround center"
+    fxLayout.xs="column"
+    fxLayoutGap="1vw"
+  >
+    <mat-slide-toggle
+      *ngFor="let prop of booleanProperties"
+      [formControlName]="prop.name"
+      (change)="onBooleanChange($event, prop)"
+    >
+      {{ prop.name | camelCase }}
+    </mat-slide-toggle>
   </div>
 
   <!-- Images -->
   <div class="form-wrapper" fxLayout="column" fxLayoutAlign="center start" fxFlex="100%">
-    <ext-image *ngFor="let prop of imageProperties" [property]="prop" [entity]="entity" (add)="onAdd($event)"></ext-image>
+    <ext-image
+      class="mat-elevation-z2"
+      *ngFor="let prop of imageProperties"
+      [property]="prop"
+      [entity]="entity"
+      (add)="onAdd($event)"
+    ></ext-image>
   </div>
 
   <ng-container *ngTemplateOutlet="saveButton"></ng-container>
@@ -98,14 +169,21 @@
   {{originalEntity | json}}
 </div> -->
 
-
 <ng-template #saveButton>
-  <button mat-fab matTooltip="Save" type="submit" [disabled]="loading" class="bottom-right" (click)="onSave()">
+  <button
+    mat-fab
+    matTooltip="Save"
+    type="submit"
+    [disabled]="loading"
+    class="bottom-right"
+    (click)="onSave()"
+  >
     <mat-icon>
       <svg id="save" viewBox="0 0 24 24" class="primary-text">
         <path d="M0 0h24v24H0z" fill="none" />
         <path
-          d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+          d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
+        />
       </svg>
     </mat-icon>
   </button>

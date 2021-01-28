@@ -2,11 +2,15 @@
   <mat-icon *ngIf="entityMeta" svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
   <span fxFlex="0.5" fxFlex.xs="1"></span>
   <span fxFlex>
-    {{entityMeta?.displayName | camelCase}}
+    {{ entityMeta?.displayName | camelCase }}
   </span>
   <form fxFlex [formGroup]="searchFormGroup" fxHide.xs>
-    <input formControlName="text" type="search" class="search mat-elevation-z1"
-      placeholder="Search by {{searchField | camelCase}}">
+    <input
+      formControlName="text"
+      type="search"
+      class="search mat-elevation-z1"
+      placeholder="Search by {{ searchField | camelCase }}"
+    />
     <button mat-icon-button class="scale-in-center" matTooltip="Filter" (click)="onNew()">
       <ng-container *ngTemplateOutlet="filter"> </ng-container>
     </button>
@@ -15,33 +19,44 @@
   <span fxFlex fxLayout="row">
     <span fxFlex> </span>
     <div fxLayout="row" fxLayoutAlign="center center">
-      <mat-spinner *ngIf="loading" diameter=20></mat-spinner>
+      <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
       <!-- Add -->
-      <button mat-icon-button *ngIf="selection?.selected?.length <= 0 && !allowNew" class="scale-in-center"
-        matTooltip="Add new" (click)="onNew()">
+      <button
+        mat-icon-button
+        *ngIf="selection?.selected?.length <= 0 && !allowNew"
+        class="scale-in-center"
+        matTooltip="Add new"
+        (click)="onNew()"
+      >
         <ng-container *ngTemplateOutlet="add"> </ng-container>
       </button>
       <!-- Detele -->
-      <button mat-icon-button *ngIf="selection?.selected?.length > 0 && !allowNew" matTooltip="Delete selected"
-        (click)="onDelete()" class="scale-in-center">
+      <button
+        mat-icon-button
+        *ngIf="selection?.selected?.length > 0 && !allowNew"
+        matTooltip="Delete selected"
+        (click)="onDelete()"
+        class="scale-in-center"
+      >
         <ng-container *ngTemplateOutlet="deleteIcon"> </ng-container>
       </button>
     </div>
   </span>
 </mat-toolbar>
 
-<div fxLayout="column" class="container">
-
-  <mat-table *ngIf="page?.length >0; else nothig" [dataSource]="data">
-
+<div fxLayout="column">
+  <mat-table *ngIf="page?.length > 0; else nothig" [dataSource]="data">
     <!-- Select Column -->
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef fxFlex="48px">
         <ng-container [ngTemplateOutlet]="selectAll"></ng-container>
       </mat-header-cell>
       <mat-cell *matCellDef="let row" fxFlex="48px">
-        <mat-checkbox (click)="$event.stopPropagation()"
-          (change)="$event ? selection.toggle(row) : null; selectionChange()" [checked]="selection.isSelected(row)">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null; selectionChange()"
+          [checked]="selection.isSelected(row)"
+        >
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -81,35 +96,48 @@
     <ng-container matColumnDef="page">
       <mat-footer-cell *matFooterCellDef>
         <span fxFlex></span>
-        <mat-paginator class="mat-elevation-z0" *ngIf="page?.length" (page)="onPage($event)" [length]="page.length"
-          [pageSize]="page.pageSize" [pageSizeOptions]="dataTableConfig.pageSizeOptions"
-          [showFirstLastButtons]="dataTableConfig.showFirstLastButtons">
+        <mat-paginator
+          class="mat-elevation-z0"
+          *ngIf="page?.length"
+          (page)="onPage($event)"
+          [length]="page.length"
+          [pageSize]="page.pageSize"
+          [pageSizeOptions]="dataTableConfig.pageSizeOptions"
+          [showFirstLastButtons]="dataTableConfig.showFirstLastButtons"
+        >
         </mat-paginator>
       </mat-footer-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="allColumns; sticky: true"></mat-header-row>
     <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: allColumns"></mat-row>
-    <mat-footer-row *matFooterRowDef="['page'];sticky: true"></mat-footer-row>
+    <mat-footer-row *matFooterRowDef="['page']; sticky: true"></mat-footer-row>
   </mat-table>
 
-  <span fxFlex></span>
-
+  <!-- <span fxFlex></span> -->
 </div>
 
 <ng-template #nothig>
   <div fxLayout="row" fxLayoutAlign="center center" class="nothing">
     <div fxLayout="column" fxLayoutAlign="center center">
-      <mat-icon *ngIf="entityMeta" class="font-64" mat-card-avatar svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
+      <mat-icon
+        *ngIf="entityMeta"
+        class="font-64"
+        mat-card-avatar
+        svgIcon="api-root:{{ entityMeta?.name }}"
+      ></mat-icon>
       <h1 *ngIf="loading">Loading</h1>
-      <h1 *ngIf="!loading">No {{entityMeta?.displayName | camelCase}} found !</h1>
+      <h1 *ngIf="!loading">No {{ entityMeta?.displayName | camelCase }} found !</h1>
     </div>
   </div>
 </ng-template>
 
 <ng-template #selectAll>
-  <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
-    [indeterminate]="selection.hasValue() && !isAllSelected()">
+  <mat-checkbox
+    (change)="$event ? masterToggle() : null"
+    [checked]="selection.hasValue() && isAllSelected()"
+    [indeterminate]="selection.hasValue() && !isAllSelected()"
+  >
   </mat-checkbox>
 </ng-template>
 
@@ -126,12 +154,12 @@
   <mat-icon>
     <svg id="edit" class="icon-button" viewBox="0 0 24 24">
       <path
-        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+      />
       <path d="M0 0h24v24H0z" fill="none" />
     </svg>
   </mat-icon>
 </ng-template>
-
 
 <ng-template #add>
   <mat-icon>
@@ -146,6 +174,7 @@
   <mat-icon>
     <svg viewBox="0 0 24 24">
       <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" /></svg>
+      <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+    </svg>
   </mat-icon>
 </ng-template>

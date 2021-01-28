@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { ActivatedRoute } from '@angular/router';
 import {
   AbstractEntityService,
   deepCopy,
   EntityMeta,
+  ExtApiConfig,
   FileProperty,
   Property,
   PropertyType,
 } from 'extendz/core';
-import { forkJoin, of } from 'rxjs';
-import { finalize, flatMap, map, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { finalize, mergeMap, skip, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'ext-base-view',
   template: '<p>Please extend me</p>',
 })
-export class ExtBaseViewComponent implements OnInit {
+export class ExtBaseViewComponent implements OnInit, OnDestroy {
   /***
    *
    */
@@ -53,13 +56,62 @@ export class ExtBaseViewComponent implements OnInit {
   public stringProperties: Property[];
   public objectProperties: Property[];
 
-  constructor(private entityService: AbstractEntityService) {}
+  private activatedRouteSub: Subscription;
+
+  constructor(
+    private apiConfig: ExtApiConfig,
+    private entityService: AbstractEntityService,
+    private activatedRoute: ActivatedRoute
+  ) {
+    this.activatedRouteSub = this.activatedRoute.params.pipe(skip(1)).subscribe((d) => this.init());
+  }
 
   ngOnInit(): void {
+    this.init();
+  }
+
+  ngOnDestroy(): void {
+    if (this.activatedRouteSub) this.activatedRouteSub.unsubscribe();
+  }
+
+  private init() {
     const propties = this.entityMeta.properties;
-    this.handleEntityMeta(propties);
-    this.handleEntity(propties);
-  } // ngOnInit()
+    let filteredProperties: Property[] = [];
+    // Update
+    if (this.resolve(this.apiConfig.idFeild, this.entity)) {
+      if (this.entityMeta.commands && this.entityMeta.commands['update']) {
+        const createProps = this.entityMeta.commands['update'].properties;
+        propties.forEach((p) => {
+          if (createProps.indexOf(p.name) > -1) filteredProperties.push(p);
+          else if (p.command != undefined) filteredProperties.push(p);
+        });
+      }
+    }
+    // New
+    else {
+      if (this.entityMeta.commands && this.entityMeta.commands['create']) {
+        const createProps = this.entityMeta.commands['create'].properties;
+        propties.forEach((p) => {
+          if (createProps.indexOf(p.name) > -1) filteredProperties.push(p);
+        });
+      }
+    }
+    if (filteredProperties.length == 0) filteredProperties = propties;
+    this.handleEntityMeta(filteredProperties);
+    this.handleEntity(filteredProperties);
+  }
+
+  private handleEntityMeta(propties: Property[]) {
+    this.stringProperties = propties.filter((p) => p.type === PropertyType.string);
+    this.enumProperties = propties.filter((p) => p.type === PropertyType.enum);
+    this.booleanProperties = propties.filter((p) => p.type === PropertyType.boolean);
+    this.numberProperties = propties.filter((p) => p.type === PropertyType.number);
+    this.embeddedProperties = propties.filter((p) => p.type === PropertyType.embedded);
+    this.emailProperties = propties.filter((p) => p.type === PropertyType.email);
+    this.objectProperties = propties.filter((p) => p.type === PropertyType.object);
+    this.dateProperties = propties.filter((p) => p.type === PropertyType.date);
+    this.imageProperties = propties.filter((p) => p.type === PropertyType.image);
+  } // handleEntityMeta()
 
   private handleEntity(propties: Property[]) {
     // Create form
@@ -81,17 +133,10 @@ export class ExtBaseViewComponent implements OnInit {
     this.originalEntity = deepCopy(entity);
   }
 
-  private handleEntityMeta(propties: Property[]) {
-    this.stringProperties = propties.filter((p) => p.type === PropertyType.string);
-    this.enumProperties = propties.filter((p) => p.type === PropertyType.enum);
-    this.booleanProperties = propties.filter((p) => p.type === PropertyType.boolean);
-    this.numberProperties = propties.filter((p) => p.type === PropertyType.number);
-    this.embeddedProperties = propties.filter((p) => p.type === PropertyType.embedded);
-    this.emailProperties = propties.filter((p) => p.type === PropertyType.email);
-    this.objectProperties = propties.filter((p) => p.type === PropertyType.object);
-    this.dateProperties = propties.filter((p) => p.type === PropertyType.date);
-    this.imageProperties = propties.filter((p) => p.type === PropertyType.image);
-  } // handleEntityMeta()
+  private resolve(path: string, obj: any, separator: string = '.') {
+    var properties = Array.isArray(path) ? path : path.split(separator);
+    return properties.reduce((prev, curr) => prev && prev[curr], obj);
+  }
 
   /***
    * Add Event fired from file handlers
@@ -112,13 +157,18 @@ export class ExtBaseViewComponent implements OnInit {
       this.entityService
         .save(this.entityMeta, this.formGroup.value, this.originalEntity)
         .pipe(
+          tap((d) => (this.entity = d)),
           // Get the saved object and deepCopy
           tap((d) => this.deepCopy(d)),
           // Upload file save
-          flatMap((d) => this.entityService.uploadFiles(d, this.filesMap)),
+          mergeMap((d) => this.entityService.uploadFiles(d, this.filesMap)),
           finalize(() => (this.loading = false))
         )
         .subscribe();
     } else this.formGroup.markAsDirty();
   } //onSave()
+
+  public onBooleanChange(event: MatCheckboxChange, property: Property) {
+    console.log(event.checked, property.command, this.entity);
+  }
 } // class

@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { Component, forwardRef, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, forwardRef, Inject, OnInit } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
@@ -46,8 +46,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig,
     @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService,
     private entityMetaService: EntityMetaService,
-    private dialog: MatDialog,
-    private ngZone: NgZone
+    private dialog: MatDialog
   ) {
     super();
   }
@@ -100,8 +99,10 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
       entity: this.entity,
       property: this.property,
     };
+
     let dialogRef = this.dialog.open(ExtAdvanceSelectComponent, {
       data,
+      panelClass: 'ext-advance-select',
       width: '90vw',
     });
 

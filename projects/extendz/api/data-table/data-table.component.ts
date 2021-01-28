@@ -1,3 +1,4 @@
+import { animate, sequence, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import { HttpParams } from '@angular/common/http';
 import {
@@ -22,9 +23,8 @@ import {
   Property,
 } from 'extendz/core';
 import { Subscription } from 'rxjs';
-import { debounceTime, finalize, flatMap, map, take, tap } from 'rxjs/operators';
+import { debounceTime, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
 import { INPUT_ENTITY_META } from '../api.consts';
-import { trigger, transition, style, sequence, animate } from '@angular/animations';
 
 export const rowsAnimation = trigger('rowsAnimation', [
   transition('void => *', [
@@ -93,7 +93,7 @@ export class ExtDataTableComponent implements OnInit {
   /***
    * Selection model
    */
-  public selection: SelectionModel<object>;
+  public selection: SelectionModel<any>;
   /***
    * loading indicator
    */
@@ -131,7 +131,7 @@ export class ExtDataTableComponent implements OnInit {
     this.searchSubscription = this.searchFormGroup.valueChanges
       .pipe(
         debounceTime(500),
-        flatMap((v) => {
+        mergeMap((v) => {
           this.searchParams = new HttpParams();
           this.searchParams = this.searchParams.append(this.searchField, v.text);
           return this.getData(this.entityMeta, this.page).pipe(take(1));
@@ -147,7 +147,7 @@ export class ExtDataTableComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes[INPUT_ENTITY_META] && changes[INPUT_ENTITY_META].currentValue) {
       if (this.multiSelect === undefined) this.multiSelect = true;
-      this.selection = new SelectionModel<object>(this.multiSelect, []);
+      this.selection = new SelectionModel<any>(this.multiSelect, []);
 
       // Set search
       if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
@@ -165,7 +165,6 @@ export class ExtDataTableComponent implements OnInit {
       this.allColumns = ['select', ...this.properties.map((p) => p.name)];
       if (!this.allowNew) this.allColumns = [...this.allColumns, 'edit'];
       this.getData(this.entityMeta, this.page).subscribe();
-      console.log(this.entityMeta);
     }
   } // ngOnChanges()
 
@@ -187,10 +186,8 @@ export class ExtDataTableComponent implements OnInit {
     this.dataTableService
       .delete(this.entityMeta, this.selection.selected)
       .pipe(
-        flatMap((_) => this.getData(this.entityMeta, this.page)),
-        finalize(() => {
-          this.selection.clear();
-        })
+        mergeMap((_) => this.getData(this.entityMeta, this.page)),
+        finalize(() => this.selection.clear())
       )
       .subscribe();
   } //onDelete()
@@ -227,7 +224,7 @@ export class ExtDataTableComponent implements OnInit {
    */
   public isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.page.pageSize;
+    const numRows = this.page.length;
     return numSelected === numRows;
   } // isAllSelected()
   /***
@@ -236,6 +233,6 @@ export class ExtDataTableComponent implements OnInit {
   public masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.data.forEach((row) => this.selection.select(row[this.config.idFeild]));
+      : this.data.forEach((row) => this.selection.select(row));
   } // masterToggle()
 } // class

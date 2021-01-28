@@ -1,6 +1,6 @@
 {
   "name": "extendz",
-  "version": "10.0.1",
+  "version": "11.0.5",
   "dependencies": {
     "tslib": "^2.0.0"
   },

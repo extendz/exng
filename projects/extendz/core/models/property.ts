@@ -1,3 +1,4 @@
+import { Command } from './command';
 import { EntityMeta } from './entity-meta';
 
 export class ImageMeta {
@@ -80,4 +81,8 @@ export class Property {
    * Default seach in data table
    */
   defaultSearch?: boolean;
+  /**
+   *
+   */
+  command: Command;
 }

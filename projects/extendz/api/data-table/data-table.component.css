@@ -28,7 +28,9 @@
 }
 
 .nothing {
-  height: 90vh;
+  margin-top: 10vh;
+  /* background-color: rebeccapurple; */
+  /* height: 90vh; */
 }
 
 .scale-in-center {

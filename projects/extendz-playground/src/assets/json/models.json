@@ -4,6 +4,16 @@
     "displayName": "Customers",
     "url": "customers",
     "search": { "default": "firstName" },
+    "commands": {
+      "create": {
+        "properties": ["firstName", "lastName"]
+      },
+      "read": {},
+      "delete": {},
+      "update": {
+        "properties": ["firstName"]
+      }
+    },
     "properties": [
       {
         "name": "profilePicture",
@@ -21,8 +31,17 @@
   },
   "product": {
     "name": "product",
+    "title": "name",
     "displayName": "Products",
     "url": "products",
+    "commands": {
+      "create": {},
+      "read": {},
+      "delete": {},
+      "update": {
+        "properties": ["name"]
+      }
+    },
     "properties": [
       {
         "name": "image",
@@ -35,6 +54,25 @@
       {
         "name": "code",
         "type": "string"
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "command": {
+          "url": "activate-now"
+        }
+      },
+      {
+        "name": "sameDayDelivery",
+        "type": "boolean"
+      },
+      {
+        "name": "Fragile",
+        "type": "boolean"
+      },
+      {
+        "name": "echoFriendly",
+        "type": "boolean"
       }
     ]
   },
@@ -72,13 +110,37 @@
     "name": "stockKeepingUnits",
     "displayName": "Stock Keeping Units",
     "url": "stockKeepingUnits",
-    "properties": [{ "name": "price", "type": "number" }]
+    "properties": [
+      { "name": "price", "type": "number" },
+      {
+        "name": "product",
+        "type": "object",
+        "relationshipType": "oneToOne",
+        "reference": "product"
+      }
+    ]
   },
   "owner": {
     "name": "owner",
     "displayName": "Owners",
     "title": "name",
     "url": "owners",
+    "properties": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "email",
+        "type": "email"
+      }
+    ]
+  },
+  "events":{
+    "name": "events",
+    "displayName": "Events",
+    "title": "Events",
+    "url": "events",
     "properties": [
       {
         "name": "name",

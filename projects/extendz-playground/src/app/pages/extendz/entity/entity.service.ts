@@ -36,7 +36,6 @@ export class EntityService implements AbstractEntityService {
     original: ObjectWithLinks
   ): Observable<ObjectWithLinks> {
     let diffOb = diff(newValue, original);
-    console.log('diff', diffOb);
     let converted = this.preSave(newValue);
     // PATCH
     if (original && original._links)
