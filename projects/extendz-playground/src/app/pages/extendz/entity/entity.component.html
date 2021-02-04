@@ -1,1 +1,5 @@
-<ext-entity [entityMeta]="data.entityMeta" [entity]="data.entity"></ext-entity>
+<ext-entity
+  [entityMeta]="data.entityMeta"
+  [entity]="data.entity"
+  (action)="onAction($event)"
+></ext-entity>

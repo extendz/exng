@@ -1,6 +1,15 @@
-import { Component, ComponentFactoryResolver, Input, OnInit, Type, ViewChild } from '@angular/core';
-import { EntityMeta } from 'extendz/core';
-import { INPUT_ENTIRY, INPUT_ENTITY_META } from '../api.consts';
+import {
+  Component,
+  ComponentFactoryResolver,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Type,
+  ViewChild,
+} from '@angular/core';
+import { Action, EntityMeta } from 'extendz/core';
+import { INPUT_ENTIRY, INPUT_ENTITY_META, OUTPUT_ACTION } from '../api.consts';
 import { EntityViewDirective } from './entity-view.directive';
 import { AbstractView } from './views/abstact-view';
 import { ExtAvatarComponent } from './views/avatar/avatar.component';
@@ -9,7 +18,7 @@ import { TypeComponent } from './views/type/type.component';
 @Component({
   selector: 'ext-entity',
   templateUrl: './entity.component.html',
-  styleUrls: ['./entity.component.scss']
+  styleUrls: ['./entity.component.scss'],
 })
 export class ExtEntityComponent implements OnInit {
   /**
@@ -21,6 +30,8 @@ export class ExtEntityComponent implements OnInit {
    * Current entity
    */
   @Input(INPUT_ENTIRY) public entity: any;
+
+  @Output(OUTPUT_ACTION) action: EventEmitter<Action> = new EventEmitter<Action>();
 
   @ViewChild(EntityViewDirective, { static: true }) view: EntityViewDirective;
 
@@ -43,6 +54,7 @@ export class ExtEntityComponent implements OnInit {
     const componentRef = viewContainerRef.createComponent(componentFactory);
     (<AbstractView>componentRef.instance).entityMeta = this.entityMeta;
     (<AbstractView>componentRef.instance).entity = this.entity;
+    (<AbstractView>componentRef.instance).action = this.action;
   }
 
   public handleResponse(entity: any) {}

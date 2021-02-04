@@ -1,16 +1,13 @@
 <div>
-  <span fxFlex></span>
+  <span fxFlex="2"></span>
   <div class="avatar-container" fxFlex fxLayoutAlign="center center">
     <img [src]="imageUrl" alt="avatar" class="avatar mat-elevation-z1" />
   </div>
-  <span fxFlex>
-    <button mat-icon-button></button>
-  </span>
   <span fxFlex="2"></span>
 </div>
 
 <form [formGroup]="formGroup" fxLayout="column">
-  <div class="form-wrapper" fxLayoutGap="1vw" fxLayout="row wrap" fxLayoutAlign="start center">
+  <div class="form-wrapper" fxLayoutGap="1vw" fxLayout="row wrap" fxLayoutAlign="space-between center">
     <!-- String -->
     <div
       fxLayout.xs="column"
@@ -147,6 +144,17 @@
     </mat-slide-toggle>
   </div>
 
+  <div
+    class="form-wrapper"
+    fxLayoutAlign="space-arround center"
+    fxLayout.xs="column"
+    fxLayoutGap="1vw"
+  >
+    <button mat-raised-button (click)="onAction(a)" *ngFor="let a of entityMeta.actions">
+      {{ a }}
+    </button>
+  </div>
+
   <!-- Images -->
   <div class="form-wrapper" fxLayout="column" fxLayoutAlign="center start" fxFlex="100%">
     <ext-image
@@ -160,14 +168,6 @@
 
   <ng-container *ngTemplateOutlet="saveButton"></ng-container>
 </form>
-
-<!-- <div class="form-wrapper">
-  {{formGroup.value|json}}
-
-  <hr>
-
-  {{originalEntity | json}}
-</div> -->
 
 <ng-template #saveButton>
   <button

@@ -3,6 +3,7 @@ export * from './interfaces/abstract-entity-service';
 export * from './interfaces/paged-data.interface';
 //
 export * from './models/entity-meta';
+export * from './models/action';
 export * from './models/entity-meta-response';
 export * from './models/ext-api-config';
 export * from './models/ext-data-table.config';

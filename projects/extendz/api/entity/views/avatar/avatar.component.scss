@@ -1,14 +1,15 @@
 $avatar-height: 10vw;
 
 .avatar-container {
-  margin: 2vh 0 2vh 0;
+  padding: 2vh 0 2vh 0;
   height: $avatar-height;
+  
 }
 
 .avatar {
-  width: $avatar-height;
-  height: 100%;
-  border-radius: 5%;
+  width: 8vw;
+  height: 8vw;
+  border-radius: 50%;;
 }
 
 // .avatar:hover {
@@ -27,6 +28,6 @@ $avatar-height: 10vw;
   margin: 2vh 2vw 2vh 2vw;
 }
 
-.image-container{
-  max-width:  90vw;
+.image-container {
+  max-width: 90vw;
 }

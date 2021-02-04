@@ -34,12 +34,13 @@
     "title": "name",
     "displayName": "Products",
     "url": "products",
+    "actions": ["View Stock Keeping Unit(s)"],
     "commands": {
       "create": {},
       "read": {},
       "delete": {},
       "update": {
-        "properties": ["name"]
+        "properties": ["name", "image", "code", "description"]
       }
     },
     "properties": [
@@ -51,8 +52,13 @@
         "name": "name",
         "type": "string"
       },
+
       {
         "name": "code",
+        "type": "string"
+      },
+      {
+        "name": "description",
         "type": "string"
       },
       {
@@ -136,7 +142,7 @@
       }
     ]
   },
-  "events":{
+  "events": {
     "name": "events",
     "displayName": "Events",
     "title": "Events",

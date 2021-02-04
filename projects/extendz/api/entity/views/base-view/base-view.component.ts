@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { ActivatedRoute } from '@angular/router';
 import {
   AbstractEntityService,
+  Action,
   deepCopy,
   EntityMeta,
   ExtApiConfig,
@@ -44,6 +45,9 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
    *
    */
   public loading: boolean = false;
+
+  @Output()
+  public action: EventEmitter<Action> = new EventEmitter<Action>();
 
   // Properties
   public booleanProperties: Property[];
@@ -87,6 +91,7 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
         });
       }
     }
+
     // New
     else {
       if (this.entityMeta.commands && this.entityMeta.commands['create']) {
@@ -96,6 +101,7 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
         });
       }
     }
+
     if (filteredProperties.length == 0) filteredProperties = propties;
     this.handleEntityMeta(filteredProperties);
     this.handleEntity(filteredProperties);
@@ -170,5 +176,14 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
 
   public onBooleanChange(event: MatCheckboxChange, property: Property) {
     console.log(event.checked, property.command, this.entity);
+  }
+
+  public onAction(action: string) {
+    let a: Action = {
+      action,
+      entity: this.entity,
+    };
+
+    this.action.emit(a);
   }
 } // class
