@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Params, Resolve, RouterStateSnapshot } from '@angular/router';
 import { EntityMeta } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { Observable, of } from 'rxjs';
-import { flatMap, map, tap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { EntityService } from './entity.service';
 
 export interface EntityComponentResolverData {
   entityMeta: EntityMeta;
   entity: any;
+  params?: Params;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'any' })
 export class EntityComponentResolverService implements Resolve<EntityComponentResolverData> {
   constructor(private entityMetaService: EntityMetaService, private entityService: EntityService) {}
 
@@ -25,13 +26,14 @@ export class EntityComponentResolverService implements Resolve<EntityComponentRe
 
     return this.entityMetaService.getModel(model).pipe(
       tap((em) => (entityMeta = em)),
-      flatMap((m) => {
+      mergeMap((m) => {
         if (id == 'new') return of(null);
         return this.entityService.getOne(m, id);
       }),
       map((entity) => ({
         entityMeta,
         entity,
+        params: route.queryParams,
       }))
     );
   } //resolve

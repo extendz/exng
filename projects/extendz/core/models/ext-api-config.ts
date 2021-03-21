@@ -1,10 +1,7 @@
-export const EXTENDZ_API_CONFIG = 'ExtendzApiConfig';
+import { InjectionToken } from '@angular/core';
+
+export const EXT_API_CONFIG = new InjectionToken('EXT_API_CONFIG');
 
 export class ExtApiConfig {
-  public svgIconSet: string;
-  public modelsJson: string;
-  public idFeild: string;
-  public dataTableProjecion?: string = 'dataTable';
-  public dateFormat?: string = 'mm/dd/yyyy';
-  public snackBarDuration?: number = 3000;
+  constructor(public modelsJson: string) {}
 }

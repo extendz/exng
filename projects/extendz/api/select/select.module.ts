@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExtPipesModule } from 'extendz/pipes';
+import { ExtAddNewModule } from './dialog/add-new/add-new.module';
 import { ExtAdvanceSelectModule } from './dialog/advance-select/advance-select.module';
 import { ExtSelectComponent } from './select.component';
 
@@ -22,13 +23,14 @@ import { ExtSelectComponent } from './select.component';
     // Extendz
     ExtPipesModule,
     ExtAdvanceSelectModule,
+    ExtAddNewModule,
     //Mat
     MatAutocompleteModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,
     MatInputModule,
-    MatTooltipModule
-  ]
+    MatTooltipModule,
+  ],
 })
 export class ExtSelectModule {}

@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { FileProperty, ImageCroppedPropertyEvent, Property, RelationshipType } from 'extendz/core';
+import { ImageCroppedPropertyEvent, Property, RelationshipType } from 'extendz/core';
 import { take } from 'rxjs/operators';
 import { ImageCropperDialogComponent } from './image-cropper-dialog/image-cropper-dialog.component';
 
@@ -9,78 +10,96 @@ import { ImageCropperDialogComponent } from './image-cropper-dialog/image-croppe
   selector: 'ext-image',
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: forwardRef(() => ExtImageComponent),
+    },
+  ],
 })
-export class ExtImageComponent implements OnInit {
-  @Input() public property: Property;
+export class ExtImageComponent implements OnInit, ControlValueAccessor {
+  @Input() property: Property;
+  // @Input() entity: any;
+  @Input() mini: boolean;
+  @Input() multiple: boolean;
 
-  @Input() public entity: any;
-
-  @Output() public add: EventEmitter<FileProperty> = new EventEmitter<FileProperty>();
+  // @Output() public add: EventEmitter<FileProperty> = new EventEmitter<FileProperty>();
 
   public displayImages: SafeUrl[] = [];
-  public multiple: boolean;
 
   constructor(private sanitizer: DomSanitizer, private dialog: MatDialog) {}
 
-  ngOnInit(): void {
-    // Show existing images
-    if (this.entity) {
-      let name = this.property.name;
-      if (this.property.relationshipType === RelationshipType.oneToMany) {
-        let urls = this.entity[name] as string[];
-        if (urls)
-          this.displayImages = urls.map((path) =>
-            this.sanitizer.bypassSecurityTrustStyle(`url(${path})`)
-          );
-      } else {
-        let url = this.entity[name] as string;
-        if (url) this.displayImages = [this.sanitizer.bypassSecurityTrustStyle(`url(${url})`)];
-      }
-    }
-    this.multiple = this.property.relationshipType === RelationshipType.oneToMany;
-  } //ngOnInit()
+  ngOnInit(): void {}
 
-  public handleFile(data: FileProperty) {
+  public onChange: any = () => {};
+  public onTouched: any = () => {};
+
+  writeValue(urls: string | string[]): void {
+    if (Array.isArray(urls))
+      this.displayImages = urls.map((path) =>
+        this.sanitizer.bypassSecurityTrustStyle(`url(${path})`)
+      );
+    else if (urls) this.displayImages = [this.sanitizer.bypassSecurityTrustStyle(`url(${urls})`)];
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {}
+
+  public handleFile(data: ImageCroppedPropertyEvent) {
     let im = this.property.imageMeta;
     if (im && im.cropper) {
-      data.property = this.property;
-      const dialogRef = this.dialog.open(ImageCropperDialogComponent, {
-        minWidth: '100vw',
-        maxHeight: '100vh',
-        disableClose: false,
-        panelClass: 'image-cropper-dialog',
-        data,
-      });
+      const dialogRef = this.getDialog(data);
       dialogRef
         .afterClosed()
         .pipe(take(1))
-        .subscribe((e: ImageCroppedPropertyEvent) => {
-          console.log(e);
-          this.handleFileRead(<File>e.file);
-          this.add.emit({ file: e.file, property: this.property });
+        .subscribe((e: ImageCroppedPropertyEvent[]) => {
+          e.forEach((v) => this.handleFileRead(v.file));
+          const files = e.map((f) => f.file);
+          this.handleUpdate(files);
         });
     } else {
-      let eventObj: MSInputMethodContext = <MSInputMethodContext>(<unknown>event);
-      let target: HTMLInputElement = <HTMLInputElement>eventObj.target;
-      for (let index = 0; index < target.files.length; index++) {
-        let file = target.files[index];
+      let files: File[] = [];
+      for (let index = 0; index < data.target.files.length; index++) {
+        let file = data.target.files[index];
         this.handleFileRead(file);
-        this.add.emit({ file, property: this.property });
+        files.push(file);
       }
+      this.handleUpdate(files);
     }
   } // handleFile()
 
+  private handleUpdate(files: File[]) {
+    this.onChange(files);
+    // if (this.entity) this.entity[this.property.name] = files;
+  }
+
+  private getDialog(data: ImageCroppedPropertyEvent) {
+    data.property = this.property;
+    return this.dialog.open(ImageCropperDialogComponent, {
+      minWidth: '100vw',
+      maxHeight: '100vh',
+      disableClose: false,
+      panelClass: 'image-cropper-dialog',
+      data,
+    });
+  }
+
+  /** Show preview of the file uploaded */
   private handleFileRead(file: File) {
     let reader = new FileReader();
     reader.onload = (event: ProgressEvent) => {
       let path = <string>reader.result;
       let image = this.sanitizer.bypassSecurityTrustStyle(`url(${path})`);
-      if (this.property.relationshipType == RelationshipType.oneToMany)
-        this.displayImages.unshift(image);
-      else {
-        this.displayImages[0] = image;
-      }
+      this.displayImages.unshift(image);
     };
     reader.readAsDataURL(file);
-  } // handleFileRead()
+  }
 }

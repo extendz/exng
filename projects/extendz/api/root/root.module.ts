@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ExtApiConfig, ExtRootConfig, EXT_API_CONFIG, EXT_ROOT_CONFIG } from 'extendz/core';
 import { ExtPipesModule } from 'extendz/pipes';
 import { RootComponent } from './root.component';
 
@@ -13,14 +14,27 @@ import { RootComponent } from './root.component';
   exports: [RootComponent],
   imports: [
     CommonModule,
+    FlexLayoutModule,
     // Ext
     ExtPipesModule,
-    FlexLayoutModule,
     // Material
     MatCardModule,
     MatIconModule,
     MatRippleModule,
-    MatProgressSpinnerModule
-  ]
+    MatProgressSpinnerModule,
+  ],
 })
-export class ExtRootModule {}
+export class ExtRootModule {
+  static forFeature(
+    config: ExtRootConfig
+    // service?: Type<any>
+  ): ModuleWithProviders<ExtRootModule> {
+    return {
+      ngModule: ExtRootModule,
+      providers: [
+        { provide: EXT_ROOT_CONFIG, useValue: config },
+        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson) },
+      ],
+    };
+  }
+}

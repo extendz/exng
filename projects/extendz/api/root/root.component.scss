@@ -2,3 +2,31 @@
   margin: 1vh 1vw 1vh 1vw;
   cursor: pointer;
 }
+
+$color: #999;
+$width: 64px;
+
+mat-icon {
+  font-size: $width;
+  width: $width;
+  height: $width;
+  color: $color;
+}
+
+mat-card:hover mat-icon {
+  color: #000;
+  transition: color 0.5s ease;
+}
+
+mat-card:hover .name{
+  font-weight: 700;
+  transition: font-weight 0.5s ease;
+}
+
+.name {
+  text-align: center;
+}
+
+.url {
+  color: $color;
+}

@@ -2,26 +2,32 @@ import { Command } from './command';
 import { EntityMeta } from './entity-meta';
 
 export class ImageMeta {
-  /***
-   * This will be selected as the avatar image
-   */
+  /*** This will be selected as the avatar image */
   public avatar?: boolean;
-  /***
-   * Image cropper enabled?
-   */
+
+  /*** Image cropper enabled */
   public cropper?: boolean;
-  /***
-   *
-   */
+
+  /*** Image crop width to height ratio */
   public ratio?: number;
-  /***
-   *
-   */
+
+  /*** Image resized to given width */
   public resizeToWidth?: number;
-  /***
-   *
-   */
+
+  /*** Image format need to be cropped */
   public format?: string;
+}
+
+export class MatrixDefinition {
+  static: MatrixRow[];
+  rows: MatrixRow[];
+}
+
+export class MatrixRow {
+  property: Property;
+  /*** If there is an unit to select,then current selected will be this */
+  unit?: any;
+  values: any[];
 }
 
 export enum RelationshipType {
@@ -42,6 +48,10 @@ export enum PropertyType {
   object = 'object',
   string = 'string',
   time = 'time',
+  matrix = 'matrix',
+  money = 'money',
+  color = 'color',
+  unit = 'unit',
 }
 
 export class Property {
@@ -49,40 +59,58 @@ export class Property {
    *
    */
   required?: boolean;
+  
   /***
    *
    */
   generated?: boolean;
+  
   /***
    *
    */
   reference?: string;
-  /***
-   *
-   */
+
+  /*** */
   type: PropertyType;
+  
   /***
    *
    */
   name: string;
+  
   /***
    *
    */
   relationshipType?: RelationshipType;
+  
   /***
    *
    */
   entityMeta?: EntityMeta;
+
   /***
    * Only for the type image.
    */
   imageMeta?: ImageMeta;
-  /***
-   * Default seach in data table
-   */
+
+  /** Default seach in data table */
   defaultSearch?: boolean;
-  /**
-   *
+
+  /*** */
+  command?: Command;
+
+  /** Matrix definition */
+  matrixDefinition?: MatrixDefinition;
+
+  /** Reverse relataing property name */
+  mappedBy?: string;
+
+  /*** Properties that can be mesured with units will have options to select.
+   * Ex: LKR 200
+   * Ex: 200 KG
    */
-  command: Command;
+  units: string[];
+
+  /*** Feild name used on reference display */
+  displayField: string;
 }

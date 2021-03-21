@@ -3,13 +3,16 @@ import {
   ComponentFactoryResolver,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   Type,
   ViewChild,
 } from '@angular/core';
+import { Params } from '@angular/router';
 import { Action, EntityMeta } from 'extendz/core';
-import { INPUT_ENTIRY, INPUT_ENTITY_META, OUTPUT_ACTION } from '../api.consts';
+import { INPUT_ENTIRY, INPUT_ENTITY_META, INPUT_PARAMS, OUTPUT_ACTION } from '../api.consts';
 import { EntityViewDirective } from './entity-view.directive';
 import { AbstractView } from './views/abstact-view';
 import { ExtAvatarComponent } from './views/avatar/avatar.component';
@@ -20,16 +23,15 @@ import { TypeComponent } from './views/type/type.component';
   templateUrl: './entity.component.html',
   styleUrls: ['./entity.component.scss'],
 })
-export class ExtEntityComponent implements OnInit {
-  /**
-   * Entity meta for the selected/new item
-   */
-  @Input(INPUT_ENTITY_META) public entityMeta: EntityMeta;
+export class ExtEntityComponent implements OnInit, OnChanges {
+  /*** Entity meta for the selected/new item */
+  @Input(INPUT_ENTITY_META) entityMeta: EntityMeta;
 
-  /**
-   * Current entity
-   */
-  @Input(INPUT_ENTIRY) public entity: any;
+  /*** Current entity */
+  @Input(INPUT_ENTIRY) entity: any;
+
+  /*** Parameters to start with */
+  @Input(INPUT_PARAMS) params: Params;
 
   @Output(OUTPUT_ACTION) action: EventEmitter<Action> = new EventEmitter<Action>();
 
@@ -37,7 +39,7 @@ export class ExtEntityComponent implements OnInit {
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
     let view = this.entityMeta.view || 'avatar';
     let component: Type<any>;
     switch (view) {
@@ -55,7 +57,10 @@ export class ExtEntityComponent implements OnInit {
     (<AbstractView>componentRef.instance).entityMeta = this.entityMeta;
     (<AbstractView>componentRef.instance).entity = this.entity;
     (<AbstractView>componentRef.instance).action = this.action;
+    (<AbstractView>componentRef.instance).params = this.params;
   }
+
+  ngOnInit(): void {}
 
   public handleResponse(entity: any) {}
 

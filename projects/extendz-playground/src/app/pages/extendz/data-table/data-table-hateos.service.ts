@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   EntityMeta,
   ExtApiConfig,
-  EXTENDZ_API_CONFIG,
+  EXT_API_CONFIG,
   HateosPagedResponse,
   ObjectWithLinks,
   PagedData,
@@ -19,7 +19,7 @@ export class DataTableHateosService extends DataTableService {
   constructor(
     public http: HttpClient,
     public snackBar: MatSnackBar,
-    @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig
+    @Inject(EXT_API_CONFIG) public config: ExtApiConfig
   ) {
     super(http, snackBar, config);
   }

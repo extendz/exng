@@ -1,5 +1,5 @@
-import { ModuleWithProviders, NgModule, Type } from '@angular/core';
-import { ExtEntityConfig, EXT_ENTITY_CONFIG, EXT_ENTITY_SERVICE } from 'extendz/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { ExtApiConfig, ExtEntityConfig, EXT_API_CONFIG, EXT_ENTITY_CONFIG } from 'extendz/core';
 import { EntityViewDirective } from './entity-view.directive';
 import { ExtEntityComponent } from './entity.component';
 import { ExtAvatarModule } from './views/avatar/avatar.module';
@@ -10,20 +10,17 @@ import { TypeComponent } from './views/type/type.component';
   exports: [ExtEntityComponent],
   imports: [
     //
-    ExtAvatarModule
-  ]
+    ExtAvatarModule,
+  ],
 })
 export class ExtEntityModule {
-  static forRoot(config: ExtEntityConfig, service: Type<any>): ModuleWithProviders<ExtEntityModule> {
+  static forFeature(config: ExtEntityConfig): ModuleWithProviders<ExtEntityModule> {
     return {
       ngModule: ExtEntityModule,
       providers: [
         { provide: EXT_ENTITY_CONFIG, useValue: config },
-        {
-          provide: EXT_ENTITY_SERVICE,
-          useClass: service
-        }
-      ]
+        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson) },
+      ],
     };
-  } // forRoot()
+  }
 }

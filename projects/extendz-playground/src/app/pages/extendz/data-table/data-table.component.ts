@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityMeta, ExtApiConfig, EXTENDZ_API_CONFIG, getId } from 'extendz/core';
+import { EntityMeta, ExtApiConfig, EXT_API_CONFIG, getId } from 'extendz/core';
 import { ObjectWithLinks } from 'extendz/core/models/hateos/object-with-links';
 import { EntityMetaService } from 'extendz/service';
 import { map, mergeMap, tap } from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class DataTableComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private entityMetaService: EntityMetaService,
     private router: Router,
-    @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig
+    @Inject(EXT_API_CONFIG) public config: ExtApiConfig
   ) {}
 
   ngOnInit(): void {

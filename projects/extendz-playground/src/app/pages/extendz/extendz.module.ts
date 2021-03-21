@@ -5,6 +5,6 @@ import { ExtendzComponent } from './extendz.component';
 
 @NgModule({
   declarations: [ExtendzComponent],
-  imports: [CommonModule, ExtendzRoutingModule]
+  imports: [CommonModule, ExtendzRoutingModule],
 })
 export class ExtendzModule {}

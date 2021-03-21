@@ -3,34 +3,12 @@ import { NgModule } from '@angular/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  ExtApiConfig,
-  EXTENDZ_API_CONFIG,
-  EXT_DATA_TABLE_CONFIG,
-  EXT_DATA_TABLE_SERVICE,
-} from 'extendz/core';
 import { environment } from '../environments/environment';
 import { IndexedDBModule } from '../shared/indexdb/indexed-db.module';
-import { API_TOKEN, ApiInterceptorService } from '../shared/interceptors/api-interceptor.services';
+import { ApiInterceptorService, API_TOKEN } from '../shared/interceptors/api-interceptor.services';
 import { fakeBackendProvider } from '../shared/interceptors/fake-backend-provider';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DataTableHateosService } from './pages/extendz/data-table/data-table-hateos.service';
-
-const extendzConfig: ExtApiConfig = {
-  modelsJson: 'assets/json/models.json',
-  svgIconSet: 'assets/svg/api-icons.svg',
-  dataTableProjecion: 'dataTable',
-  idFeild: '_links.self.href',
-  snackBarDuration: 3000,
-  dateFormat: 'yyyy/MM/dd',
-};
-
-const extendzDataTable = {
-  pageSizeOptions: [10, 20, 100, 500],
-  showFirstLastButtons: true,
-  defaultPageSize: 20,
-};
 
 @NgModule({
   declarations: [AppComponent],
@@ -46,27 +24,21 @@ const extendzDataTable = {
         name: 'extendz',
         stores: [
           { name: 'customers' },
+          { name: 'brands' },
+          { name: 'prices' },
           { name: 'owners' },
           { name: 'shops' },
           { name: 'stockKeepingUnits' },
           { name: 'products' },
+          { name: 'currencies' },
         ],
       },
     ]),
   ],
   providers: [
-    {
-      provide: EXTENDZ_API_CONFIG,
-      useValue: extendzConfig,
-    },
-    {
-      provide: EXT_DATA_TABLE_SERVICE,
-      useClass: DataTableHateosService,
-    },
-    { provide: EXT_DATA_TABLE_CONFIG, useValue: extendzDataTable },
     { provide: API_TOKEN, useValue: environment.basePath },
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptorService, multi: true },
-    fakeBackendProvider,
+    // fakeBackendProvider,
   ],
   bootstrap: [AppComponent],
 })

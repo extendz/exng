@@ -7,7 +7,7 @@ import { ExtEditEmbeddedComponentData } from '../../embedded.component';
 @Component({
   selector: 'ext-edit-embedded',
   templateUrl: './edit-embedded.component.html',
-  styleUrls: ['./edit-embedded.component.scss']
+  styleUrls: ['./edit-embedded.component.scss'],
 })
 export class ExtEditEmbeddedComponent implements OnInit {
   // Properties
@@ -30,18 +30,15 @@ export class ExtEditEmbeddedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.stringProperties = this.entityMeta.properties.filter(p => p.type === PropertyType.string);
-    this.enumProperties = this.entityMeta.properties.filter(p => p.type === PropertyType.enum);
-    this.booleanProperties = this.entityMeta.properties.filter(
-      p => p.type === PropertyType.boolean
-    );
-    this.numberProperties = this.entityMeta.properties.filter(p => p.type === PropertyType.number);
-    this.embeddedProperties = this.entityMeta.properties.filter(
-      p => p.type === PropertyType.embedded
-    );
-    this.emailProperties = this.entityMeta.properties.filter(p => p.type === PropertyType.email);
+    const properties = Object.values(this.entityMeta.properties);
+    this.stringProperties = properties.filter((p) => p.type === PropertyType.string);
+    this.enumProperties = properties.filter((p) => p.type === PropertyType.enum);
+    this.booleanProperties = properties.filter((p) => p.type === PropertyType.boolean);
+    this.numberProperties = properties.filter((p) => p.type === PropertyType.number);
+    this.embeddedProperties = properties.filter((p) => p.type === PropertyType.embedded);
+    this.emailProperties = properties.filter((p) => p.type === PropertyType.email);
     // Create form
-    this.entityMeta.properties.forEach(p => {
+    properties.forEach((p) => {
       let ctrl = new FormControl();
       // Validators
       let validators: ValidatorFn[] = [];

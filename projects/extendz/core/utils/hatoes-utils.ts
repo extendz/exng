@@ -15,4 +15,10 @@ export function clearUrl(url: string) {
   let paraStart = url.indexOf('{?');
   if (paraStart > 0) url = url.substring(0, paraStart);
   return url;
-} //  clearUrl()
+}
+
+/*** Extract the given feild given as a string path from the object */
+export function getValueByField(path: string, obj: any, separator: string = '.') {
+  var properties = Array.isArray(path) ? path : path.split(separator);
+  return properties.reduce((prev, curr) => prev && prev[curr], obj);
+}

@@ -11,13 +11,15 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatIconRegistry } from '@angular/material/icon';
 import { PageEvent } from '@angular/material/paginator';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   AbstractDataTableService,
   EntityMeta,
   ExtApiConfig,
   ExtDatatableConfig,
-  EXTENDZ_API_CONFIG,
+  EXT_API_CONFIG,
   EXT_DATA_TABLE_CONFIG,
   EXT_DATA_TABLE_SERVICE,
   Property,
@@ -46,22 +48,18 @@ export const rowsAnimation = trigger('rowsAnimation', [
   animations: [rowsAnimation],
 })
 export class ExtDataTableComponent implements OnInit {
-  /***
-   * Entity meta data
-   */
-  @Input() public entityMeta: EntityMeta;
-  /***
-   * Data to be shown
-   */
-  @Input() public data: any[] = [];
-  /***
-   * Selected Items
-   */
-  @Input() public selected: any[];
-  /***
-   * Multi select in the table enable/dissable
-   */
-  @Input() public multiSelect: boolean;
+  /*** Entity meta data   */
+  @Input() entityMeta: EntityMeta;
+
+  /*** Data to be shown */
+  @Input() data: any[] = [];
+
+  /*** Selected Items */
+  @Input() selected: any[];
+
+  /*** Multi select in the table enable/dissable */
+  @Input() multiSelect: boolean;
+
   /***
    * Allow to create new entity
    */
@@ -116,11 +114,15 @@ export class ExtDataTableComponent implements OnInit {
   private searchParams: HttpParams;
 
   constructor(
-    @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig,
+    @Inject(EXT_API_CONFIG) public config: ExtApiConfig,
     @Inject(EXT_DATA_TABLE_CONFIG) public dataTableConfig: ExtDatatableConfig,
     @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private iconRegistry: MatIconRegistry,
+    private sanitizer: DomSanitizer
   ) {
+    const url = this.sanitizer.bypassSecurityTrustResourceUrl(this.dataTableConfig.svgIconSet);
+    this.iconRegistry.addSvgIconSetInNamespace('api-root', url);
     this.page = { pageIndex: 0, pageSize: dataTableConfig.defaultPageSize, length: 0 };
     this.searchFormGroup = this.formBuilder.group({
       text: [null, Validators.required],
@@ -142,23 +144,25 @@ export class ExtDataTableComponent implements OnInit {
 
   ngOnDestroy(): void {
     if (this.searchSubscription) this.searchSubscription.unsubscribe();
-  } // ngOnDestroy()
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes[INPUT_ENTITY_META] && changes[INPUT_ENTITY_META].currentValue) {
       if (this.multiSelect === undefined) this.multiSelect = true;
       this.selection = new SelectionModel<any>(this.multiSelect, []);
 
+      let properties = Object.values(this.entityMeta.properties);
+
       // Set search
       if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
-      else this.searchField = this.entityMeta.properties[0].name;
+      else this.searchField = properties[0].name;
 
       // Get the table headers based on the projection
-      let properties = this.entityMeta.properties;
+
       let projections = this.entityMeta.projections;
 
-      if (projections && projections[this.config.dataTableProjecion])
-        properties = this.entityMeta.projections[this.config.dataTableProjecion];
+      if (projections && projections[this.dataTableConfig.dataTableProjecion])
+        properties = this.entityMeta.projections[this.dataTableConfig.dataTableProjecion];
 
       // Get only the name since that is diplayed
       this.properties = properties;
@@ -190,17 +194,14 @@ export class ExtDataTableComponent implements OnInit {
         finalize(() => this.selection.clear())
       )
       .subscribe();
-  } //onDelete()
-  /***
-   *
-   */
+  }
+
+  /*** User select an existing entity to edit */
   public editRow(item: any) {
     this.select.emit(item);
-  } // editRow()
+  }
 
-  /***
-   * Create a new entity
-   */
+  /*** Create a new entity */
   public onNew() {
     this.select.emit(null);
   }

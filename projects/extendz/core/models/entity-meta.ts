@@ -25,7 +25,9 @@ export class EntityMeta {
   /***
    *
    */
-  properties?: Property[];
+  properties?: {
+    [key: string]: Property;
+  };
   /***
    * Display value for the entity
    */

@@ -1,0 +1,125 @@
+<mat-accordion>
+  <mat-expansion-panel hideToggle class="mat-elevation-z0" expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title> {{ property.name | camelCase }} </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div style="width: 100%" fxLayout="column">
+      <div fxLayoutAlign="space-between center" fxLayout="raw wrap" *ngIf="showMatrixInput">
+        <mat-form-field class="matrix-input" *ngFor="let r of property.matrixDefinition.rows">
+          <button matSuffix mat-button [matMenuTriggerFor]="menu" *ngIf="r.property.units">
+            {{ r.unit || r.property.units[0] }}
+          </button>
+          <mat-label>{{ r.property.name | camelCase }}</mat-label>
+          <mat-chip-list #chipList>
+            <mat-chip removable="true" (removed)="remove(r, c)" *ngFor="let c of r.values">
+              {{ c.value || c.name || c }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+
+            <input
+              autocomplete="off"
+              type="text"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="add($event, r)"
+            />
+          </mat-chip-list>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngFor="let c of r.property.units" (click)="onOptionSelect(c, r)">
+              {{ c }}
+            </button>
+          </mat-menu>
+        </mat-form-field>
+      </div>
+      <!-- Form -->
+      <form [formGroup]="formGroup" *ngIf="!showMatrixInput">
+        <mat-table [dataSource]="dataSource" formArrayName="data">
+          <ng-container [matColumnDef]="column.property.name" *ngFor="let column of columns">
+            <mat-header-cell *matHeaderCellDef [fxFlex]="column.property.width">
+              <span>{{ column.property.name | camelCase }}</span>
+            </mat-header-cell>
+
+            <mat-cell
+              [fxFlex]="column.property.width"
+              *matCellDef="let e; let i = index"
+              [formGroupName]="i"
+            >
+              <span [ngSwitch]="column.property.type" style="width: 100%">
+                <span *ngSwitchCase="'image'">
+                  <ext-image
+                    [property]="column.property"
+                    mini="true"
+                    multiple="true"
+                    [formControlName]="column.property.name"
+                  ></ext-image>
+                </span>
+                <span *ngSwitchCase="'money'" style="width: 100%">
+                  <mat-form-field style="width: 90%">
+                    <ext-money
+                      [property]="column.property"
+                      [formControlName]="column.property.name"
+                    ></ext-money>
+                  </mat-form-field>
+                </span>
+                <span *ngSwitchCase="'number'">
+                  <mat-form-field>
+                    <input
+                      type="number"
+                      matInput
+                      autocomplete="off"
+                      [formControlName]="column.property.name"
+                    />
+                  </mat-form-field>
+                </span>
+
+                <span *ngSwitchCase="'unit'">
+                  {{ e[column.property.name]?.value }} {{ e[column.property.name]?.unit }}
+                </span>
+
+                <span *ngSwitchCase="'color'">
+                  {{ e[column.property.name]?.name }}
+                </span>
+
+                <span *ngSwitchDefault>
+                  {{ e[column.property.name] }}
+                </span>
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="view">
+            <mat-header-cell fxFlex="100px" *matHeaderCellDef>View</mat-header-cell>
+            <mat-cell *matCellDef="let e" fxFlex="100px">
+              <ng-content *ngTemplateOutlet="view; context: { element: e }"></ng-content>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Row definitions -->
+          <mat-header-row *matHeaderRowDef="allColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
+        </mat-table>
+      </form>
+    </div>
+    <mat-action-row>
+      <button *ngIf="showMatrixInput" mat-raised-button (click)="updateMatrix()">Generate</button>
+      <button *ngIf="!showMatrixInput" mat-raised-button (click)="onAddNew($event)">Add New</button>
+      <span fxFlex></span>
+    </mat-action-row>
+  </mat-expansion-panel>
+  {{ formGroup.value | json }}
+</mat-accordion>
+
+<ng-template #view let-element="element">
+  <div fxLayoutAlign="end center">
+    <button mat-icon-button (click)="onView(element)">
+      <mat-icon>
+        <svg viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+          />
+        </svg>
+      </mat-icon>
+    </button>
+  </div>
+</ng-template>

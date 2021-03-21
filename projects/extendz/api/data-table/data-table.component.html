@@ -1,7 +1,7 @@
 <mat-toolbar>
   <mat-icon *ngIf="entityMeta" svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
   <span fxFlex="0.5" fxFlex.xs="1"></span>
-  <span fxFlex>
+  <span fxFlex class="title">
     {{ entityMeta?.displayName | camelCase }}
   </span>
   <form fxFlex [formGroup]="searchFormGroup" fxHide.xs>
@@ -68,10 +68,10 @@
       <mat-cell *matCellDef="let e">
         <span [ngSwitch]="p.type">
           <span *ngSwitchCase="'timestamp'">
-            {{ e[p.name] | date: config.dateFormat }}
+            {{ e[p.name] | date: dataTableConfig.dateFormat }}
           </span>
           <span *ngSwitchCase="'image'">
-            <img class="image" [src]="e[p.name]" alt="Image" />
+            <img class="image" [src]="e[p.name] || dataTableConfig.placeholderImage" alt="Image" />
           </span>
           <span *ngSwitchDefault>
             {{ e[p.name] }}

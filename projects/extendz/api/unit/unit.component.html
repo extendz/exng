@@ -1,0 +1,18 @@
+<form [formGroup]="formGroup">
+  <mat-select formControlName="unit" fxFlex="15">
+    <mat-option *ngFor="let u of this.property.units" [value]="u">
+      {{ u }}
+    </mat-option>
+  </mat-select>
+
+  <span fxFlex="1"></span>
+
+  <input
+    type="number"
+    fxFlex
+    formControlName="value"
+    [placeholder]="property.name | camelCase"
+    matInput
+    autocomplete="off"
+  />
+</form>

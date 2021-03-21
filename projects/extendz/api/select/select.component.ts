@@ -1,4 +1,5 @@
 import { HttpParams } from '@angular/common/http';
+import { ThisReceiver } from '@angular/compiler';
 import { Component, forwardRef, Inject, OnInit } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -7,7 +8,7 @@ import {
   AbstractDataTableService,
   EntityMeta,
   ExtApiConfig,
-  EXTENDZ_API_CONFIG,
+  EXT_API_CONFIG,
   EXT_DATA_TABLE_SERVICE,
   Property,
   RelationshipType,
@@ -16,12 +17,17 @@ import { EntityMetaService } from 'extendz/service';
 import { Observable } from 'rxjs';
 import { debounceTime, filter, map, startWith, switchMap, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
+import { ExtAddNewComponent } from './dialog/add-new/add-new.component';
 import { ExtAdvanceSelectComponent } from './dialog/advance-select/advance-select.component';
 
 export interface ExtAdvanceSearchData {
   entityMeta: EntityMeta;
   entity: any;
   property: Property;
+}
+
+export interface ExtAddNewData {
+  entityMeta: EntityMeta;
 }
 
 @Component({
@@ -43,7 +49,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
   public searchField: string;
 
   constructor(
-    @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig,
+    @Inject(EXT_API_CONFIG) public config: ExtApiConfig,
     @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService,
     private entityMetaService: EntityMetaService,
     private dialog: MatDialog
@@ -79,7 +85,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
       else if (Object.keys(entity).length === 0) return null;
       return entity[this.entityMeta.title];
     };
-  } //getDisplayValue()
+  }
 
   /***
    * This will make the given obejct null or remove the value
@@ -90,7 +96,32 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     this.value = '_null';
     this.onChange(this.value);
     this.displayValue = null;
-  } //onRemoveObject()
+  }
+
+  addNew(event: MouseEvent, property: Property) {
+    event.stopPropagation();
+
+    this.entityMetaService
+      .getModel(property.reference)
+      .pipe(take(1))
+      .subscribe((entityMeta) => {
+        let data: ExtAddNewData = {
+          entityMeta,
+        };
+        let dialogRef = this.dialog.open(ExtAddNewComponent, {
+          data,
+          // panelClass: 'ext-advance-select',
+          width: '90vw',
+        });
+        dialogRef
+          .afterClosed()
+          .pipe(
+            take(1),
+            filter((r) => r != undefined)
+          )
+          .subscribe((result: any | any[]) => this.handleEmbedded(result));
+      });
+  }
 
   public onAdvanceSearch(event: MouseEvent, replace: boolean) {
     event.stopPropagation();
@@ -113,10 +144,10 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
         filter((r) => r != undefined)
         // filter((r: string[]) => r.length <= 0)
       )
-      .subscribe((result: object | object[]) => this.handleEmbedded(result));
+      .subscribe((result: any | any[]) => this.handleEmbedded(result));
   } //onAdvanceSearch()
 
-  private handleEmbedded(result: object | object[]) {
+  private handleEmbedded(result: any | any[]) {
     this.value = result;
     this.onChange(this.value);
     if (Array.isArray(result)) {
@@ -142,7 +173,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     this.onTouched = fn;
   }
 
-  writeValue(obj: object): void {
+  writeValue(obj: any): void {
     if (obj) this.handleEmbedded(obj);
   }
 

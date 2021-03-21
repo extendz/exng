@@ -1,0 +1,19 @@
+<form [formGroup]="priceFormGroup">
+  <mat-select formControlName="currency" fxFlex="15">
+    <mat-option *ngFor="let c of currencies$ | async" [value]="c">
+      {{ c.code }}
+    </mat-option>
+  </mat-select>
+
+  <span fxFlex="1"></span>
+
+  <input
+    fxFlex
+    matInput
+    type="number"
+    formControlName="value"
+    autocomplete="off"
+    [placeholder]="placeholder"
+    [required]="required"
+  />
+</form>

@@ -1,53 +1,49 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import {
   AbstractEntityService,
   Action,
   deepCopy,
   EntityMeta,
   ExtApiConfig,
-  FileProperty,
+  ExtEntityConfig,
+  EXT_ENTITY_CONFIG,
+  getValueByField,
   Property,
   PropertyType,
 } from 'extendz/core';
-import { Subscription } from 'rxjs';
-import { finalize, mergeMap, skip, tap } from 'rxjs/operators';
+import { EntityMetaService } from 'extendz/service';
+import { forkJoin, Subscription } from 'rxjs';
+import { defaultIfEmpty, finalize, mergeMap, skip, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'ext-base-view',
-  template: '<p>Please extend me</p>',
+  template: '',
 })
 export class ExtBaseViewComponent implements OnInit, OnDestroy {
-  /***
-   *
-   */
+  /*** Hold meta data about the Entity*/
   public entityMeta: EntityMeta;
-  /***
-   *
-   */
+
+  /*** Current entitty selected*/
   public entity: any;
+
+  public params: Params;
+
   /***
    * As soon as the entity get loaded in here.
    * We make a copy of the object. This is to track what we have changed using the forms
    */
   public originalEntity: any;
-  /***
-   * Files map arranged by property name
-   */
-  public filesMap: Map<string, FileProperty[]> = new Map();
-  /***
-   * Defualt form group
-   */
+
+  /*** Form group */
   public formGroup: FormGroup = new FormGroup({});
-  /***
-   *
-   */
+
+  /*** Show loading */
   public loading: boolean = false;
 
-  @Output()
-  public action: EventEmitter<Action> = new EventEmitter<Action>();
+  @Output() action: EventEmitter<Action> = new EventEmitter<Action>();
 
   // Properties
   public booleanProperties: Property[];
@@ -59,19 +55,53 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
   public numberProperties: Property[];
   public stringProperties: Property[];
   public objectProperties: Property[];
+  public matrixProperties: Property[];
+  public unitProperties: Property[];
+  public moneyProperties: Property[];
+  public colorProperties: Property[];
 
   private activatedRouteSub: Subscription;
 
   constructor(
-    private apiConfig: ExtApiConfig,
-    private entityService: AbstractEntityService,
-    private activatedRoute: ActivatedRoute
+    protected apiConfig: ExtApiConfig,
+    @Inject(EXT_ENTITY_CONFIG) protected entityConfig: ExtEntityConfig,
+    protected entityService: AbstractEntityService,
+    protected activatedRoute: ActivatedRoute,
+    protected entityMetaService: EntityMetaService
   ) {
     this.activatedRouteSub = this.activatedRoute.params.pipe(skip(1)).subscribe((d) => this.init());
   }
 
   ngOnInit(): void {
-    this.init();
+    // Resolve params
+    const reqs = [];
+    if (this.params) {
+      Object.keys(this.params).forEach((key) => {
+        const value = this.params[key];
+        const property = this.entityMeta.properties[key];
+        if (!this.entity) this.entity = {};
+        if (property) {
+          switch (property.type) {
+            case PropertyType.string:
+              this.entity[key] = value;
+              break;
+            case PropertyType.object:
+              const r = this.entityMetaService.getModel(key).pipe(
+                take(1),
+                mergeMap((em) => this.entityService.getOne(em, value)),
+                tap((m) => {
+                  this.entity[key] = m;
+                })
+              );
+              reqs.push(r);
+              break;
+          }
+        } else throw new Error(`Property ${key} not found`);
+      });
+    }
+    forkJoin(reqs)
+      .pipe(defaultIfEmpty(null))
+      .subscribe((_) => this.init());
   }
 
   ngOnDestroy(): void {
@@ -79,13 +109,13 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
   }
 
   private init() {
-    const propties = this.entityMeta.properties;
+    const properties = Object.values(this.entityMeta.properties);
     let filteredProperties: Property[] = [];
     // Update
-    if (this.resolve(this.apiConfig.idFeild, this.entity)) {
+    if (getValueByField(this.entityConfig.idFeild, this.entity)) {
       if (this.entityMeta.commands && this.entityMeta.commands['update']) {
         const createProps = this.entityMeta.commands['update'].properties;
-        propties.forEach((p) => {
+        properties.forEach((p) => {
           if (createProps.indexOf(p.name) > -1) filteredProperties.push(p);
           else if (p.command != undefined) filteredProperties.push(p);
         });
@@ -96,13 +126,13 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     else {
       if (this.entityMeta.commands && this.entityMeta.commands['create']) {
         const createProps = this.entityMeta.commands['create'].properties;
-        propties.forEach((p) => {
+        properties.forEach((p) => {
           if (createProps.indexOf(p.name) > -1) filteredProperties.push(p);
         });
       }
     }
 
-    if (filteredProperties.length == 0) filteredProperties = propties;
+    if (filteredProperties.length == 0) filteredProperties = properties;
     this.handleEntityMeta(filteredProperties);
     this.handleEntity(filteredProperties);
   }
@@ -117,7 +147,11 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     this.objectProperties = propties.filter((p) => p.type === PropertyType.object);
     this.dateProperties = propties.filter((p) => p.type === PropertyType.date);
     this.imageProperties = propties.filter((p) => p.type === PropertyType.image);
-  } // handleEntityMeta()
+    this.matrixProperties = propties.filter((p) => p.type === PropertyType.matrix);
+    this.unitProperties = propties.filter((p) => p.type === PropertyType.unit);
+    this.colorProperties = propties.filter((p) => p.type === PropertyType.color);
+    this.moneyProperties = propties.filter((p) => p.type === PropertyType.money);
+  }
 
   private handleEntity(propties: Property[]) {
     // Create form
@@ -139,40 +173,20 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     this.originalEntity = deepCopy(entity);
   }
 
-  private resolve(path: string, obj: any, separator: string = '.') {
-    var properties = Array.isArray(path) ? path : path.split(separator);
-    return properties.reduce((prev, curr) => prev && prev[curr], obj);
-  }
-
-  /***
-   * Add Event fired from file handlers
-   */
-  public onAdd(event: FileProperty) {
-    const key = event.property.name;
-    let files = this.filesMap.get(key);
-    if (!files) files = [];
-    files.push(event);
-    this.filesMap.set(key, files);
-  } //onAdd()
-  /***
-   *
-   */
+  /*** save */
   public onSave(): void {
     if (this.formGroup.valid) {
       this.loading = true;
       this.entityService
-        .save(this.entityMeta, this.formGroup.value, this.originalEntity)
+        .save(this.entityMeta, this.formGroup.value, true, this.originalEntity)
         .pipe(
           tap((d) => (this.entity = d)),
-          // Get the saved object and deepCopy
           tap((d) => this.deepCopy(d)),
-          // Upload file save
-          mergeMap((d) => this.entityService.uploadFiles(d, this.filesMap)),
           finalize(() => (this.loading = false))
         )
         .subscribe();
-    } else this.formGroup.markAsDirty();
-  } //onSave()
+    } else this.formGroup.markAllAsTouched();
+  }
 
   public onBooleanChange(event: MatCheckboxChange, property: Property) {
     console.log(event.checked, property.command, this.entity);
@@ -183,7 +197,6 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
       action,
       entity: this.entity,
     };
-
     this.action.emit(a);
   }
 } // class

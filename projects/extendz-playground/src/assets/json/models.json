@@ -1,161 +1,43 @@
 {
-  "customer": {
-    "name": "customer",
-    "displayName": "Customers",
-    "url": "customers",
-    "search": { "default": "firstName" },
-    "commands": {
-      "create": {
-        "properties": ["firstName", "lastName"]
-      },
-      "read": {},
-      "delete": {},
-      "update": {
-        "properties": ["firstName"]
-      }
-    },
-    "properties": [
-      {
-        "name": "profilePicture",
-        "type": "image"
-      },
-      {
-        "name": "firstName",
-        "type": "string"
-      },
-      {
-        "name": "lastName",
-        "type": "string"
-      }
-    ]
-  },
-  "product": {
-    "name": "product",
+  "brand": {
+    "name": "brand",
+    "displayName": "Brands",
     "title": "name",
-    "displayName": "Products",
-    "url": "products",
-    "actions": ["View Stock Keeping Unit(s)"],
-    "commands": {
-      "create": {},
-      "read": {},
-      "delete": {},
-      "update": {
-        "properties": ["name", "image", "code", "description"]
-      }
-    },
-    "properties": [
-      {
-        "name": "image",
-        "type": "image"
-      },
-      {
-        "name": "name",
-        "type": "string"
-      },
-
-      {
-        "name": "code",
-        "type": "string"
-      },
-      {
-        "name": "description",
-        "type": "string"
-      },
-      {
-        "name": "active",
-        "type": "boolean",
-        "command": {
-          "url": "activate-now"
-        }
-      },
-      {
-        "name": "sameDayDelivery",
-        "type": "boolean"
-      },
-      {
-        "name": "Fragile",
-        "type": "boolean"
-      },
-      {
-        "name": "echoFriendly",
-        "type": "boolean"
-      }
-    ]
-  },
-  "shop": {
-    "name": "shop",
-    "displayName": "Shops",
-    "url": "shops",
-    "config": {
-      "entity": {
-        "enableProjection": true,
-        "projection": "entity"
-      }
-    },
-    "properties": [
-      { "name": "name", "type": "string", "required": true },
-      { "name": "status", "type": "enum", "enums": ["Open", "Closed"] },
-      { "name": "images", "type": "image", "relationshipType": "oneToMany" },
-      { "name": "owner", "type": "object", "relationshipType": "oneToOne", "reference": "owner" },
-      {
-        "name": "stockKeepingUnits",
-        "type": "object",
-        "relationshipType": "oneToMany",
-        "reference": "stockKeepingUnits"
-      }
-    ],
-    "projections": {
-      "dataTable": [
-        { "name": "name", "type": "string", "required": true },
-        { "name": "status", "type": "enum", "enums": ["Open", "Closed"] },
-        { "name": "owner", "type": "string" }
-      ]
+    "url": "brands",
+    "properties": {
+      "name": { "name": "logo", "type": "image" },
+      "logo": { "name": "name", "type": "string", "required": true, "width": "50" }
     }
   },
-  "stockKeepingUnits": {
-    "name": "stockKeepingUnits",
-    "displayName": "Stock Keeping Units",
-    "url": "stockKeepingUnits",
-    "properties": [
-      { "name": "price", "type": "number" },
-      {
-        "name": "product",
+  "category": {
+    "name": "category",
+    "displayName": "Categories",
+    "title": "name",
+    "url": "categories",
+    "properties": {
+      "name": { "name": "name", "type": "string", "required": true },
+      "subCategories": {
+        "name": "subCategories",
+        "type": "object",
+        "relationshipType": "oneToMany",
+        "reference": "subCategory",
+        "mappedBy": "category"
+      }
+    }
+  },
+  "subCategory": {
+    "name": "subCategory",
+    "displayName": "Sub Category",
+    "title": "name",
+    "url": "subCategories",
+    "properties": {
+      "name": { "name": "name", "type": "string", "required": true },
+      "category": {
+        "name": "category",
         "type": "object",
         "relationshipType": "oneToOne",
-        "reference": "product"
+        "reference": "category"
       }
-    ]
-  },
-  "owner": {
-    "name": "owner",
-    "displayName": "Owners",
-    "title": "name",
-    "url": "owners",
-    "properties": [
-      {
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "name": "email",
-        "type": "email"
-      }
-    ]
-  },
-  "events": {
-    "name": "events",
-    "displayName": "Events",
-    "title": "Events",
-    "url": "events",
-    "properties": [
-      {
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "name": "email",
-        "type": "email"
-      }
-    ]
+    }
   }
 }

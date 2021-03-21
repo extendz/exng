@@ -12,7 +12,7 @@ export class EntityComponent implements OnInit {
   public data: EntityComponentResolverData;
 
   constructor(private activatedRoute: ActivatedRoute) {
-    this.data = this.activatedRoute.snapshot.data.extendz;
+    this.activatedRoute.data.subscribe((d) => (this.data = d.extendz));
   }
 
   ngOnInit(): void {}

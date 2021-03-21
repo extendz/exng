@@ -53,6 +53,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           const data = convertToHatos(body, entity);
           return this.indexedDbService.update(entity, data).pipe(mergeMap((d) => ok(d)));
         case 'GET':
+          console.log(url);
+          
           if (id) {
             return this.indexedDbService.get(entity, id).pipe(mergeMap((d) => ok(d)));
           } else {

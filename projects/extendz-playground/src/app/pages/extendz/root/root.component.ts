@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityMeta } from 'extendz/core';
 import * as faker from 'faker';
-import { take } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { mergeMap, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -55,5 +56,41 @@ export class RootComponent {
       };
       this.http.post('owners', customer).pipe(take(1)).subscribe();
     }
+  }
+
+  fakeData() {
+    this.generateBrands();
+    this.generateCurrencies();
+  }
+
+  generateCurrencies() {
+    this.http
+      .get('assets/json/currency.json')
+      .pipe(
+        mergeMap((d) => {
+          const all = [];
+          Object.keys(d).forEach((k) => {
+            const c = d[k];
+            const curr = { code: c.code, name: c.name };
+            all.push(this.http.post('currencies', curr).pipe(take(1)));
+          });
+          return forkJoin(all);
+        })
+      )
+      .subscribe((d) => {});
+  }
+
+  generateBrands() {
+    this.http
+      .get('assets/json/car_brands.json')
+      .pipe(
+        take(1),
+        mergeMap((d: any[]) => {
+          const xx = d.map((x) => this.http.post('brands', x).pipe(take(1)));
+          return forkJoin(xx);
+        })
+      )
+
+      .subscribe();
   }
 } //class

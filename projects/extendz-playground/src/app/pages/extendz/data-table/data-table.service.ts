@@ -6,7 +6,7 @@ import {
   AbstractDataTableService,
   EntityMeta,
   ExtApiConfig,
-  EXTENDZ_API_CONFIG,
+  EXT_API_CONFIG,
   PagedData,
 } from 'extendz/core';
 import { forkJoin, Observable, throwError } from 'rxjs';
@@ -17,7 +17,7 @@ export class DataTableService extends AbstractDataTableService {
   constructor(
     public http: HttpClient,
     public snackBar: MatSnackBar,
-    @Inject(EXTENDZ_API_CONFIG) public config: ExtApiConfig
+    @Inject(EXT_API_CONFIG) public config: ExtApiConfig
   ) {
     super();
   }
@@ -32,7 +32,7 @@ export class DataTableService extends AbstractDataTableService {
       params = params.append('pageIndex', `${pageEvent.pageIndex}`);
       params = params.append('pageSize', `${pageEvent.pageSize}`);
     }
-   
+
     return this.http
       .get<PagedData>(entityMeta.url, { params })
       .pipe(take(1));
@@ -65,7 +65,7 @@ export class DataTableService extends AbstractDataTableService {
           this.snackBar.open("This is depending on another entity. Can't delete !", 'Okay', {
             panelClass: ['snack-bar-error'],
           });
-        this.snackBar.open('Delete failed', 'Okay', { duration: this.config.snackBarDuration });
+        this.snackBar.open('Delete failed', 'Okay', { duration: 3000 });
         return throwError(err);
       })
     );

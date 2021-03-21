@@ -1,36 +1,58 @@
 <mat-form-field fxFlex>
-    <input [formControl]="autoCompleteControl" matInput [placeholder]="property?.name | camelCase"
-        [matAutocomplete]="auto" />
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplayValue"
-        (optionSelected)="onOptionSelected($event)">
-        <mat-option *ngFor="let o of  autoCompleteData$ | async" [value]="o">
-            {{ o[entityMeta.title]}}
-        </mat-option>
-    </mat-autocomplete>
+  <input
+    [formControl]="autoCompleteControl"
+    matInput
+    [placeholder]="property?.name | camelCase"
+    [matAutocomplete]="auto"
+  />
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    [displayWith]="getDisplayValue"
+    (optionSelected)="onOptionSelected($event)"
+  >
+    <mat-option *ngFor="let o of autoCompleteData$ | async" [value]="o">
+      {{ o[entityMeta.title] }}
+    </mat-option>
+  </mat-autocomplete>
 
-    <button mat-icon-button matSuffix (click)="onRemoveObject($event,property)" matTooltip="Clear">
-        <ng-container *ngTemplateOutlet="clear"></ng-container>
-    </button>
+  <button mat-icon-button matSuffix (click)="addNew($event, property)" matTooltip="Add new">
+    <ng-container *ngTemplateOutlet="add"></ng-container>
+  </button>
 
-    <button mat-icon-button matSuffix (click)="onAdvanceSearch($event, true)" matTooltip="Advance Select">
-        <ng-container *ngTemplateOutlet="openInNew"> </ng-container>
-    </button>
+  <button mat-icon-button matSuffix (click)="onRemoveObject($event, property)" matTooltip="Clear">
+    <ng-container *ngTemplateOutlet="clear"></ng-container>
+  </button>
+
+  <button
+    mat-icon-button
+    matSuffix
+    (click)="onAdvanceSearch($event, true)"
+    matTooltip="Advance Select"
+  >
+    <ng-container *ngTemplateOutlet="openInNew"> </ng-container>
+  </button>
 </mat-form-field>
 
 <ng-template #openInNew>
-    <svg id="open_in_new" viewBox="0 0 24 24">
-        <path d="M0 0h24v24H0z" fill="none" />
-        <path
-            d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
-    </svg>
+  <svg id="open_in_new" viewBox="0 0 24 24">
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path
+      d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+    />
+  </svg>
 </ng-template>
 
 <ng-template #clear>
+  <svg viewBox="0 0 24 24">
+    <path
+      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+    />
+    <path d="M0 0h24v24H0z" fill="none" />
+  </svg>
+</ng-template>
 
-    <svg viewBox="0 0 24 24">
-        <path
-            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-        <path d="M0 0h24v24H0z" fill="none" />
-    </svg>
-
+<ng-template #add>
+  <svg viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+  </svg>
 </ng-template>

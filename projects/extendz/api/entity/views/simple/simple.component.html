@@ -1,0 +1,55 @@
+<form [formGroup]="formGroup" fxLayout="row wrap" fxLayoutAlign="space-between center">
+  <!-- String -->
+  <div
+    fxLayout.xs="column"
+    fxFlex.xs="100%"
+    [fxFlex.lg]="prop.width"
+    *ngFor="let prop of stringProperties"
+  >
+    <mat-form-field style="width: 100%">
+      <input
+        autocomplete="off"
+        matInput
+        [placeholder]="prop.name | camelCase"
+        [formControlName]="prop.name"
+      />
+      <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
+        {{ prop.name | camelCase }} is
+        <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <!--Enum -->
+  <mat-form-field
+    fxLayout.xs="column"
+    fxFlex.xs="100%"
+    fxFlex.lg="30vw"
+    *ngFor="let prop of enumProperties"
+  >
+    <mat-select [placeholder]="prop.name | camelCase" [formControlName]="prop.name">
+      <mat-option *ngFor="let enum of prop.enums" [value]="enum">
+        {{ enum }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Money -->
+  <mat-form-field
+    *ngFor="let prop of moneyProperties"
+    fxLayout="column"
+    fxFlex.xs="100%"
+    fxFlex.lg="30vw"
+  >
+    <ext-money
+      [property]="prop"
+      [placeholder]="prop.name | camelCase"
+      [formControlName]="prop.name"
+    >
+    </ext-money>
+    <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
+      {{ prop.name | camelCase }} is <strong>required!</strong>
+    </mat-error>
+  </mat-form-field>
+</form>
+
+<!-- {{ entityMeta | json }} -->
