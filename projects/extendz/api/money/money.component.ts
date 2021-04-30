@@ -29,18 +29,13 @@ import {
   ExtEntityConfig,
   EXT_DATA_TABLE_SERVICE,
   EXT_ENTITY_CONFIG,
+  getValueByField,
   Price,
   Property,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, mergeMap, tap } from 'rxjs/operators';
-
-export function phoneNumberValidator(control: AbstractControl) {
-  console.log(control.value);
-
-  console.log('Validating', control);
-}
 
 @Component({
   selector: 'ext-money',
@@ -146,7 +141,11 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
     });
 
     this.priceFormGroup.valueChanges.pipe(debounceTime(100)).subscribe((v: Price) => {
-      if (v.currency && v.value) this.onChange(v);
+      if (v.currency && v.value) {
+        const url = getValueByField(this.entityConfig.idFeild, v.currency);
+        this.onChange({ value: v.value, currency: url });
+        // this.onChange(v);
+      }
     });
 
     fm.monitor(elRef.nativeElement, true).subscribe((origin) => {
@@ -155,19 +154,7 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
     });
   }
 
-  ngOnInit(): void {
-    this.currencies$ = this.entityMetaService.getModel(this.entityConfig.currency.model).pipe(
-      mergeMap((m) => this.dataTableService.getData(m)),
-      map((d) => d.data),
-      // Set default value if there is not currecy set at this time
-      tap((cs: Currency[]) => {
-        const currencyE = this.entityConfig.currency;
-        let currency = cs.filter((c) => c.code == currencyE.defaultCurrency)[0];
-        if (!currency) currency = cs[0];
-        this.priceFormGroup.patchValue({ currency });
-      })
-    );
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy() {
     this.stateChanges.complete();
@@ -185,7 +172,28 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
   }
 
   writeValue(price: Price): void {
+    // console.log(price);
+    // if
+    // const id = getValueByField(this.entityConfig.idFeild, price.currency);
+    // console.log(id);
+
     if (price) this.priceFormGroup.patchValue(price);
+    this.getCurrencies(price);
+  }
+
+  getCurrencies(price: Price) {
+    this.currencies$ = this.entityMetaService.getModel(this.entityConfig.currency.model).pipe(
+      mergeMap((m) => this.dataTableService.getData(m)),
+      map((d) => d.data),
+      // Set default value if there is not currecy set at this time
+      tap((currencies: Currency[]) => {
+        let defaultCurrency = this.entityConfig.currency;
+        if (price && price.currency) defaultCurrency.defaultCurrency = price.currency.code;
+        let currency = currencies.filter((c) => c.code == defaultCurrency.defaultCurrency)[0];
+        if (!currency) currency = currencies[0];
+        this.priceFormGroup.patchValue({ currency });
+      })
+    );
   }
 
   registerOnChange(fn: any): void {

@@ -1,14 +1,12 @@
 import { AppPage } from './app.po';
 import { browser, logging } from 'protractor';
 
-describe('workspace-project App', () => {
+describe('Extendz playground', () => {
   let page: AppPage;
 
-  beforeEach(() => {
-    page = new AppPage();
-  });
+  beforeEach(() => (page = new AppPage()));
 
-  it('should have component title', () => {
+  it('Should have component title', () => {
     page.navigateTo();
     expect(page.getComponentText()).toEqual('Components');
   });
@@ -22,4 +20,5 @@ describe('workspace-project App', () => {
       } as logging.Entry)
     );
   });
+
 });

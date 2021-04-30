@@ -59,12 +59,12 @@ export class Property {
    *
    */
   required?: boolean;
-  
+
   /***
    *
    */
   generated?: boolean;
-  
+
   /***
    *
    */
@@ -72,17 +72,17 @@ export class Property {
 
   /*** */
   type: PropertyType;
-  
+
   /***
    *
    */
   name: string;
-  
+
   /***
    *
    */
   relationshipType?: RelationshipType;
-  
+
   /***
    *
    */
@@ -111,6 +111,9 @@ export class Property {
    */
   units: string[];
 
-  /*** Feild name used on reference display */
+  /*** Field name used on reference display */
   displayField: string;
+
+  /*** Before saving the parent property this property need to be saved and passed on  */
+  preSave?: boolean;
 }

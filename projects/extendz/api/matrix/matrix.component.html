@@ -1,10 +1,15 @@
 <mat-accordion>
-  <mat-expansion-panel hideToggle class="mat-elevation-z0" expanded>
+  <mat-expansion-panel hideToggle class="mat-elevation-z0" expanded >
     <mat-expansion-panel-header>
       <mat-panel-title> {{ property.name | camelCase }} </mat-panel-title>
     </mat-expansion-panel-header>
-    <div style="width: 100%" fxLayout="column">
-      <div fxLayoutAlign="space-between center" fxLayout="raw wrap" *ngIf="showMatrixInput">
+    <div fxLayout="column">
+      <div
+        fxLayoutAlign="space-between center"
+        fxLayout="raw wrap"
+        fxLayout.xs="column"
+        *ngIf="showMatrixInput"
+      >
         <mat-form-field class="matrix-input" *ngFor="let r of property.matrixDefinition.rows">
           <button matSuffix mat-button [matMenuTriggerFor]="menu" *ngIf="r.property.units">
             {{ r.unit || r.property.units[0] }}
@@ -106,7 +111,7 @@
       <span fxFlex></span>
     </mat-action-row>
   </mat-expansion-panel>
-  {{ formGroup.value | json }}
+  <!-- {{ formGroup.value | json }} -->
 </mat-accordion>
 
 <ng-template #view let-element="element">

@@ -11,16 +11,12 @@ mat-icon {
   width: $width;
   height: $width;
   color: $color;
+  transition: color 1s ease;
 }
 
 mat-card:hover mat-icon {
   color: #000;
-  transition: color 0.5s ease;
-}
-
-mat-card:hover .name{
-  font-weight: 700;
-  transition: font-weight 0.5s ease;
+  transition: color 1s ease;
 }
 
 .name {

@@ -4,11 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params, Router } from '@angular/router';
 import {
   AbstractEntityService,
-  diff,
+
   EntityMeta,
   getId,
   ObjectWithLinks,
-  Property,
+  Property
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -19,14 +19,20 @@ export class PropertyFile {
   file: File;
 }
 
-export class PostSave {
-  parentEntityMeta: EntityMeta;
-  propertyName: string;
+export class SavePayload {
   payload: any;
+  propertyName: string;
+  property?: Property;
+  parentEntityMeta?: EntityMeta;
 }
 
 export class RestAndFiles {
-  constructor(public payload: any, public files: PropertyFile[], public postSave?: PostSave[]) {}
+  constructor(
+    public payload: any,
+    public files: PropertyFile[],
+    public preSave?: SavePayload[],
+    public postSave?: SavePayload[]
+  ) {}
 }
 
 @Injectable({ providedIn: 'any' })
@@ -89,9 +95,8 @@ export class EntityService implements AbstractEntityService {
   ): Observable<any> {
     // console.log(newValue);
 
-    let converted: RestAndFiles = this.preSave(newValue, entityMeta);
+    let converted: RestAndFiles = this.process(newValue, entityMeta);
     let sub: Observable<any>;
-    console.log(converted);
 
     // PATCH;
     if (original && original._links)
@@ -119,8 +124,8 @@ export class EntityService implements AbstractEntityService {
         )
       )
     );
-    // return sub;
-    return of();
+    return sub;
+    // return of();
   } //save()
 
   uploadFiles(entity: ObjectWithLinks, files: PropertyFile[]): Observable<unknown[]> {
@@ -143,7 +148,7 @@ export class EntityService implements AbstractEntityService {
     this.snackBar.open('Updated', null, { duration: 3000, panelClass: ['snack-bar-info'] });
   }
 
-  private getPostSave(postSaves: PostSave[], parentRef: string) {
+  private getPostSave(postSaves: SavePayload[], parentRef: string) {
     // console.log('Post saving', postSaves, parentRef);
     let reqs = [];
     postSaves.forEach((ps) => {
@@ -151,14 +156,24 @@ export class EntityService implements AbstractEntityService {
       savingEm = savingEm.pipe(
         mergeMap((em) => {
           const payload = this.mapParent(ps.payload, parentRef, ps.parentEntityMeta.name);
-          console.log(payload);
-
           return this.save(em, payload, false);
         })
       );
       reqs.push(savingEm);
     });
     return forkJoin(reqs).pipe(defaultIfEmpty(null));
+  }
+
+  private getPreSave(preSave: SavePayload[]) {
+    const preSaved = {};
+    preSave.forEach((ps) => {
+      let savingEm = this.entityMetaService.getModel(ps.property.reference);
+      savingEm = savingEm.pipe(
+        mergeMap((em) => {
+          return this.save(em, ps.payload, false);
+        })
+      );
+    });
   }
 
   private mapParent(payload: any, parentRef: string, propertyName: string) {
@@ -184,37 +199,43 @@ export class EntityService implements AbstractEntityService {
     return this.entityMetaService.getModel(p.reference);
   }
 
-  private preSave(newValue: any, entityMeta: EntityMeta): RestAndFiles {
+  private process(newValue: any, entityMeta: EntityMeta): RestAndFiles {
     // Detect ObjectWith links then convert them to id or id list
     const rest = {};
     const files: PropertyFile[] = [];
-    const postSave: PostSave[] = [];
+    const postSave: SavePayload[] = [];
+    const preSave: SavePayload[] = [];
+
     Object.keys(newValue).forEach((key) => {
-      const v = newValue[key];
+      const value = newValue[key];
       // Skip null values
-      if (v == null || v == '_null') return;
+      if (value == null || value == '_null') return;
+
+      // if Pre save then push
+      const property = entityMeta.properties[key];
+      // if (property.preSave) {
+      //   preSave.push({ payload: value, propertyName: key });
+      //   return;
+      // }
 
       // Arrays of object need to be refence as URLS.
-      if (Array.isArray(v)) {
-        const f = v
+      if (Array.isArray(value)) {
+        const f = value
           .filter((x) => x != undefined)
-          .map((x) => {
-            if (v instanceof Object && x._links) return x._links.self.href;
-            else if (x instanceof File) files.push({ file: x, name: key });
-            else {
-              postSave.push({ parentEntityMeta: entityMeta, payload: x, propertyName: key });
-              // return;
-            }
+          .map((payload) => {
+            if (value instanceof Object && payload._links) return payload._links.self.href;
+            else if (payload instanceof File) files.push({ file: payload, name: key });
+            else postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key });
           })
           .filter((x) => x != undefined);
         if (f.length > 0) rest[key] = f;
-      } else if (v instanceof File) {
-        files.push({ file: v, name: key });
-      } else if (v instanceof Object && v._links) {
+      } else if (value instanceof File) {
+        files.push({ file: value, name: key });
+      } else if (value instanceof Object && value._links) {
         const linked: ObjectWithLinks = newValue[key];
         rest[key] = linked._links.self.href;
       } else rest[key] = newValue[key];
     });
-    return new RestAndFiles(rest, files, postSave);
+    return new RestAndFiles(rest, files, preSave, postSave);
   }
 } // class

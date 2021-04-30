@@ -23,6 +23,7 @@
         <input
           autocomplete="off"
           matInput
+          [id]="prop.name"
           [placeholder]="prop.name | camelCase"
           [formControlName]="prop.name"
         />
@@ -87,7 +88,7 @@
         [placeholder]="prop.name | camelCase"
       ></ext-unit>
     </mat-form-field>
-    
+
     <!-- Color -->
     <ext-color
       fxFlex.xs="100%"
@@ -176,12 +177,7 @@
   </div>
 
   <!-- Matrix -->
-  <div
-    class="form-wrapper"
-    fxLayoutAlign="space-arround center"
-    fxLayout.xs="column"
-    fxLayoutGap="1vw"
-  >
+  <div class="form-wrapper">
     <ext-matrix
       fxFlex
       *ngFor="let prop of matrixProperties"
@@ -196,6 +192,7 @@
     class="form-wrapper"
     fxLayoutAlign="space-arround center"
     fxLayout.xs="column"
+    fxLayoutAlign.xs="center start"
     fxLayoutGap="1vw"
   >
     <mat-slide-toggle
@@ -236,6 +233,7 @@
 <ng-template #saveButton>
   <button
     mat-fab
+    id="btnSave"
     matTooltip="Save"
     type="submit"
     [disabled]="loading"

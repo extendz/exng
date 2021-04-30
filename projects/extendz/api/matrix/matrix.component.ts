@@ -71,10 +71,6 @@ export class MatrixComponent implements OnInit, OnDestroy, ControlValueAccessor 
   }
 
   ngOnInit(): void {
-    console.log(this.property);
-    this.entityMetaService.getModel(this.property.reference).subscribe((em) => {
-      console.log(em);
-    });
     this.columns = [...this.property.matrixDefinition.static];
     this.allColumns = this.columns.map((c) => c.property.name);
   }
@@ -128,9 +124,11 @@ export class MatrixComponent implements OnInit, OnDestroy, ControlValueAccessor 
         }
       });
       this.allColumns.push('view');
-    }
 
-    this.dataSource = obj;
+      this.dataSource = obj;
+      this.updateForm();
+      this.formGroup.patchValue({ data: obj });
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -159,7 +157,10 @@ export class MatrixComponent implements OnInit, OnDestroy, ControlValueAccessor 
       .filter((row) => row.values.length >= 0);
 
     this.dataSource = this.matrix(values);
+    this.updateForm();
+  }
 
+  private updateForm() {
     // Generate rows
     this.dataSource.forEach((dataRow) => {
       const row = this.formBuilder.group({});

@@ -1,63 +1,96 @@
 <mat-dialog-content>
-    <form [formGroup]="formGroup">
-        <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayoutGap="2vw">
-            <!-- String -->
-            <div fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of stringProperties">
-                <mat-form-field style="width: 100%;">
-                    <input autocomplete="off" matInput [placeholder]="prop.name | camelCase"
-                        [formControlName]="prop.name" />
-                    <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
-                        {{ prop.name | camelCase }} is
-                        <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+  <form [formGroup]="formGroup">
+    <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+      <!-- String -->
+      <div
+        fxLayout.xs="column"
+        fxFlex.xs="100%"
+        fxFlex.lg="30vw"
+        *ngFor="let prop of stringProperties"
+      >
+        <mat-form-field style="width: 100%">
+          <input
+            autocomplete="off"
+            matInput
+            [placeholder]="prop.name | camelCase"
+            [formControlName]="prop.name"
+          />
+          <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
+            {{ prop.name | camelCase }} is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-            <!-- Email -->
-            <div fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of emailProperties">
-                <mat-form-field style="width: 100%;">
-                    <input type="email" matInput [placeholder]="prop.name | camelCase" [formControlName]="prop.name" />
-                    <mat-error *ngIf="formGroup.controls[prop.name].hasError('email')">
-                        {{ prop.name | camelCase }} is
-                        <strong>not valid</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+      <!-- Email -->
+      <div
+        fxLayout.xs="column"
+        fxFlex.xs="100%"
+        fxFlex.lg="30vw"
+        *ngFor="let prop of emailProperties"
+      >
+        <mat-form-field style="width: 100%">
+          <input
+            type="email"
+            matInput
+            [placeholder]="prop.name | camelCase"
+            [formControlName]="prop.name"
+          />
+          <mat-error *ngIf="formGroup.controls[prop.name].hasError('email')">
+            {{ prop.name | camelCase }} is
+            <strong>not valid</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-            <!-- Number -->
-            <mat-form-field fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw"
-                *ngFor="let prop of numberProperties">
-                <input autocomplete="off" matInput type="number" [placeholder]="prop.name | camelCase"
-                    [formControlName]="prop.name" />
-                <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
-                    {{ prop.name | camelCase }}
-                    <strong>required</strong>
-                </mat-error>
-            </mat-form-field>
+      <!-- Number -->
+      <mat-form-field
+        fxLayout.xs="column"
+        fxFlex.xs="100%"
+        fxFlex.lg="30vw"
+        *ngFor="let prop of numberProperties"
+      >
+        <input
+          autocomplete="off"
+          matInput
+          type="number"
+          [placeholder]="prop.name | camelCase"
+          [formControlName]="prop.name"
+        />
+        <mat-error *ngIf="formGroup.controls[prop.name].hasError('required')">
+          {{ prop.name | camelCase }}
+          <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
 
-            <!--Enum -->
-            <mat-form-field fxLayout.xs="column" fxFlex.xs="100%" fxFlex.lg="30vw" *ngFor="let prop of enumProperties">
-                <mat-select [placeholder]="prop.name | camelCase" [formControlName]="prop.name">
-                    <mat-option *ngFor="let enum of prop.enums" [value]="enum">
-                        {{ enum }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+      <!--Enum -->
+      <mat-form-field
+        fxLayout.xs="column"
+        fxFlex.xs="100%"
+        fxFlex.lg="30vw"
+        *ngFor="let prop of enumProperties"
+      >
+        <mat-select [placeholder]="prop.name | camelCase" [formControlName]="prop.name">
+          <mat-option *ngFor="let enum of prop.enums" [value]="enum">
+            {{ enum }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-        </div>
-
-        <!--Boolean -->
-        <div fxLayoutAlign="center center">
-            <div fxLayoutAlign="center center">
-                <mat-slide-toggle *ngFor="let prop of booleanProperties" [formControlName]="prop.name">
-                    {{ prop.name | camelCase }}</mat-slide-toggle>
-            </div>
-        </div>
-    </form>
+    <!--Boolean -->
+    <div fxLayoutAlign="center center">
+      <div fxLayoutAlign="center center">
+        <mat-slide-toggle *ngFor="let prop of booleanProperties" [formControlName]="prop.name">
+          {{ prop.name | camelCase }}</mat-slide-toggle
+        >
+      </div>
+    </div>
+  </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cancel</button>
-    <span fxFlex></span>
-    <button mat-button color="primary" (click)="onOkay()">Done</button>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <span fxFlex></span>
+  <button mat-button color="primary" (click)="onOkay()">Done</button>
 </mat-dialog-actions>

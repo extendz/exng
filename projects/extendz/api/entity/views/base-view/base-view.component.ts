@@ -78,6 +78,8 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     if (this.params) {
       Object.keys(this.params).forEach((key) => {
         const value = this.params[key];
+        console.log(this.entityMeta);
+
         const property = this.entityMeta.properties[key];
         if (!this.entity) this.entity = {};
         if (property) {

@@ -1,5 +1,4 @@
 import { HttpParams } from '@angular/common/http';
-import { ThisReceiver } from '@angular/compiler';
 import { Component, forwardRef, Inject, OnInit } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -14,7 +13,7 @@ import {
   RelationshipType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { Observable } from 'rxjs';
+import { iif, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, startWith, switchMap, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
 import { ExtAddNewComponent } from './dialog/add-new/add-new.component';
@@ -61,23 +60,26 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     // Prop
     let disabled = this.property.relationshipType === RelationshipType.oneToMany ? true : false;
     this.autoCompleteControl = new FormControl({ value: '', disabled });
+    // get first property to set as default search
 
     this.entityMetaService.getModel(this.property.reference).subscribe((d) => {
+      if (!d) throw new Error(`Entity model for ${this.property.reference} could not be found!`);
       this.entityMeta = d;
       // Set search
       if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
-      else this.searchField = this.entityMeta.properties[0].name;
-      // console.log('Goe em', this.entityMeta);
+      else this.searchField = Object.values(this.entityMeta.properties)[0].name;
     });
 
-    this.autoCompleteData$ = this.autoCompleteControl.valueChanges.pipe(
+    const auto = this.autoCompleteControl.valueChanges.pipe(
       startWith(''),
       debounceTime(1000),
       map((v: string) => new HttpParams().append(this.searchField, v)),
       switchMap((p) => this.dataTableService.getData(this.entityMeta, p)),
       map((d) => d.data)
     );
-  } //ngOnInit
+
+    this.autoCompleteData$ = iif(() => this.searchField != null, auto, of());
+  }
 
   get getDisplayValue() {
     return (entity: any) => {
@@ -177,5 +179,5 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     if (obj) this.handleEmbedded(obj);
   }
 
-  setDisabledState?(isDisabled: boolean): void {}
+  setDisabledState(isDisabled: boolean): void {}
 }

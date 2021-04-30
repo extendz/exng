@@ -39,12 +39,13 @@ export class ExtAvatarComponent extends ExtBaseViewComponent implements OnInit, 
 
   ngOnInit(): void {
     // avart image
-    // if (this.entity) {
-    //   let urls = this.entityMeta.properties
-    //     .filter((p: Property) => p.type === PropertyType.image)
-    //     .map((p: Property) => this.entity[p.name]);
-    //   this.imageUrl = urls[0];
-    // } else this.imageUrl = this.entityConfig.placeholderImage;
+    const properties = Object.values(this.entityMeta.properties);
+    if (this.entity) {
+      let urls = properties
+        .filter((p: Property) => p.type === PropertyType.image)
+        .map((p: Property) => this.entity[p.name]);
+      this.imageUrl = urls[0];
+    } else this.imageUrl = this.entityConfig.placeholderImage;
     // Call super function
     super.ngOnInit();
   } //ngOnInit()
