@@ -4,12 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { ExtPipesModule } from 'extendz/pipes';
+import { ExtSimpleEntityModule } from '../../core/simple-entity/simple-entity.module';
 import { ExtEditEmbeddedComponent } from './edit-embedded.component';
 
 @NgModule({
@@ -20,15 +15,10 @@ import { ExtEditEmbeddedComponent } from './edit-embedded.component';
     ReactiveFormsModule,
     FlexLayoutModule,
     // Extendz
-    ExtPipesModule,
+    ExtSimpleEntityModule,
     // Mat
-    MatButtonModule,
     MatDialogModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSlideToggleModule,
-    MatProgressSpinnerModule
-  ]
+    MatButtonModule,
+  ],
 })
 export class ExtEditEmbeddedModule {}

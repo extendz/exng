@@ -1,0 +1,24 @@
+<mat-tab-group>
+  <mat-tab [label]="data.propertyName | camelCase">
+    <table mat-table [dataSource]="entities">
+      <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef>{{ col | camelCase }}</th>
+        <td mat-cell *matCellDef="let element">{{ element[col] }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </mat-tab>
+  <mat-tab label="Add New" [disabled]="data.generated">
+    <div class="add-new">
+      <ext-simple-entity [data]="data" (add)="onAdd($event)"></ext-simple-entity>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <span fxFlex></span>
+  <button mat-button color="primary" (click)="onOkay()">Done</button>
+</mat-dialog-actions>

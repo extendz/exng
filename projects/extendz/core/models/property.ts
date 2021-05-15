@@ -40,12 +40,14 @@ export enum PropertyType {
   boolean = 'boolean',
   date = 'date',
   embedded = 'embedded',
+  embeddedList = 'embeddedList',
   email = 'email',
   enum = 'enum',
   file = 'file',
   image = 'image',
   number = 'number',
   object = 'object',
+  objectList = 'objectList',
   string = 'string',
   time = 'time',
   matrix = 'matrix',
@@ -81,11 +83,6 @@ export class Property {
   /***
    *
    */
-  relationshipType?: RelationshipType;
-
-  /***
-   *
-   */
   entityMeta?: EntityMeta;
 
   /***
@@ -109,10 +106,16 @@ export class Property {
    * Ex: LKR 200
    * Ex: 200 KG
    */
-  units: string[];
+  units?: string[];
+
+  width?: {
+    xs?: string;
+    md?: string;
+    lg?: string;
+  };
 
   /*** Field name used on reference display */
-  displayField: string;
+  displayField?: string;
 
   /*** Before saving the parent property this property need to be saved and passed on  */
   preSave?: boolean;

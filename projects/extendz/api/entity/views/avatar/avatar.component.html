@@ -16,7 +16,7 @@
     <div
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      [fxFlex.lg]="prop.width"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of stringProperties"
     >
       <mat-form-field style="width: 100%">
@@ -38,7 +38,7 @@
     <div
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of emailProperties"
     >
       <mat-form-field style="width: 100%">
@@ -59,7 +59,7 @@
     <mat-form-field
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of numberProperties"
     >
       <input
@@ -80,7 +80,7 @@
       *ngFor="let prop of unitProperties"
       fxLayout="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
     >
       <ext-unit
         [property]="prop"
@@ -92,7 +92,7 @@
     <!-- Color -->
     <ext-color
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of colorProperties"
       [property]="prop"
       [formControlName]="prop.name"
@@ -102,7 +102,7 @@
     <mat-form-field
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of enumProperties"
     >
       <mat-select [placeholder]="prop.name | camelCase" [formControlName]="prop.name">
@@ -116,7 +116,7 @@
     <mat-form-field
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of dateProperties"
     >
       <input
@@ -138,7 +138,7 @@
     <ext-embedded
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width.lg"
       *ngFor="let prop of embeddedProperties"
       [property]="prop"
       [(entity)]="entity"
@@ -150,7 +150,7 @@
     <ext-select
       fxLayout.xs="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
       *ngFor="let prop of objectProperties"
       [property]="prop"
       [formControlName]="prop.name"
@@ -162,7 +162,7 @@
       *ngFor="let prop of moneyProperties"
       fxLayout="column"
       fxFlex.xs="100%"
-      fxFlex.lg="30vw"
+      [fxFlex.lg]="prop?.width?.lg"
     >
       <ext-money
         [property]="prop"

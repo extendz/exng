@@ -42,7 +42,6 @@ export class MatrixComponent implements OnInit, OnDestroy, ControlValueAccessor 
   @ViewChild(MatTable, { static: false }) table: MatTable<any>;
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  relationshipTypes = RelationshipType;
 
   columns: MatrixRow[] = [];
   allColumns: string[];

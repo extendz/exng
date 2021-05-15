@@ -58,6 +58,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           } else {
             const page = params.has('page') ? +params.get('page') : undefined;
             const size = params.has('size') ? +params.get('size') : undefined;
+            const sort = params.has('sort') ? +params.get('sort') : undefined;
             return this.indexedDbService.list(entity).pipe(
               // delay(500),
               mergeMap((d) => ok(toHateos(d, entity, page, size)))

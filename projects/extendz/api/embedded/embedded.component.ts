@@ -1,14 +1,19 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityMeta, Property } from 'extendz/core';
+import { EntityMeta, Property, PropertyType } from 'extendz/core';
 import { filter, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
 import { ExtEditEmbeddedComponent } from './dialog/edit-embedded/edit-embedded.component';
+import { ExtTableEmbeddedComponent } from './dialog/table-embedded/table-embedded.component';
 
 export interface ExtEditEmbeddedComponentData {
-  entityMeta: EntityMeta;
-  entity: any;
+  entityMeta?: EntityMeta;
+  propertyType?: PropertyType;
+  propertyName?: string;
+  generated?: boolean;
+  entity?: any;
+  entities?: any[];
 }
 
 @Component({
@@ -19,17 +24,47 @@ export interface ExtEditEmbeddedComponentData {
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() => ExtEmbeddedComponent)
-    }
-  ]
+      useExisting: forwardRef(() => ExtEmbeddedComponent),
+    },
+  ],
 })
-export class ExtEmbeddedComponent extends ExtBaseSelectComponent
+export class ExtEmbeddedComponent
+  extends ExtBaseSelectComponent
   implements OnInit, ControlValueAccessor {
+  propertyType: PropertyType;
+  propertyTypes = PropertyType;
+
   constructor(private dialog: MatDialog) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.propertyType = this.property.type;
+  }
+
+  onTable(event: MouseEvent) {
+    event.preventDefault();
+    let entities = null;
+    if (this.entity) entities = this.entity[this.property.name];
+    const data: ExtEditEmbeddedComponentData = {
+      entityMeta: this.property.entityMeta,
+      entities,
+      generated: this.property.generated,
+      propertyType: this.propertyType,
+      propertyName: this.property.name,
+    };
+    const dialogRef = this.dialog.open(ExtTableEmbeddedComponent, {
+      data,
+      width: '90vw',
+    });
+    dialogRef
+      .afterClosed()
+      .pipe(
+        take(1),
+        filter((r) => r != undefined)
+      )
+      .subscribe((result: object | object[]) => this.handleEmbedded(result, this.property, true));
+  }
 
   /***
    * On edit the embedded entity
@@ -38,15 +73,20 @@ export class ExtEmbeddedComponent extends ExtBaseSelectComponent
     event.preventDefault();
     let entity = null;
     if (this.entity) entity = this.entity[this.property.name];
+    const data: ExtEditEmbeddedComponentData = {
+      entityMeta: this.property.entityMeta,
+      entity,
+      propertyType: this.propertyType,
+    };
     const dialogRef = this.dialog.open(ExtEditEmbeddedComponent, {
-      data: { entityMeta: this.property.entityMeta, entity }
+      data,
     });
     dialogRef
       .afterClosed()
       .pipe(
         take(1),
-        filter(r => r != undefined),
-        filter(r => r != '')
+        filter((r) => r != undefined),
+        filter((r) => r != '')
       )
       .subscribe((result: object | object[]) => this.handleEmbedded(result, this.property, true));
   } //onEdit()
@@ -54,7 +94,7 @@ export class ExtEmbeddedComponent extends ExtBaseSelectComponent
   private handleEmbedded(result: object | object[], property: Property, replace: boolean) {
     this.value = result;
     this.onChange(this.value);
-  } //handleEmbedded()
+  }
 
   registerOnChange(fn: Function) {
     this.onChange = fn;

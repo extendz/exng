@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { RelationshipType } from 'extendz/core';
+import { PropertyType, RelationshipType } from 'extendz/core';
 import { ExtAdvanceSearchData } from '../../select.component';
 
 @Component({
   selector: 'ext-advance-select',
   templateUrl: './advance-select.component.html',
-  styleUrls: ['./advance-select.component.scss']
+  styleUrls: ['./advance-select.component.scss'],
 })
 export class ExtAdvanceSelectComponent implements OnInit {
   public multiSelect: boolean;
@@ -16,7 +16,7 @@ export class ExtAdvanceSelectComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ExtAdvanceSearchData,
     private dialogRef: MatDialogRef<ExtAdvanceSelectComponent>
   ) {
-    this.multiSelect = data.property.relationshipType == RelationshipType.oneToOne ? false : true;
+    this.multiSelect = data.property.type == PropertyType.object ? false : true;
   }
 
   ngOnInit(): void {}

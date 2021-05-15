@@ -10,6 +10,7 @@ import {
   EXT_API_CONFIG,
   EXT_DATA_TABLE_SERVICE,
   Property,
+  PropertyType,
   RelationshipType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
@@ -58,7 +59,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
 
   ngOnInit(): void {
     // Prop
-    let disabled = this.property.relationshipType === RelationshipType.oneToMany ? true : false;
+    let disabled = this.property.type === PropertyType.objectList ? true : false;
     this.autoCompleteControl = new FormControl({ value: '', disabled });
     // get first property to set as default search
 

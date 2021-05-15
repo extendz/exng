@@ -6,18 +6,13 @@ import { NgStore } from './types/store.type';
  * IndexedDB client
  */
 export class IndexedDatabase {
-
   /** IndexedBD instance */
   private database: IDBDatabase;
 
   /** Indicates if databases has been upgraded */
   private upgraded: boolean;
 
-  constructor(
-    database: IDBDatabase,
-    upgraded: boolean,
-    stores: NgStore[] = []
-  ) {
+  constructor(database: IDBDatabase, upgraded: boolean, stores: NgStore[] = []) {
     this.database = database;
     this.upgraded = upgraded;
     this.createTables(stores);
@@ -28,7 +23,7 @@ export class IndexedDatabase {
    */
   createTables(tables: NgStore[]) {
     if (this.upgraded) {
-      tables.forEach(item => this.createTable(item));
+      tables.forEach((item) => this.createTable(item));
     }
   }
   /**
@@ -44,11 +39,13 @@ export class IndexedDatabase {
    * @param storeName Store name
    */
   list<M = any>(storeName: string): Observable<M[]> {
-    return new Observable<M[]>(observer => {
+    return new Observable<M[]>((observer) => {
       const store = this.store(storeName, TransactionModes.READONLY);
       const request = store.getAll();
-      request.onsuccess = event => observer.next(request.result);
-      request.onerror = event => observer.error(request.error);
+      // const index = store.index('name');
+      // const request = index.getAll();
+      request.onsuccess = (event) => observer.next(request.result);
+      request.onerror = (event) => observer.error(request.error);
     });
   }
   /**
@@ -57,11 +54,11 @@ export class IndexedDatabase {
    * @param key Predicate key
    */
   get<M = any>(storeName: string, key: any): Observable<M> {
-    return new Observable<M>(observer => {
+    return new Observable<M>((observer) => {
       const store = this.store(storeName, TransactionModes.READONLY);
       const request = store.get(key);
-      request.onsuccess = event => observer.next(request.result);
-      request.onerror = event => observer.error(request.error);
+      request.onsuccess = (event) => observer.next(request.result);
+      request.onerror = (event) => observer.error(request.error);
     });
   }
   /**
@@ -70,11 +67,11 @@ export class IndexedDatabase {
    * @param data data to store
    */
   create<M = any>(storeName: string, data: M): Observable<M> {
-    return new Observable<M>(observer => {
+    return new Observable<M>((observer) => {
       const store = this.store(storeName, TransactionModes.READWRITE);
       const request = store.put(data);
-      request.onsuccess = event => observer.next(data);
-      request.onerror = event => observer.error(request.error);
+      request.onsuccess = (event) => observer.next(data);
+      request.onerror = (event) => observer.error(request.error);
     });
   }
   /**
@@ -83,11 +80,11 @@ export class IndexedDatabase {
    * @param data data to store
    */
   update<M = any>(storeName: string, data: M): Observable<M> {
-    return new Observable<M>(observer => {
+    return new Observable<M>((observer) => {
       const store = this.store(storeName, TransactionModes.READWRITE);
       const request = store.put(data);
-      request.onsuccess = event => observer.next(data);
-      request.onerror = event => observer.error(request.error);
+      request.onsuccess = (event) => observer.next(data);
+      request.onerror = (event) => observer.error(request.error);
     });
   }
   /**
@@ -96,11 +93,11 @@ export class IndexedDatabase {
    * @param key Element key to delete
    */
   delete(storeName: string, key: IDBValidKey): Observable<boolean> {
-    return new Observable<boolean>(observer => {
+    return new Observable<boolean>((observer) => {
       const store = this.store(storeName, TransactionModes.READWRITE);
       const request = store.delete(key);
-      request.onsuccess = event => observer.next(true);
-      request.onerror = event => observer.error(request.error);
+      request.onsuccess = (event) => observer.next(true);
+      request.onerror = (event) => observer.error(request.error);
     });
   }
   /**

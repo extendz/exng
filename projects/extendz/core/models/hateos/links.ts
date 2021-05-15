@@ -7,5 +7,5 @@ export class Links {
   last?: Href;
   profile?: Href;
   search?: Href;
-  [key: string]: Object;
+  [key: string]: any;
 }

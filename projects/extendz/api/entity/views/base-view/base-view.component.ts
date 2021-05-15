@@ -144,7 +144,9 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     this.enumProperties = propties.filter((p) => p.type === PropertyType.enum);
     this.booleanProperties = propties.filter((p) => p.type === PropertyType.boolean);
     this.numberProperties = propties.filter((p) => p.type === PropertyType.number);
-    this.embeddedProperties = propties.filter((p) => p.type === PropertyType.embedded);
+    this.embeddedProperties = propties.filter(
+      (p) => p.type === PropertyType.embedded || p.type === PropertyType.embeddedList
+    );
     this.emailProperties = propties.filter((p) => p.type === PropertyType.email);
     this.objectProperties = propties.filter((p) => p.type === PropertyType.object);
     this.dateProperties = propties.filter((p) => p.type === PropertyType.date);

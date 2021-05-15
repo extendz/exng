@@ -35,6 +35,10 @@ export class DataTableHateosService extends DataTableService {
       params = params.append('size', `${pageEvent.pageSize}`);
       params = params.append('projection', 'dataTable');
     }
+    if (entityMeta.sorts) {
+      entityMeta.sorts.forEach((s) => (params = params.append('sort', s)));
+    }
+
     return this.http
       .get<HateosPagedResponse>(entityMeta.url, { params })
       .pipe(
