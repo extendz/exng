@@ -9,6 +9,8 @@ import {
   EXT_API_CONFIG,
   EXT_ENTITY_CONFIG,
   EXT_ENTITY_SERVICE,
+  Property,
+  PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { INPUT_ENTIRY, INPUT_ENTITY_META } from '../../../api.consts';
@@ -26,6 +28,11 @@ export class SimpleComponent extends ExtBaseViewComponent implements OnInit {
   /*** Current entity*/
   @Input(INPUT_ENTIRY) entity: any;
 
+  @Input() Save: any;
+
+  properties: Property[];
+  propertyTypes = PropertyType;
+
   constructor(
     @Inject(EXT_API_CONFIG) protected apiConfig: ExtApiConfig,
     @Inject(EXT_ENTITY_CONFIG) public entityConfig: ExtEntityConfig,
@@ -38,7 +45,10 @@ export class SimpleComponent extends ExtBaseViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Call super function
     super.ngOnInit();
+  }
+
+  handleEntityMeta(propties: Property[]) {
+    this.properties = propties;
   }
 }

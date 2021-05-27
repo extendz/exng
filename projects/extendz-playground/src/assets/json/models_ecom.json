@@ -1,0 +1,258 @@
+{
+  "product": {
+    "name": "product",
+    "displayName": "Products",
+    "url": "products",
+    "title": "name",
+    "config": {
+      "entity": {
+        "enableProjection": true,
+        "projection": "entity"
+      }
+    },
+    "properties": {
+      "active": { "name": "active", "type": "boolean" },
+      "image": { "name": "image", "type": "image" },
+      "name": { "name": "name", "type": "string", "width": { "lg": "48" } },
+      "description": { "name": "description", "type": "string", "width": { "lg": "48" } },
+      "brand": { "name": "brand", "type": "object", "reference": "brand", "width": { "lg": "48" } },
+      "stockKeepingUnits": {
+        "name": "stockKeepingUnits",
+        "type": "matrix",
+        "reference": "stockKeepingUnit",
+        "mappedBy": "product",
+        "matrixDefinition": {
+          "static": [
+            {
+              "property": {
+                "name": "image",
+                "type": "image",
+                "imageMeta": { "cropper": false },
+                "width": "100px"
+              }
+            },
+            { "property": { "name": "price", "type": "money", "units": ["LKR", "USD"] } },
+            { "property": { "name": "quantity", "type": "number" } }
+          ],
+          "rows": [
+            { "property": { "name": "color", "type": "color", "width": "100px" } },
+            {
+              "property": {
+                "name": "capacity",
+                "type": "unit",
+                "units": ["MB", "GB", "TB"],
+                "width": "100px"
+              }
+            },
+            {
+              "property": {
+                "name": "weight",
+                "type": "unit",
+                "units": ["mg", "g", "kg"],
+                "width": "100px"
+              }
+            },
+            { "property": { "name": "size", "width": "100px" } },
+            { "property": { "name": "variety", "width": "100px" } }
+          ]
+        }
+      }
+    },
+    "projections": {
+      "dataTable": [
+        { "name": "image", "type": "image" },
+        { "name": "name", "type": "string", "required": true },
+        { "name": "brand", "type": "string" }
+      ]
+    }
+  },
+  "brand": {
+    "name": "brand",
+    "displayName": "Brands",
+    "title": "name",
+    "url": "brands",
+    "properties": [
+      { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
+      { "name": "image", "type": "image"}
+    ]
+  },
+  "category": {
+    "name": "category",
+    "displayName": "Category",
+    "title": "name",
+    "url": "categories",
+    "properties": [
+      { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
+      { "name": "image", "type": "image" }
+    ]
+  },
+  "subcategory": {
+    "name": "subcategory",
+    "displayName": "Subcategory",
+    "title": "name",
+    "url": "subcategories",
+    "properties": [
+      { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
+      { "name": "image", "type": "image" }
+    ]
+  },
+  "currency": {
+    "name": "currency",
+    "title": "code",
+    "displayName": "Currency",
+    "url": "currencies",
+    "properties": [
+      {
+        "name": "name",
+        "type": "string",
+        "width": { "lg": "48" }
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "width": { "lg": "48" }
+      }
+    ]
+  },
+  "purchase": {
+    "name": "purchase",
+    "displayName": "Purchase",
+    "title": "name",
+    "url": "purchases",
+    "config": {
+      "entity": {
+        "enableProjection": true,
+        "projection": "entity"
+      }
+    },
+    "properties": [
+      {
+        "name": "delivery",
+        "type": "embedded",
+        "entityMeta": {
+          "properties": [
+            { "name": "date", "type": "date" },
+            { "name": "time", "type": "enum", "enums": ["Any", "Morning", "Evening"] },
+            { "name": "message", "type": "string" }
+          ]
+        }
+      },
+      {
+        "name": "recipient",
+        "type": "embedded",
+        "entityMeta": {
+          "properties": [
+            { "name": "firstName", "type": "string" },
+            { "name": "lastName", "type": "string" },
+            { "name": "phone", "type": "string" },
+            { "name": "address", "type": "string" }
+          ]
+        }
+      },
+      {
+        "name": "sender",
+        "type": "embedded",
+        "entityMeta": {
+          "properties": [
+            { "name": "firstName", "type": "string" },
+            { "name": "lastName", "type": "string" },
+            { "name": "phone", "type": "string" },
+            { "name": "email", "type": "email" }
+          ]
+        }
+      },
+      {
+        "name": "payment",
+        "type": "embedded",
+        "entityMeta": {
+          "properties": [
+            { "name": "type", "type": "enum", "enums": ["Card", "CashOnDelivery", "BankTransfer"] }
+          ]
+        }
+      },
+      { "name": "total", "type": "money", "units": ["LKR", "USD"] },
+      { "name": "status", "type": "enum", "enums": ["Pending", "Paid", "Approved"] },
+      {
+        "name": "cartItems",
+        "type": "embeddedList",
+        "generated": true,
+        "entityMeta": {
+          "properties": {
+            "quantity": {
+              "name": "quantity",
+              "type": "number"
+            },
+            "productName": {
+              "name": "productName",
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "projections": {
+      "dataTable": [
+        { "name": "status", "type": "string" },
+        { "name": "total", "type": "string", "required": true },
+        { "name": "paymentType", "type": "string", "required": true }
+      ]
+    }
+  },
+  "shop": {
+    "name": "shop",
+    "displayName": "Shop",
+    "url": "shops",
+    "properties": [
+      { "name": "alias", "type": "string", "generated": true, "width": { "lg": "48" } },
+      { "name": "logoImage", "type": "image" },
+      {
+        "name": "bankDetails",
+        "type": "embeddedList",
+        "width": { "lg": "50" },
+        "entityMeta": {
+          "properties": {
+            "bankName": {
+              "name": "bankName",
+              "type": "string",
+              "required": true
+            },
+            "bankAccountNumber": {
+              "name": "bankAccountNumber",
+              "type": "string",
+              "required": true
+            },
+            "accountHolderName": {
+              "name": "accountHolderName",
+              "type": "string",
+              "required": true
+            },
+            "branchName": {
+              "name": "branchName",
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "stockKeepingUnit": {
+    "name": "stockKeepingUnit",
+    "displayName": "Stock Keeping Units",
+    "url": "stockKeepingUnits",
+    "properties": [
+      { "name": "quantity", "type": "number", "width": { "lg": "32" } },
+      { "name": "variety", "type": "string", "width": { "lg": "32" } },
+      { "name": "size", "type": "string", "width": { "lg": "32" } },
+      { "name": "price", "type": "unit", "units": ["LKR", "USD"], "width": { "lg": "32" } },
+      { "name": "color", "type": "color", "width": { "lg": "32" } },
+      { "name": "capacity", "type": "unit", "units": ["MB", "GB", "TB"], "width": { "lg": "32" } },
+      {
+        "name": "product",
+        "type": "object",
+        "reference": "product",
+        "width": { "lg": "32" }
+      }
+    ]
+  }
+}

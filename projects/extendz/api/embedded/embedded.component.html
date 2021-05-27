@@ -6,54 +6,77 @@
     disabled="true"
   />
 
-  <button mat-icon-button matSuffix (click)="onRemoveObject($event, property)" matTooltip="Clear">
-    <ng-container *ngTemplateOutlet="clear"></ng-container>
-  </button>
-
   <button
-    *ngIf="propertyType == propertyTypes.embedded"
+    [matMenuTriggerFor]="menu"
     mat-icon-button
     matSuffix
-    (click)="onEdit($event, true)"
-    matTooltip="Edit"
+    matTooltip="More"
+    (click)="onMore($event)"
   >
-    <ng-container *ngTemplateOutlet="edit"> </ng-container>
-  </button>
-
-  <button
-    *ngIf="propertyType == propertyTypes.embeddedList"
-    mat-icon-button
-    matSuffix
-    (click)="onTable($event)"
-    matTooltip="Table"
-  >
-    <ng-container *ngTemplateOutlet="table"> </ng-container>
+    <ng-container *ngTemplateOutlet="more"> </ng-container>
   </button>
 </mat-form-field>
 
+<mat-menu #menu="matMenu">
+  <button
+    *ngIf="propertyType == propertyTypes.embedded"
+    mat-menu-item
+    (click)="onEdit($event, true)"
+  >
+    <ng-container *ngTemplateOutlet="edit"> </ng-container>
+    <span>Edit</span>
+  </button>
+  <button
+    *ngIf="propertyType == propertyTypes.embeddedList"
+    mat-menu-item
+    (click)="onTable($event)"
+  >
+    <ng-container *ngTemplateOutlet="table"> </ng-container>
+    <span>Table</span>
+  </button>
+  <button mat-menu-item (click)="onRemoveObject($event, property)">
+    <ng-container *ngTemplateOutlet="clear"></ng-container>
+    <span>Clear</span>
+  </button>
+</mat-menu>
+
+<ng-template #more>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+    </svg>
+  </mat-icon>
+</ng-template>
+
 <ng-template #edit>
-  <svg viewBox="0 0 24 24">
-    <path
-      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-    />
-    <path d="M0 0h24v24H0z" fill="none" />
-  </svg>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path
+        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+      />
+      <path d="M0 0h24v24H0z" fill="none" />
+    </svg>
+  </mat-icon>
 </ng-template>
 
 <ng-template #table>
-  <svg viewBox="0 0 24 24">
-    <path
-      fill="currentColor"
-      d="M5,4H19A2,2 0 0,1 21,6V18A2,2 0 0,1 19,20H5A2,2 0 0,1 3,18V6A2,2 0 0,1 5,4M5,8V12H11V8H5M13,8V12H19V8H13M5,14V18H11V14H5M13,14V18H19V14H13Z"
-    />
-  </svg>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path
+        fill="currentColor"
+        d="M5,4H19A2,2 0 0,1 21,6V18A2,2 0 0,1 19,20H5A2,2 0 0,1 3,18V6A2,2 0 0,1 5,4M5,8V12H11V8H5M13,8V12H19V8H13M5,14V18H11V14H5M13,14V18H19V14H13Z"
+      />
+    </svg>
+  </mat-icon>
 </ng-template>
 
 <ng-template #clear>
-  <svg viewBox="0 0 24 24">
-    <path
-      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-    />
-    <path d="M0 0h24v24H0z" fill="none" />
-  </svg>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path
+        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+      />
+      <path d="M0 0h24v24H0z" fill="none" />
+    </svg>
+  </mat-icon>
 </ng-template>

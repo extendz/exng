@@ -66,6 +66,10 @@ export class ExtEmbeddedComponent
       .subscribe((result: object | object[]) => this.handleEmbedded(result, this.property, true));
   }
 
+  onMore(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
   /***
    * On edit the embedded entity
    */

@@ -21,10 +21,9 @@
 }
 
 .font-64 {
-  width: 64px;
-  height: 64px;
-  font-size: 64px !important;
-  /* transform: scale(4); */
+  width: 128px;
+  height: 128px;
+  font-size: 128px !important;
   color: #999;
 }
 

@@ -1,0 +1,18 @@
+.form-wrapper {
+  padding: 2vh 2vw 2vh 2vw;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.bottom-right {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+}
+
+.tab-icon {
+  margin-right: 8px;
+}

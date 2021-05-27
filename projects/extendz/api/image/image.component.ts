@@ -76,7 +76,7 @@ export class ExtImageComponent implements OnInit, ControlValueAccessor {
     }
   } // handleFile()
 
-  private handleUpdate(files: File[]) {
+  private handleUpdate(files: Blob[]) {
     this.onChange(files);
     // if (this.entity) this.entity[this.property.name] = files;
   }
@@ -93,7 +93,7 @@ export class ExtImageComponent implements OnInit, ControlValueAccessor {
   }
 
   /** Show preview of the file uploaded */
-  private handleFileRead(file: File) {
+  private handleFileRead(file: Blob) {
     let reader = new FileReader();
     reader.onload = (event: ProgressEvent) => {
       let path = <string>reader.result;

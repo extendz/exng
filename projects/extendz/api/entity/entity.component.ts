@@ -16,6 +16,7 @@ import { INPUT_ENTIRY, INPUT_ENTITY_META, INPUT_PARAMS, OUTPUT_ACTION } from '..
 import { EntityViewDirective } from './entity-view.directive';
 import { AbstractView } from './views/abstact-view';
 import { ExtAvatarComponent } from './views/avatar/avatar.component';
+import { FlowComponent } from './views/flow/flow.component';
 import { TypeComponent } from './views/type/type.component';
 
 @Component({
@@ -48,6 +49,8 @@ export class ExtEntityComponent implements OnInit, OnChanges {
         break;
       case 'type':
         component = TypeComponent;
+      case 'flow':
+        component = FlowComponent;
     }
 
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { EntityMetaResponse, ExtApiConfig, EXT_API_CONFIG } from 'extendz/core';
+import { EntityMeta, EntityMetaResponse, ExtApiConfig, EXT_API_CONFIG } from 'extendz/core';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 
@@ -8,10 +8,7 @@ import { map, take, tap } from 'rxjs/operators';
 export class EntityMetaService {
   private entityMetaResponse: EntityMetaResponse;
 
-  constructor(
-    @Inject(EXT_API_CONFIG) private apiConfig: ExtApiConfig,
-    private http: HttpClient
-  ) {}
+  constructor(@Inject(EXT_API_CONFIG) private apiConfig: ExtApiConfig, private http: HttpClient) {}
 
   getRoot(): Observable<EntityMetaResponse> {
     if (this.entityMetaResponse) return of(this.entityMetaResponse);
@@ -21,7 +18,7 @@ export class EntityMetaService {
     );
   }
 
-  getModel(name: string) {
+  getModel(name: string): Observable<EntityMeta> {
     return this.getRoot().pipe(map((models) => models[name], take(1)));
   }
 }

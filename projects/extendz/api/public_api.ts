@@ -17,3 +17,7 @@ export * from './root/root.module';
 //
 export * from './select/select.component';
 export * from './select/select.module';
+
+//
+export * from './input-table/input-table.component';
+export * from './input-table/input-table.module';

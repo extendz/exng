@@ -1,7 +1,7 @@
 <mat-dialog-content>
-  <ext-simple [entityMeta]="data.entityMeta"></ext-simple>
+  <ext-simple [entityMeta]="data.entityMeta" #simple (saved)="onSaved($event)"></ext-simple>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span fxFlex></span>
-  <button mat-button>Add anotther</button>
+  <button mat-button (click)="simple.onSave()">Save and add</button>
 </mat-dialog-actions>

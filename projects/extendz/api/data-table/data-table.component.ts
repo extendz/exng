@@ -1,6 +1,6 @@
 import { animate, sequence, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
-import { HttpParams } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
@@ -25,7 +25,7 @@ import {
   Property,
 } from 'extendz/core';
 import { Subscription } from 'rxjs';
-import { debounceTime, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
+import { catchError, debounceTime, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
 import { INPUT_ENTITY_META } from '../api.consts';
 
 export const rowsAnimation = trigger('rowsAnimation', [
@@ -113,6 +113,8 @@ export class ExtDataTableComponent implements OnInit {
    */
   private searchParams: HttpParams;
 
+  httpError: HttpErrorResponse;
+
   constructor(
     @Inject(EXT_API_CONFIG) public config: ExtApiConfig,
     @Inject(EXT_DATA_TABLE_CONFIG) public dataTableConfig: ExtDatatableConfig,
@@ -179,6 +181,10 @@ export class ExtDataTableComponent implements OnInit {
       tap((p) => (this.page = p.page)),
       map((d) => d.data),
       tap((d) => (this.data = d)),
+      catchError((e: HttpErrorResponse) => {
+        this.httpError = e;
+        throw e;
+      }),
       finalize(() => (this.loading = false))
     );
   } //getData()

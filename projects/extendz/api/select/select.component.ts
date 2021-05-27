@@ -72,7 +72,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     });
 
     const auto = this.autoCompleteControl.valueChanges.pipe(
-      startWith(''),
+      // startWith(''),
       debounceTime(1000),
       map((v: string) => new HttpParams().append(this.searchField, v)),
       switchMap((p) => this.dataTableService.getData(this.entityMeta, p)),
@@ -93,17 +93,20 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
   /***
    * This will make the given obejct null or remove the value
    */
-  public onRemoveObject(event: MouseEvent, property: Property) {
-    event.stopPropagation();
+  onRemoveObject(event: MouseEvent, property: Property) {
     this.autoCompleteControl.setValue('');
-    this.value = '_null';
+    this.value = null;
     this.onChange(this.value);
     this.displayValue = null;
   }
 
-  addNew(event: MouseEvent, property: Property) {
+  onMore(event: MouseEvent) {
     event.stopPropagation();
+  }
 
+  onView() {}
+
+  addNew(event: MouseEvent, property: Property) {
     this.entityMetaService
       .getModel(property.reference)
       .pipe(take(1))
@@ -127,7 +130,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
   }
 
   public onAdvanceSearch(event: MouseEvent, replace: boolean) {
-    event.stopPropagation();
     let data: ExtAdvanceSearchData = {
       entityMeta: this.entityMeta,
       entity: this.entity,
@@ -157,9 +159,9 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
       this.displayValue = `${result.length} selected`;
       this.autoCompleteControl.setValue(this.displayValue);
     } else this.autoCompleteControl.setValue(result);
-  } //handleEmbedded()
+  } 
 
-  public onAutoComple(event: MouseEvent) {
+  onAutoComple(event: MouseEvent) {
     event.preventDefault();
   }
 

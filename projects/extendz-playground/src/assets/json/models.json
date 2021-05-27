@@ -1,79 +1,16 @@
 {
-  "product": {
-    "name": "product",
-    "displayName": "Products",
-    "url": "products",
-    "title": "name",
-    "config": {
-      "entity": {
-        "enableProjection": true,
-        "projection": "entity"
-      }
-    },
-    "properties": {
-      "active": { "name": "active", "type": "boolean" },
-      "image": { "name": "image", "type": "image" },
-      "name": { "name": "name", "type": "string", "width": { "lg": "48" } },
-      "description": { "name": "description", "type": "string", "width": { "lg": "48" } },
-      "brand": { "name": "brand", "type": "object", "reference": "brand", "width": { "lg": "48" } },
-      "stockKeepingUnits": {
-        "name": "stockKeepingUnits",
-        "type": "matrix",
-        "reference": "stockKeepingUnit",
-        "mappedBy": "product",
-        "matrixDefinition": {
-          "static": [
-            {
-              "property": {
-                "name": "image",
-                "type": "image",
-                "imageMeta": { "cropper": false },
-                "width": "100px"
-              }
-            },
-            { "property": { "name": "price", "type": "money", "units": ["LKR", "USD"] } },
-            { "property": { "name": "quantity", "type": "number" } }
-          ],
-          "rows": [
-            { "property": { "name": "color", "type": "color", "width": "100px" } },
-            {
-              "property": {
-                "name": "capacity",
-                "type": "unit",
-                "units": ["MB", "GB", "TB"],
-                "width": "100px"
-              }
-            },
-            {
-              "property": {
-                "name": "weight",
-                "type": "unit",
-                "units": ["mg", "g", "kg"],
-                "width": "100px"
-              }
-            },
-            { "property": { "name": "size", "width": "100px" } },
-            { "property": { "name": "variety", "width": "100px" } }
-          ]
-        }
-      }
-    },
-    "projections": {
-      "dataTable": [
-        { "name": "image", "type": "image" },
-        { "name": "name", "type": "string", "required": true },
-        { "name": "brand", "type": "string" }
-      ]
-    }
-  },
-  "brand": {
-    "name": "brand",
-    "displayName": "Brands",
-    "title": "name",
-    "url": "brands",
+  "batch": {
+    "name": "batch",
+    "displayName": "Batch",
+    "url": "batches",
     "properties": [
-      { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
-      { "name": "image", "type": "image"}
+      { "name": "description", "type": "string", "width": { "lg": "48" } },
+      { "name": "initialQuantity", "type": "number", "required": true, "width": { "lg": "25" } },
+      { "name": "quantity", "type": "number", "width": { "lg": "25" } },
+      { "name": "reservedQuantity", "type": "number", "width": { "lg": "24" } },
+      { "name": "arrivedDate", "type": "date", "width": { "lg": "24" } },
+      { "name": "expiryDate", "type": "date", "width": { "lg": "24" } },
+      { "name": "manufacturedDate", "type": "date", "width": { "lg": "24" } }
     ]
   },
   "category": {
@@ -81,20 +18,40 @@
     "displayName": "Category",
     "title": "name",
     "url": "categories",
-    "properties": [
-      { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
-      { "name": "image", "type": "image" }
-    ]
+    "properties": {
+      "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
+      "image": { "name": "image", "type": "image" }
+    }
   },
-  "subcategory": {
-    "name": "subcategory",
-    "displayName": "Subcategory",
-    "title": "name",
-    "url": "subcategories",
-    "properties": [
-      { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
-      { "name": "image", "type": "image" }
-    ]
+  "customer": {
+    "name": "customer",
+    "displayName": "Customers",
+    "title": "firstName",
+    "url": "customers",
+    "properties": {
+      "firstName": {
+        "name": "firstName",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "48" }
+      },
+      "address": {
+        "name": "address",
+        "type": "embedded",
+        "entityMeta": {
+          "properties": {
+            "line1": { "name": "line1", "type": "string" },
+            "line2": { "name": "line2", "type": "string" },
+            "City": { "name": "city", "type": "string" },
+            "type": { "name": "type", "type": "string" },
+            "default": { "name": "default", "type": "string" }
+          }
+        },
+        "width": { "lg": "48" }
+      },
+      "telePhone": { "name": "telePhone", "type": "string" },
+      "lastName": { "name": "lastName", "type": "string", "width": { "lg": "48" } }
+    }
   },
   "currency": {
     "name": "currency",
@@ -114,145 +71,374 @@
       }
     ]
   },
-  "purchase": {
-    "name": "purchase",
-    "displayName": "Purchase",
+  "delivery": {
+    "name": "delivery",
+    "displayName": "Delivery",
+    "title": "quantity",
+    "url": "deliveries",
+    "properties": {
+      "quantity": {
+        "name": "quantity",
+        "type": "number",
+        "required": true,
+        "width": { "lg": "20" }
+      },
+      "salesOrderLine": {
+        "name": "salesOrderLine",
+        "type": "object",
+        "required": true,
+        "width": { "lg": "40" }
+      }
+    }
+  },
+  "deliveryOrders": {
+    "name": "deliveryOrders",
+    "displayName": "Delivery Orders",
+    "title": "dispatchDate",
+    "url": "deliveryOrders",
+    "properties": {
+      "dispatchDate": { "name": "dispatchDate", "type": "date", "width": { "lg": 30 } },
+      "deliveryVehicle": { "name": "deliveryVehicle", "type": "object", "width": { "lg": 30 } },
+      "note": { "name": "note", "type": "string", "width": { "lg": 30 } },
+      "status": { "name": "status", "type": "string", "width": { "lg": 30 } }
+    }
+  },
+  "deliveryVehicle": {
+    "name": "deliveryVehicle",
+    "displayName": "Delivery Vehicle",
+    "title": "registorNumber",
+    "url": "deliveryVehicles",
+    "properties": {
+      "registorNumber": { "name": "registorNumber", "type": "string", "width": { "lg": 30 } },
+      "description": { "name": "description", "type": "string", "width": { "lg": 30 } }
+    }
+  },
+  "inventoryTransaction": {
+    "name": "inventoryTransaction",
+    "displayName": "Inventory Transaction",
     "title": "name",
-    "url": "purchases",
+    "url": "inventoryTransactions",
+    "properties": {
+      "name": { "name": "reference", "type": "string", "width": { "lg": "100" } },
+      "quantity": { "name": "quantity", "type": "number", "width": { "lg": "20" } },
+      "transactionType": {
+        "name": "transactionType",
+        "type": "enum",
+        "enums": ["In", "Out"],
+        "width": { "lg": "20" }
+      },
+      "date": { "name": "date", "type": "date", "width": { "lg": "20" } },
+      "totalAmount": { "name": "totalAmount", "type": "money", "width": { "lg": "20" } }
+    }
+  },
+  "product": {
+    "name": "product",
+    "displayName": "Products",
+    "url": "products",
+    "title": "name",
     "config": {
       "entity": {
         "enableProjection": true,
         "projection": "entity"
       }
     },
-    "properties": [
-      {
-        "name": "delivery",
-        "type": "embedded",
-        "entityMeta": {
-          "properties": [
-            { "name": "date", "type": "date" },
-            { "name": "time", "type": "enum", "enums": ["Any", "Morning", "Evening"] },
-            { "name": "message", "type": "string" }
-          ]
-        }
-      },
-      {
-        "name": "recipient",
-        "type": "embedded",
-        "entityMeta": {
-          "properties": [
-            { "name": "firstName", "type": "string" },
-            { "name": "lastName", "type": "string" },
-            { "name": "phone", "type": "string" },
-            { "name": "address", "type": "string" }
-          ]
-        }
-      },
-      {
-        "name": "sender",
-        "type": "embedded",
-        "entityMeta": {
-          "properties": [
-            { "name": "firstName", "type": "string" },
-            { "name": "lastName", "type": "string" },
-            { "name": "phone", "type": "string" },
-            { "name": "email", "type": "email" }
-          ]
-        }
-      },
-      {
-        "name": "payment",
-        "type": "embedded",
-        "entityMeta": {
-          "properties": [
-            { "name": "type", "type": "enum", "enums": ["Card", "CashOnDelivery", "BankTransfer"] }
-          ]
-        }
-      },
-      { "name": "total", "type": "money", "units": ["LKR", "USD"] },
-      { "name": "status", "type": "enum", "enums": ["Pending", "Paid", "Approved"] },
-      {
-        "name": "cartItems",
-        "type": "embeddedList",
-        "generated": true,
-        "entityMeta": {
-          "properties": {
-            "quantity": {
-              "name": "quantity",
-              "type": "number"
-            },
-            "productName": {
-              "name": "productName",
-              "type": "string"
-            }
-          }
-        }
-      }
-    ],
-    "projections": {
-      "dataTable": [
-        { "name": "status", "type": "string" },
-        { "name": "total", "type": "string", "required": true },
-        { "name": "paymentType", "type": "string", "required": true }
-      ]
+    "properties": {
+      "name": { "name": "name", "type": "string", "width": { "lg": "48" } }
     }
   },
-  "shop": {
-    "name": "shop",
-    "displayName": "Shop",
-    "url": "shops",
-    "properties": [
-      { "name": "alias", "type": "string", "generated": true, "width": { "lg": "48" } },
-      { "name": "logoImage", "type": "image" },
+  "payment": {
+    "name": "payment",
+    "displayName": "Payment",
+    "title": "amount",
+    "url": "payments",
+    "properties": {
+      "quantity": {
+        "name": "amount",
+        "type": "number",
+        "required": true,
+        "width": { "lg": "20" }
+      }
+    }
+  },
+  "purchaseOrder": {
+    "name": "purchaseOrder",
+    "displayName": "Purchase Order",
+    "url": "purchaseOrders"
+  },
+  "purchaseOrderLine": {
+    "name": "purchaseOrderLine",
+    "displayName": "Purchase Order Line",
+    "url": "purchaseOrderLines"
+  },
+  "supplier": {
+    "name": "supplier",
+    "displayName": "Supplier",
+    "url": "suppliers"
+  },
+  "supplierForProduct": {
+    "name": "supplierForProduct",
+    "displayName": "Supplier For Product",
+    "url": "supplierForProducts"
+  },
+  "salesRepresentative": {
+    "name": "salesRepresentative",
+    "displayName": "Sales Representative",
+    "title": "firstName",
+    "url": "salesRepresentatives",
+    "properties": {
+      "firstName": {
+        "name": "firstName",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "48" }
+      },
+      "lastName": {
+        "name": "lastName",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "48" }
+      }
+    }
+  },
+  "salesOrder": {
+    "name": "salesOrder",
+    "displayName": "Sales Order",
+    "view": "flow",
+    "url": "salesOrders",
+    "config": {
+      "entity": {
+        "enableProjection": true,
+        "projection": "entity"
+      }
+    },
+    "projections": {
+      "dataTable": [{ "name": "number", "type": "number" }]
+    },
+    "validators": [
       {
-        "name": "bankDetails",
-        "type": "embeddedList",
-        "width": { "lg": "50" },
+        "on": "type",
+        "value": "Retailer",
+        "disable": ["measureSqft", "totalAmount"]
+      }
+    ],
+    "properties": {
+      "number": {
+        "name": "number",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "24", "xs": "100" }
+      },
+      "type": {
+        "name": "type",
+        "type": "enum",
+        "enums": ["Retailer", "Project"],
+        "width": { "lg": "24" }
+      },
+      "wantedDeliveryDate": {
+        "name": "wantedDeliveryDate",
+        "type": "date",
+        "width": { "lg": "24" }
+      },
+      "startDate": {
+        "name": "startDate",
+        "type": "date",
+        "width": { "lg": "24" }
+      },
+      "customer": {
+        "name": "customer",
+        "type": "object",
+        "reference": "customer",
+        "width": { "lg": "24" }
+      },
+      "deliveryAddress": {
+        "name": "deliveryAddress",
+        "type": "embedded",
         "entityMeta": {
           "properties": {
-            "bankName": {
-              "name": "bankName",
-              "type": "string",
-              "required": true
-            },
-            "bankAccountNumber": {
-              "name": "bankAccountNumber",
-              "type": "string",
-              "required": true
-            },
-            "accountHolderName": {
-              "name": "accountHolderName",
-              "type": "string",
-              "required": true
-            },
-            "branchName": {
-              "name": "branchName",
-              "type": "string",
-              "required": true
+            "line1": { "name": "line1", "type": "string" }
+          }
+        },
+        "width": { "lg": "24" }
+      },
+      "salesRepresentative": {
+        "name": "salesRepresentative",
+        "type": "object",
+        "reference": "salesRepresentative",
+        "width": { "lg": "24" }
+      },
+      "team": { "name": "team", "type": "string", "width": { "lg": "24" } },
+      "unitPrice": { "name": "unitPrice", "type": "money", "width": { "lg": "24" } },
+      "measureSqft": { "name": "measureSqft", "type": "number", "width": { "lg": "24" } },
+      "calculatedSqft": { "name": "calculatedSqft", "type": "number", "width": { "lg": "24" } },
+      "totalAmount": { "name": "totalAmount", "type": "money", "width": { "lg": "24" } },
+      "_spacer": { "name": "spacer", "type": "spacer", "width": { "lg": "50", "xs": "0" } },
+      "totalPaid": { "name": "totalPaid", "type": "money", "width": { "lg": "24" } },
+      "totalBePaid": { "name": "totalBePaid", "type": "money", "width": { "lg": "24" } },
+      "_tabs": {
+        "type": "tabs",
+        "tabs": [
+          {
+            "name": "orderLines",
+            "displayName": "Order Lines",
+            "type": "objectList",
+            "reference": "salesOrderLine",
+            "entityMeta": {
+              "properties": {
+                "product": {
+                  "name": "product",
+                  "type": "object",
+                  "reference": "product",
+                  "width": { "lg": "20vw" }
+                },
+                "quantity": {
+                  "name": "quantity",
+                  "type": "number"
+                },
+                "deliveredQuantity": {
+                  "name": "deliveredQuantity",
+                  "type": "number"
+                },
+                "price": {
+                  "name": "price",
+                  "type": "number"
+                },
+                "discountType": {
+                  "name": "discountType",
+                  "type": "enum",
+                  "enums": ["Fixed", "Presentage"]
+                },
+                "discount": {
+                  "name": "discount",
+                  "type": "number"
+                },
+                "status": {
+                  "name": "status",
+                  "type": "enum",
+                  "enums": ["Deliverd", "Paid"]
+                }
+              }
+            }
+          },
+          {
+            "name": "salesOrderCharge",
+            "displayName": "Charges",
+            "reference": "salesOrderCharge",
+            "entityMeta": {
+              "properties": {
+                "amount": {
+                  "name": "amount",
+                  "type": "number"
+                },
+                "description": {
+                  "name": "description",
+                  "type": "string"
+                },
+                "type": {
+                  "name": "type",
+                  "type": "object",
+                  "reference": "salesChargeType",
+                  "mutations": [
+                    {
+                      "type": "update",
+                      "from": "defaultAmount",
+                      "to": "amount"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "deliveries",
+            "displayName": "Deliveries",
+            "reference": "delivery",
+            "entityMeta": {
+              "properties": {
+                "quantity": {
+                  "name": "quantity",
+                  "type": "number"
+                }
+              }
+            }
+          },
+          {
+            "name": "payments",
+            "displayName": "Payments",
+            "reference": "payment",
+            "entityMeta": {
+              "properties": {
+                "quantity": {
+                  "name": "quantity",
+                  "type": "number"
+                }
+              }
             }
           }
-        }
+        ],
+        "width": { "lg": "100" }
       }
-    ]
+    }
   },
-  "stockKeepingUnit": {
-    "name": "stockKeepingUnit",
-    "displayName": "Stock Keeping Units",
-    "url": "stockKeepingUnits",
-    "properties": [
-      { "name": "quantity", "type": "number", "width": { "lg": "32" } },
-      { "name": "variety", "type": "string", "width": { "lg": "32" } },
-      { "name": "size", "type": "string", "width": { "lg": "32" } },
-      { "name": "price", "type": "unit", "units": ["LKR", "USD"], "width": { "lg": "32" } },
-      { "name": "color", "type": "color", "width": { "lg": "32" } },
-      { "name": "capacity", "type": "unit", "units": ["MB", "GB", "TB"], "width": { "lg": "32" } },
-      {
-        "name": "product",
+  "salesOrderLine": {
+    "name": "salesOrderLine",
+    "displayName": "Sales Order Lines",
+    "title": "name",
+    "url": "salesOrderLines",
+    "properties": {
+      "quantity": { "name": "quantity", "type": "number", "width": { "lg": "100" } },
+      "salesOrder": { "name": "salesOrder", "type": "object" },
+      "product": { "name": "product", "type": "object" }
+    }
+  },
+  "salesOrderCharge": {
+    "name": "salesOrderCharge",
+    "displayName": "Sales Order Charge",
+    "title": "amount",
+    "url": "charges",
+    "properties": {
+      "description": { "name": "description", "type": "string", "width": { "lg": "48" } },
+      "amount": { "name": "amount", "type": "number", "required": true, "width": { "lg": "24" } },
+      "type": {
+        "name": "type",
         "type": "object",
-        "reference": "product",
-        "width": { "lg": "32" }
+        "reference": "salesChargeType",
+        "width": { "lg": "24" }
       }
-    ]
+    }
+  },
+  "salesChargeType": {
+    "name": "salesChargeType",
+    "displayName": "Sales Charge Type",
+    "title": "name",
+    "url": "salesChargeTypes",
+    "properties": {
+      "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "48" } },
+      "defaultAmount": {
+        "name": "defaultAmount",
+        "type": "number",
+        "required": true,
+        "width": { "lg": "48" }
+      }
+    }
+  },
+  "systemUser": {
+    "name": "systemUser",
+    "displayName": "System User",
+    "title": "username",
+    "url": "systemUsers",
+    "properties": {
+      "username": {
+        "name": "username",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      },
+      "password": {
+        "name": "password",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      }
+    }
   }
 }

@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExtPipesModule } from 'extendz/pipes';
 import { ExtAddNewModule } from './dialog/add-new/add-new.module';
@@ -26,6 +27,7 @@ import { ExtSelectComponent } from './select.component';
     ExtAddNewModule,
     //Mat
     MatAutocompleteModule,
+    MatMenuModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,

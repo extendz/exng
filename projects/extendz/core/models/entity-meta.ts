@@ -3,6 +3,13 @@ import { Search } from './search';
 import { Config } from './config';
 import { Command } from './command';
 
+
+export class Validation {
+  on?: string;
+  value?: string;
+  disable?: string[];
+}
+
 export class EntityMeta {
   /**
    * Custom action
@@ -11,7 +18,7 @@ export class EntityMeta {
   /***
    *
    */
-  dataUrl: string;
+  dataUrl?: string;
   /***
    *
    */
@@ -31,11 +38,11 @@ export class EntityMeta {
   /***
    * Display value for the entity
    */
-  displayName: string;
+  displayName?: string;
   /***
    * Name for the Entity meta
    */
-  name: string;
+  name?: string;
   /***
    * Sort
    */
@@ -51,12 +58,12 @@ export class EntityMeta {
   /***
    * Url for the data source
    */
-  url: string;
+  url?: string;
   /***
    * html template
    * TODO: this should be defined ones
    */
-  view: string;
+  view?: string;
   /***
    *
    */
@@ -65,4 +72,9 @@ export class EntityMeta {
    *
    */
   config?: Config;
+
+  /*** Validators */
+  validators?: Validation[];
+
+
 }

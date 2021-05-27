@@ -127,7 +127,13 @@
         svgIcon="api-root:{{ entityMeta?.name }}"
       ></mat-icon>
       <h1 *ngIf="loading">Loading</h1>
-      <h1 *ngIf="!loading">No {{ entityMeta?.displayName | camelCase }} found !</h1>
+      <h1 *ngIf="!loading">
+        <span *ngIf="httpError">
+          <span style="color: #c00;">{{ httpError?.error?.status }} </span>
+          {{ httpError?.error?.error }}
+        </span>
+        <span *ngIf="!httpError">No {{ entityMeta?.displayName | camelCase }} found !</span>
+      </h1>
     </div>
   </div>
 </ng-template>

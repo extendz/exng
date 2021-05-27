@@ -3,6 +3,7 @@ import { ExtApiConfig, ExtEntityConfig, EXT_API_CONFIG, EXT_ENTITY_CONFIG } from
 import { EntityViewDirective } from './entity-view.directive';
 import { ExtEntityComponent } from './entity.component';
 import { ExtAvatarModule } from './views/avatar/avatar.module';
+import { ExtFlowModule } from './views/flow/flow.module';
 import { TypeComponent } from './views/type/type.component';
 
 @NgModule({
@@ -11,6 +12,7 @@ import { TypeComponent } from './views/type/type.component';
   imports: [
     //
     ExtAvatarModule,
+    ExtFlowModule,
   ],
 })
 export class ExtEntityModule {

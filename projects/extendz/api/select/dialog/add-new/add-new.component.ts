@@ -10,7 +10,7 @@ import { ExtAddNewData } from '../../select.component';
   templateUrl: './add-new.component.html',
   styleUrls: ['./add-new.component.scss'],
 })
-export class ExtAddNewComponent implements OnInit {
+export class ExtAddNewComponent {
   entityMeta$: Observable<EntityMeta>;
 
   constructor(
@@ -19,5 +19,7 @@ export class ExtAddNewComponent implements OnInit {
     private dialogRef: MatDialogRef<ExtAddNewComponent>
   ) {}
 
-  ngOnInit(): void {}
+  onSaved(event: any) {
+    this.dialogRef.close(event);
+  }
 }

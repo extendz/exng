@@ -19,7 +19,8 @@ export abstract class AbstractEntityService {
     entityMeta: EntityMeta,
     newValue: object,
     navigate: boolean,
-    original?: object
+    original?: object,
+    showSnackBar?: boolean
   ): Observable<any>;
 
   /*** Navigate the given property with the id  */

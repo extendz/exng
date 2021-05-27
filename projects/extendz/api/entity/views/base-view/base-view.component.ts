@@ -17,12 +17,13 @@ import {
 import { EntityMetaService } from 'extendz/service';
 import { forkJoin, Subscription } from 'rxjs';
 import { defaultIfEmpty, finalize, mergeMap, skip, take, tap } from 'rxjs/operators';
+import { AbstractView } from '../abstact-view';
 
 @Component({
   selector: 'ext-base-view',
   template: '',
 })
-export class ExtBaseViewComponent implements OnInit, OnDestroy {
+export abstract class ExtBaseViewComponent extends AbstractView implements OnInit, OnDestroy {
   /*** Hold meta data about the Entity*/
   public entityMeta: EntityMeta;
 
@@ -45,20 +46,8 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
 
   @Output() action: EventEmitter<Action> = new EventEmitter<Action>();
 
-  // Properties
-  public booleanProperties: Property[];
-  public dateProperties: Property[];
-  public embeddedProperties: Property[];
-  public emailProperties: Property[];
-  public enumProperties: Property[];
-  public imageProperties: Property[];
-  public numberProperties: Property[];
-  public stringProperties: Property[];
-  public objectProperties: Property[];
-  public matrixProperties: Property[];
-  public unitProperties: Property[];
-  public moneyProperties: Property[];
-  public colorProperties: Property[];
+  /*** Emit event on succes save */
+  @Output() saved: EventEmitter<any> = new EventEmitter<any>();
 
   private activatedRouteSub: Subscription;
 
@@ -69,6 +58,7 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected entityMetaService: EntityMetaService
   ) {
+    super();
     this.activatedRouteSub = this.activatedRoute.params.pipe(skip(1)).subscribe((d) => this.init());
   }
 
@@ -78,8 +68,6 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     if (this.params) {
       Object.keys(this.params).forEach((key) => {
         const value = this.params[key];
-        console.log(this.entityMeta);
-
         const property = this.entityMeta.properties[key];
         if (!this.entity) this.entity = {};
         if (property) {
@@ -139,57 +127,49 @@ export class ExtBaseViewComponent implements OnInit, OnDestroy {
     this.handleEntity(filteredProperties);
   }
 
-  private handleEntityMeta(propties: Property[]) {
-    this.stringProperties = propties.filter((p) => p.type === PropertyType.string);
-    this.enumProperties = propties.filter((p) => p.type === PropertyType.enum);
-    this.booleanProperties = propties.filter((p) => p.type === PropertyType.boolean);
-    this.numberProperties = propties.filter((p) => p.type === PropertyType.number);
-    this.embeddedProperties = propties.filter(
-      (p) => p.type === PropertyType.embedded || p.type === PropertyType.embeddedList
-    );
-    this.emailProperties = propties.filter((p) => p.type === PropertyType.email);
-    this.objectProperties = propties.filter((p) => p.type === PropertyType.object);
-    this.dateProperties = propties.filter((p) => p.type === PropertyType.date);
-    this.imageProperties = propties.filter((p) => p.type === PropertyType.image);
-    this.matrixProperties = propties.filter((p) => p.type === PropertyType.matrix);
-    this.unitProperties = propties.filter((p) => p.type === PropertyType.unit);
-    this.colorProperties = propties.filter((p) => p.type === PropertyType.color);
-    this.moneyProperties = propties.filter((p) => p.type === PropertyType.money);
+  abstract handleEntityMeta(propties: Property[]);
+
+  private handleEntity(properties: Property[]) {
+    // Create form
+    properties.forEach((p) => {
+      if (p.type == PropertyType.tabs) p.tabs.forEach((tp) => this.createCtrlForProp(tp));
+      else this.createCtrlForProp(p);
+    });
+    if (this.entity) this.formGroup.patchValue(this.entity, { emitEvent: false });
+    this.deepCopy(this.entity);
   }
 
-  private handleEntity(propties: Property[]) {
-    // Create form
-    propties.forEach((p) => {
-      let ctrl = new FormControl();
-      // Validators
-      let validators: ValidatorFn[] = [];
-      if (p.required) validators.push(Validators.required);
-      if (p.type == PropertyType.email) validators.push(Validators.email);
-      ctrl.setValidators(validators);
-      if (p.generated) ctrl.disable({});
-      this.formGroup.addControl(p.name, ctrl);
-    });
-    if (this.entity) this.formGroup.patchValue(this.entity);
-    this.deepCopy(this.entity);
-  } // handleEntity()
+  private createCtrlForProp(property: Property) {
+    let ctrl = new FormControl(undefined);
+    let validators: ValidatorFn[] = [];
+    if (property.required) validators.push(Validators.required);
+    if (property.type == PropertyType.email) validators.push(Validators.email);
+    ctrl.setValidators(validators);
+    if (property.generated) ctrl.disable({});
+    this.formGroup.addControl(property.name, ctrl);
+  }
 
   private deepCopy(entity: any) {
     this.originalEntity = deepCopy(entity);
   }
 
   /*** save */
-  public onSave(): void {
+  public onSave(showSnackBar?: boolean): void {
     if (this.formGroup.valid) {
       this.loading = true;
       this.entityService
-        .save(this.entityMeta, this.formGroup.value, true, this.originalEntity)
+        .save(this.entityMeta, this.formGroup.value, true, this.originalEntity, showSnackBar)
         .pipe(
           tap((d) => (this.entity = d)),
           tap((d) => this.deepCopy(d)),
+          tap((d) => this.saved.emit(d)),
           finalize(() => (this.loading = false))
         )
         .subscribe();
-    } else this.formGroup.markAllAsTouched();
+    } else {
+      this.formGroup.markAllAsTouched();
+      this.loading = false;
+    }
   }
 
   public onBooleanChange(event: MatCheckboxChange, property: Property) {

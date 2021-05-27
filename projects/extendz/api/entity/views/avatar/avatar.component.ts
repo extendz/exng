@@ -26,6 +26,21 @@ export class ExtAvatarComponent extends ExtBaseViewComponent implements OnInit, 
    */
   public imageUrl: string;
 
+   // Properties
+   public booleanProperties: Property[];
+   public dateProperties: Property[];
+   public embeddedProperties: Property[];
+   public emailProperties: Property[];
+   public enumProperties: Property[];
+   public imageProperties: Property[];
+   public numberProperties: Property[];
+   public stringProperties: Property[];
+   public objectProperties: Property[];
+   public matrixProperties: Property[];
+   public unitProperties: Property[];
+   public moneyProperties: Property[];
+   public colorProperties: Property[];
+
   constructor(
     @Inject(EXT_API_CONFIG) protected apiConfig: ExtApiConfig,
     @Inject(EXT_ENTITY_CONFIG) public entityConfig: ExtEntityConfig,
@@ -49,4 +64,22 @@ export class ExtAvatarComponent extends ExtBaseViewComponent implements OnInit, 
     // Call super function
     super.ngOnInit();
   } //ngOnInit()
+
+  handleEntityMeta(propties: Property[]) {
+    this.stringProperties = propties.filter((p) => p.type === PropertyType.string);
+    this.enumProperties = propties.filter((p) => p.type === PropertyType.enum);
+    this.booleanProperties = propties.filter((p) => p.type === PropertyType.boolean);
+    this.numberProperties = propties.filter((p) => p.type === PropertyType.number);
+    this.embeddedProperties = propties.filter(
+      (p) => p.type === PropertyType.embedded || p.type === PropertyType.embeddedList
+    );
+    this.emailProperties = propties.filter((p) => p.type === PropertyType.email);
+    this.objectProperties = propties.filter((p) => p.type === PropertyType.object);
+    this.dateProperties = propties.filter((p) => p.type === PropertyType.date);
+    this.imageProperties = propties.filter((p) => p.type === PropertyType.image);
+    this.matrixProperties = propties.filter((p) => p.type === PropertyType.matrix);
+    this.unitProperties = propties.filter((p) => p.type === PropertyType.unit);
+    this.colorProperties = propties.filter((p) => p.type === PropertyType.color);
+    this.moneyProperties = propties.filter((p) => p.type === PropertyType.money);
+  }
 } // class

@@ -14,11 +14,12 @@
     fxLayoutAlign="start center"
     (click)="onSelect(item.value)"
   >
-    <mat-icon class="primary" svgIcon="api-root:{{ item.key }}"></mat-icon>
+    <mat-icon *ngIf="item?.key" class="primary" svgIcon="api-root:{{ item?.key }}"></mat-icon>
+
     <span fxFlex="5"></span>
     <div fxLayout="column">
-      <span class="name">{{ item.value.displayName | camelCase }}</span>
-      <span class="url">{{ item.value.url }}</span>
+      <span class="name">{{ item?.value?.displayName | camelCase }}</span>
+      <span class="url">{{ item?.value?.url }}</span>
     </div>
   </mat-card>
 </div>

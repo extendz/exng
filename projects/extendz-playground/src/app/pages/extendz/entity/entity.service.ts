@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params, Router } from '@angular/router';
 import {
   AbstractEntityService,
+  clearUrl,
   EntityMeta,
   getId,
   ObjectWithLinks,
@@ -11,7 +12,7 @@ import {
   PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of, zip } from 'rxjs';
 import { defaultIfEmpty, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
 
 export class PropertyFile {
@@ -31,7 +32,8 @@ export class RestAndFiles {
     public payload: any,
     public files: PropertyFile[],
     public preSave?: SavePayload[],
-    public postSave?: SavePayload[]
+    public postSave?: SavePayload[],
+    public patchRequests?: any[]
   ) {}
 }
 
@@ -52,9 +54,7 @@ export class EntityService implements AbstractEntityService {
   }
 
   getOneByUrl(url: string, params: HttpParams): Observable<ObjectWithLinks> {
-    return this.http
-      .get<ObjectWithLinks>(url, { params })
-      .pipe(take(1));
+    return this.http.get<ObjectWithLinks>(url, { params }).pipe(take(1));
   }
 
   navigate(property: Property, idField: string): void {
@@ -87,14 +87,17 @@ export class EntityService implements AbstractEntityService {
       .subscribe();
   }
 
-  dymmySave(entityMeta: EntityMeta, newValue: any, navigate: boolean, original?: ObjectWithLinks) {}
-
   save(
     entityMeta: EntityMeta,
     newValue: any,
     navigate: boolean,
-    original?: ObjectWithLinks
+    original?: ObjectWithLinks,
+    showSnackBar?: boolean
   ): Observable<any> {
+    // get tabs and merget with parent properties
+    let _tabs = entityMeta.properties['_tabs'];
+    if (_tabs) _tabs.tabs.forEach((prop) => (entityMeta.properties[prop.name] = prop));
+
     let converted: RestAndFiles = this.process(newValue, entityMeta);
     console.log('converted', converted);
     let sub: Observable<any>;
@@ -103,13 +106,17 @@ export class EntityService implements AbstractEntityService {
     if (original && original._links)
       sub = this.http.patch<ObjectWithLinks>(original._links.self.href, converted.payload).pipe(
         take(1),
-        finalize(() => this.showUpdated())
+        finalize(() => {
+          if (showSnackBar) this.showUpdated();
+        })
       );
     // POST
     else
       sub = this.http.post<ObjectWithLinks>(entityMeta.url, converted.payload).pipe(
         take(1),
-        finalize(() => this.showCreated())
+        finalize(() => {
+          if (showSnackBar) this.showCreated();
+        })
       );
 
     sub = sub.pipe(
@@ -125,9 +132,15 @@ export class EntityService implements AbstractEntityService {
         this.getPostSave([...converted.postSave], d._links.self.href).pipe(
           mergeMap((_) => this.finalizeSave(d, navigate))
         )
-      )
+      ),
+      mergeMap((d) => {
+        return forkJoin(converted.patchRequests);
+      })
+      // patcheds
+      // zip(converted.patchRequests)
     );
     return sub;
+    // return of();
   }
 
   uploadFiles(entity: ObjectWithLinks, files: PropertyFile[]): Observable<unknown[]> {
@@ -188,33 +201,50 @@ export class EntityService implements AbstractEntityService {
     return this.entityMetaService.getModel(p.reference);
   }
 
+  private clean(object: any) {
+    for (var propName in object) {
+      if (object[propName] === null || object[propName] === undefined) {
+        delete object[propName];
+      }
+    }
+    return object;
+  }
+
   private process(newValue: any, entityMeta: EntityMeta): RestAndFiles {
-    console.debug('-------------------------------- ');
-    console.debug('---------- ' + entityMeta.name + ' ---------- ');
-    console.debug('-------------------------------- ');
+    console.log('-------------------------------- ');
+    console.log('---------- ' + entityMeta.name + ' ---------- ');
+    console.log('-------------------------------- ');
     // Detect ObjectWith links then convert them to id or id list
+
     const rest = {};
     const files: PropertyFile[] = [];
     const postSave: SavePayload[] = [];
     const preSave: SavePayload[] = [];
-    const properties = Object.values(entityMeta.properties);
+    const patches: any[] = [];
+    const properties: Property[] = Object.values(entityMeta.properties);
 
     properties.forEach((p) => {
       const key = p.name;
       const value = newValue[key];
+      // console.log(key, value);
+
       const type = p.type;
-      console.debug(key, type, value);
       if (p.generated) return;
+      else if (!value) return;
       else if (type == PropertyType.objectList) {
-        // // const filtered = (value as any[])
-        // //   .filter((x) => x != undefined)
-        // //   .map((payload) => {
-        // //     if (value instanceof Object && payload._links) return payload._links.self.href;
-        // //     else if (payload instanceof File) files.push({ file: payload, name: key });
-        // //     else postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key });
-        // //   });
-        // // console.log('filtered ' + filtered.length);
-        // if (filtered.length > 0) rest[key] = filtered;
+        (value as any[]).forEach((payload) => {
+          // post save only the
+          if (!payload._links)
+            postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key });
+          else if (payload._links) {
+            const url = clearUrl(payload._links.self.href);
+            var converted = this.convertObjectToHateos(payload, p.entityMeta);
+            console.log(converted);
+
+            const patchReq = this.http.patch(url, converted).pipe(take(1));
+            patches.push(patchReq);
+          }
+        });
       } else if (type == PropertyType.matrix) {
         (value as any[]).forEach((payload) =>
           postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key })
@@ -227,32 +257,23 @@ export class EntityService implements AbstractEntityService {
         else rest[key] = value;
       } else rest[key] = value;
     });
-
-    // Object.keys(newValue).forEach((key) => {
-    //   const value = newValue[key];
-    //   console.log(value);
-
-    //   // Skip null values
-    //   if (value == null || value == '_null') return;
-
-    //   // Arrays of object need to be refence as URLS.
-    //   if (Array.isArray(value)) {
-    //     const f = value
-    //       .filter((x) => x != undefined)
-    //       .map((payload) => {
-    //         if (value instanceof Object && payload._links) return payload._links.self.href;
-    //         else if (payload instanceof File) files.push({ file: payload, name: key });
-    //         else postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key });
-    //       })
-    //       .filter((x) => x != undefined);
-    //     if (f.length > 0) rest[key] = f;
-    //   } else if (value instanceof File) {
-    //     files.push({ file: value, name: key });
-    //   } else if (value instanceof Object && value._links) {
-    //     const linked: ObjectWithLinks = newValue[key];
-    //     rest[key] = linked._links.self.href;
-    //   } else rest[key] = newValue[key];
-    // });
-    return new RestAndFiles(rest, files, preSave, postSave);
+    return new RestAndFiles(rest, files, preSave, postSave, patches);
   }
-} // class
+
+  private convertObjectToHateos(item: ObjectWithLinks, entityMeta: EntityMeta) {
+    var returnObject = {};
+    Object.values(entityMeta.properties).forEach((property: Property) => {
+      var currentValue = item[property.name];
+      // if (!currentValue) return;
+      switch (property.type) {
+        case PropertyType.object:
+          if (currentValue._links) returnObject[property.name] = currentValue._links.self.href;
+          else returnObject[property.name] = currentValue;
+          break;
+        default:
+          returnObject[property.name] = currentValue;
+      }
+    });
+    return returnObject;
+  }
+}

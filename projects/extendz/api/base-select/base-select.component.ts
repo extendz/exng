@@ -9,7 +9,7 @@ export class ExtBaseSelectComponent implements OnInit {
   /***
    *
    */
-  protected value: string | string[] | object | object[];
+  value: string | string[] | object | object[];
   /**
    * Display value for the current value.
    * Seperation is needed since the acctual selected value is an URL and the display values is a human readble text.
@@ -24,17 +24,12 @@ export class ExtBaseSelectComponent implements OnInit {
    */
   public onTouched: any = () => {};
 
-  /***
-   *
-   */
+  /***   */
   @Input() property: Property;
-
   /*** */
   @Input() entity: any;
   /*** */
   @Output() entityChange: EventEmitter<any> = new EventEmitter<any>();
-
-  constructor() {}
 
   ngOnInit(): void {}
 

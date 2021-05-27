@@ -54,6 +54,17 @@ export enum PropertyType {
   money = 'money',
   color = 'color',
   unit = 'unit',
+  tabs = 'tabs',
+}
+
+export enum MutationType {
+  Update,
+  Delete,
+}
+
+export class Mutate {
+  from?: MutationType;
+  to?: string;
 }
 
 export class Property {
@@ -75,14 +86,10 @@ export class Property {
   /*** */
   type: PropertyType;
 
-  /***
-   *
-   */
+  /*** Name of the property  */
   name: string;
 
-  /***
-   *
-   */
+  /*** Meta data of the entity */
   entityMeta?: EntityMeta;
 
   /***
@@ -119,4 +126,9 @@ export class Property {
 
   /*** Before saving the parent property this property need to be saved and passed on  */
   preSave?: boolean;
+
+  tabs?: Property[];
+
+  /*** Mutations on form */
+  mutations?: Mutate[];
 }

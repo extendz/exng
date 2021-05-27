@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExtPipesModule } from 'extendz/pipes';
@@ -24,6 +25,7 @@ import { ExtEmbeddedComponent } from './embedded.component';
     ExtTableEmbeddedModule,
     //Mat
     MatButtonModule,
+    MatMenuModule,
     MatTableModule,
     MatDialogModule,
     MatIconModule,

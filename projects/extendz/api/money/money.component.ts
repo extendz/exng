@@ -12,14 +12,10 @@ import {
   Self,
 } from '@angular/core';
 import {
-  AbstractControl,
   ControlValueAccessor,
   FormBuilder,
   FormGroup,
   NgControl,
-  NG_VALIDATORS,
-  ValidationErrors,
-  Validator,
   Validators,
 } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -51,6 +47,7 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
   get placeholder() {
     return this._placeholder;
   }
+
   set placeholder(plh) {
     this._placeholder = plh;
     this.stateChanges.next();
@@ -144,7 +141,6 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
       if (v.currency && v.value) {
         const url = getValueByField(this.entityConfig.idFeild, v.currency);
         this.onChange({ value: v.value, currency: url });
-        // this.onChange(v);
       }
     });
 
@@ -172,11 +168,6 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
   }
 
   writeValue(price: Price): void {
-    // console.log(price);
-    // if
-    // const id = getValueByField(this.entityConfig.idFeild, price.currency);
-    // console.log(id);
-
     if (price) this.priceFormGroup.patchValue(price);
     this.getCurrencies(price);
   }
@@ -204,5 +195,8 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {}
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    isDisabled ? this.priceFormGroup.disable() : this.priceFormGroup.enable();
+  }
 }
