@@ -160,10 +160,12 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
       this.entityService
         .save(this.entityMeta, this.formGroup.value, true, this.originalEntity, showSnackBar)
         .pipe(
+          tap(console.log),
           tap((d) => (this.entity = d)),
           tap((d) => this.deepCopy(d)),
           tap((d) => this.saved.emit(d)),
-          finalize(() => (this.loading = false))
+          finalize(() => (this.loading = false)),
+          take(1)
         )
         .subscribe();
     } else {
@@ -172,15 +174,26 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
     }
   }
 
-  public onBooleanChange(event: MatCheckboxChange, property: Property) {
+  onBooleanChange(event: MatCheckboxChange, property: Property) {
     console.log(event.checked, property.command, this.entity);
   }
 
-  public onAction(action: string) {
-    let a: Action = {
-      action,
-      entity: this.entity,
-    };
-    this.action.emit(a);
+  onAction(action: Action) {
+    // merge entiry and formGroup value
+    // action.entity = { ...this.entity, ...this.formGroup.value };
+    action.entity = this.cleanObjects([this.entity, this.formGroup.value]);
+    this.action.emit(action);
   }
-} // class
+
+  cleanObjects(arr: any[]) {
+    let o = {};
+    arr.map((obj) => {
+      for (const [key, value] of Object.entries(obj)) {
+        typeof value === 'undefined' || value === null || (Array.isArray(value) && value.length < 0)
+          ? delete obj[key]
+          : (o[key] = value);
+      }
+    });
+    return o;
+  }
+}

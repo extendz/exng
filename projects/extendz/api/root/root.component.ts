@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { EntityMeta, EntityMetaResponse, ExtRootConfig, EXT_ROOT_CONFIG } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'ext-root',
@@ -13,7 +14,7 @@ import { Observable } from 'rxjs';
 export class RootComponent implements OnInit {
   @Output() select: EventEmitter<EntityMeta> = new EventEmitter<EntityMeta>();
 
-  public models$: Observable<EntityMetaResponse>;
+  models$: Observable<EntityMetaResponse>;
 
   constructor(
     @Inject(EXT_ROOT_CONFIG) private rootConfig: ExtRootConfig,
@@ -26,10 +27,18 @@ export class RootComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.models$ = this.entityMetaService.getRoot();
+    this.models$ = this.entityMetaService.getRoot().pipe(
+      map((d) => {
+        const filtterd = {};
+        Object.entries(d).forEach(([key, value]) => {
+          if (!value.hidden) filtterd[key] = value;
+        });
+        return filtterd;
+      })
+    );
   }
 
-  public onSelect(model: EntityMeta) {
+  onSelect(model: EntityMeta) {
     this.select.emit(model);
   }
 }

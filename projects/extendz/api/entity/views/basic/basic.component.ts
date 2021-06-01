@@ -1,7 +1,8 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { Property } from 'dist/extendz/core/public_api';
 import {
   AbstractEntityService,
   EntityMeta,
@@ -10,7 +11,6 @@ import {
   EXT_API_CONFIG,
   EXT_ENTITY_CONFIG,
   EXT_ENTITY_SERVICE,
-  Property,
   PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
@@ -19,11 +19,11 @@ import { INPUT_ENTIRY, INPUT_ENTITY_META } from '../../../api.consts';
 import { ExtBaseViewComponent } from '../base-view/base-view.component';
 
 @Component({
-  selector: 'ext-simple',
-  templateUrl: './simple.component.html',
-  styleUrls: ['./simple.component.scss'],
+  selector: 'ext-basic',
+  templateUrl: './basic.component.html',
+  styleUrls: ['./basic.component.scss'],
 })
-export class SimpleComponent extends ExtBaseViewComponent implements OnInit {
+export class ExtBasicComponent extends ExtBaseViewComponent implements OnInit {
   /*** Entity meta for the selected/new item */
   @Input(INPUT_ENTITY_META) entityMeta: EntityMeta;
 
@@ -44,6 +44,7 @@ export class SimpleComponent extends ExtBaseViewComponent implements OnInit {
     public media: MediaObserver
   ) {
     super(apiConfig, entityConfig, entityService, activatedRoute, entityMetaService);
+   
   }
 
   ngOnInit(): void {
@@ -69,14 +70,6 @@ export class SimpleComponent extends ExtBaseViewComponent implements OnInit {
   }
 
   handleEntityMeta(propties: Property[]) {
-    console.log(propties);
-
     this.properties = propties;
-  }
-
-  showQuickAdd() {
-    // let dialogRef = this.dialog.open(DialogOverviewExampleDialog,{
-    //   width: '50vw',
-    // });
   }
 }

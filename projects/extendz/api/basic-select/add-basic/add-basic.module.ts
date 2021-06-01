@@ -5,21 +5,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ExtPipesModule } from 'extendz/pipes';
-import { ExtSimpleModule } from '../../../entity/views/simple/simple.module';
-import { ExtAddNewComponent } from './add-new.component';
+import { ExtBasicModule } from '../../entity/views/basic/basic.module';
+import { AddBasicComponent } from './add-basic.component';
 
 @NgModule({
-  declarations: [ExtAddNewComponent],
-  entryComponents: [ExtAddNewComponent],
+  declarations: [AddBasicComponent],
+  exports: [AddBasicComponent],
   imports: [
     CommonModule,
-    ExtSimpleModule,
-    ExtPipesModule,
     FlexLayoutModule,
-    // Mat
+    ExtPipesModule,
+    ExtBasicModule,
+    MatDialogModule,
     MatButtonModule,
     MatToolbarModule,
-    MatDialogModule,
   ],
 })
-export class ExtAddNewModule {}
+export class AddBasicModule {}

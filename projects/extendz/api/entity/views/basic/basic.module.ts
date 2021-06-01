@@ -2,26 +2,30 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtPipesModule } from 'extendz/pipes';
-import { SimpleEntityComponent } from './simple-entity.component';
+import { ExtBasicSelectModule } from '../../../basic-select/basic-select.module';
+import { ExtMoneyModule } from '../../../money/money.module';
+import { ExtBasicComponent } from './basic.component';
 
 @NgModule({
-  declarations: [SimpleEntityComponent],
-  exports: [SimpleEntityComponent],
+  declarations: [ExtBasicComponent],
+  exports: [ExtBasicComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    ExtPipesModule,
     FlexLayoutModule,
-
+    ExtPipesModule,
+    ExtMoneyModule,
+    ReactiveFormsModule,
+    MatDialogModule,
     MatInputModule,
-    MatButtonModule,
+    MatSlideToggleModule,
     MatSelectModule,
     MatDatepickerModule,
   ],
 })
-export class ExtSimpleEntityModule {}
+export class ExtBasicModule {}

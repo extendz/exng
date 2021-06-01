@@ -3,9 +3,12 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtPipesModule } from 'extendz/pipes';
+import { ExtBasicSelectModule } from '../../../basic-select/basic-select.module';
 import { ExtMoneyModule } from '../../../money/money.module';
 import { SimpleComponent } from './simple.component';
 
@@ -17,9 +20,11 @@ import { SimpleComponent } from './simple.component';
     FlexLayoutModule,
     ExtPipesModule,
     ExtMoneyModule,
+    ExtBasicSelectModule,
     ReactiveFormsModule,
-
+    MatDialogModule,
     MatInputModule,
+    MatSlideToggleModule,
     MatSelectModule,
     MatDatepickerModule,
   ],

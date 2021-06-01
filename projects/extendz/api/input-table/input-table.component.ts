@@ -1,44 +1,49 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
   Component,
+  ElementRef,
   forwardRef,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges,
+  Optional,
+  Self,
   ViewChild,
 } from '@angular/core';
+import { MediaObserver } from '@angular/flex-layout';
 import {
   ControlValueAccessor,
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
-  NG_VALUE_ACCESSOR,
+  NgControl,
 } from '@angular/forms';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatTable } from '@angular/material/table';
-import { Mutate, Property } from 'extendz/core';
+import { Mutate, Property, PropertyType } from 'extendz/core';
 import { Subscription } from 'rxjs';
-import { skip, tap } from 'rxjs/operators';
+import { skip } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
 
 @Component({
   selector: 'ext-input-table',
   templateUrl: './input-table.component.html',
   styleUrls: ['./input-table.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: forwardRef(() => InputTableComponent),
-    },
-  ],
+  providers: [{ provide: MatFormFieldControl, useExisting: forwardRef(() => InputTableComponent) }],
 })
 export class InputTableComponent
   extends ExtBaseSelectComponent
   implements OnInit, ControlValueAccessor, OnDestroy
 {
-  /***   */
+  static nextId = 0;
+  id = `ext-input-table-${InputTableComponent.nextId++}`;
+
+  get empty() {
+    return this.value != null;
+  }
+
+  /*** Tab Property  */
   @Input() property: Property;
 
   @ViewChild(MatTable, { static: false }) table: MatTable<any>;
@@ -50,40 +55,50 @@ export class InputTableComponent
 
   subscription: Subscription;
 
-  constructor(private formBuilder: FormBuilder) {
-    super();
+  constructor(
+    private formBuilder: FormBuilder,
+    @Optional() @Self() ngControl: NgControl,
+    fm: FocusMonitor,
+    elRef: ElementRef,
+    public media: MediaObserver
+  ) {
+    super(ngControl, fm, elRef);
   }
 
   ngOnInit(): void {
     if (this.property) {
       this.allColumns = Object.keys(this.property.entityMeta.properties);
       //
-      this.allColumns.push('save');
+      // this.allColumns.push('save');
+
       this.formGroup = this.formBuilder.group({
         data: this.rows,
       });
     }
 
     this.subscription = this.formGroup.valueChanges
-      .pipe(
-        tap((_) => this.mutate(this.property.mutations)),
-        skip(1)
-      )
-      .subscribe((v) => {
-        this.onChange(v.data);
-      });
+      .pipe(skip(1))
+      .subscribe((v) => this.onChange(v.data));
   }
 
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
   }
 
-  mutate(mutations: Mutate[]) {
-    // console.log('mutations ', mutations);
-  }
+  onSelectionChange(entity: any, currentProperty: Property, index: number) {
+    // if any mutations
+    if (this.property.mutations) {
+      const key = currentProperty.name;
 
-  save(row: any) {
-    console.log(row);
+      // mutation for given property
+      const mutations: Mutate[] = this.property.mutations[key];
+      const mute = {};
+      console.log(entity);
+      mutations.forEach((m) => {
+        mute[m.to] = entity[m.from];
+      });
+      this.rows.controls[index].patchValue(mute);
+    }
   }
 
   ngAfterViewInit() {
@@ -93,21 +108,27 @@ export class InputTableComponent
     }, 0);
   }
 
-  addRow(value?: any) {
+  addRow(entity?: any) {
     const row = this.formBuilder.group({});
     Object.values(this.property.entityMeta.properties).forEach((prop) => {
+      //TODO dissable for type display
       let ctrl = null;
-      if (value) ctrl = new FormControl(value[prop.name]);
-      else ctrl = new FormControl();
+      let value: any;
+      if (entity) value = entity[prop.name];
+      else if (prop.type == PropertyType.index) value = this.rows.length + 1;
+
+      if (prop.generated) ctrl = new FormControl({ value, disabled: true });
+      else ctrl = new FormControl(value);
+
       row.addControl(prop.name, ctrl);
     });
 
     //TODO add _links. should be used as id feild than this
     let linksCtrl = new FormControl();
-    if (value && value._links) linksCtrl = new FormControl(value._links);
+    if (entity && entity._links) linksCtrl = new FormControl(entity._links);
     row.addControl('_links', linksCtrl);
 
-    this.dataSource.push(value);
+    this.dataSource.push(entity);
     this.rows.push(row);
     this.table.renderRows();
   }
@@ -125,4 +146,11 @@ export class InputTableComponent
   }
 
   setDisabledState?(isDisabled: boolean): void {}
+
+  setDescribedByIds(ids: string[]) {
+    throw new Error('Method not implemented.');
+  }
+  onContainerClick(event: MouseEvent) {
+    throw new Error('Method not implemented.');
+  }
 }

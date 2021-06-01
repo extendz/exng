@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EntityMeta, EntityMetaResponse, ExtApiConfig, EXT_API_CONFIG } from 'extendz/core';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
@@ -20,5 +21,9 @@ export class EntityMetaService {
 
   getModel(name: string): Observable<EntityMeta> {
     return this.getRoot().pipe(map((models) => models[name], take(1)));
+  }
+
+  getModelSync(name: string): EntityMeta {
+    return this.entityMetaResponse[name];
   }
 }

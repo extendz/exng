@@ -1,5 +1,10 @@
 <mat-dialog-content>
-  <ext-simple [entityMeta]="data.entityMeta" #simple (saved)="onSaved($event)"></ext-simple>
+  <mat-toolbar color="primary">
+    {{ data?.entityMeta?.name | camelCase }}
+  </mat-toolbar>
+  <div class="wrap">
+    <ext-simple [entityMeta]="data.entityMeta" #simple (saved)="onSaved($event)"></ext-simple>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span fxFlex></span>

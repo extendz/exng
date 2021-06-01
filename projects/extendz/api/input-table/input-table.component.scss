@@ -1,0 +1,40 @@
+// mat-form-field {
+//   margin-left: 1vw;
+// }
+
+// mat-header-cell {
+//   padding-left: 1vw;
+
+// }
+
+// ext-select {
+//   margin-left: 1vw;
+//  }
+
+.w-75 {
+  width: 75px;
+}
+
+.w-100 {
+  width: 100px;
+}
+
+table,
+th,
+td {
+  width: 100%;
+}
+mat-form-field {
+  width: 95%;
+}
+
+
+
+th,
+td {
+  border: none !important;
+}
+
+input:focus {
+  outline: none;
+}

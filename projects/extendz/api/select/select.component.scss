@@ -1,5 +1,32 @@
-// mat-form-field {
-//   width: 100%;
-//   display: block;
-  
-// }
+:host {
+  display: block;
+  max-height: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+$size: 21px;
+$icon: 14px;
+
+input {
+  line-height: 16px;
+}
+
+.small-icon-button {
+  padding: 0;
+  width: $size !important;
+  height: $size !important;
+  line-height: 16px !important;
+  height: 16px;
+
+  .mat-icon {
+    width: $icon !important;
+    height: $icon !important;
+    line-height: 16px !important;
+  }
+  .material-icons {
+    font-size: $icon !important;
+  }
+}

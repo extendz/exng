@@ -42,9 +42,11 @@ export enum PropertyType {
   embedded = 'embedded',
   embeddedList = 'embeddedList',
   email = 'email',
+  index = 'index',
   enum = 'enum',
   file = 'file',
   image = 'image',
+  imageList = 'imageList',
   number = 'number',
   object = 'object',
   objectList = 'objectList',
@@ -130,5 +132,7 @@ export class Property {
   tabs?: Property[];
 
   /*** Mutations on form */
-  mutations?: Mutate[];
+  mutations?: {
+    [key: string]: Mutate[];
+  };
 }

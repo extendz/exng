@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EntityMetaService } from 'extendz/service';
 import { EntityMeta } from 'extendz/core';
 import { Observable } from 'rxjs';
 import { ExtAddNewData } from '../../select.component';
@@ -15,7 +14,6 @@ export class ExtAddNewComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ExtAddNewData,
-    private entityMetaService: EntityMetaService,
     private dialogRef: MatDialogRef<ExtAddNewComponent>
   ) {}
 

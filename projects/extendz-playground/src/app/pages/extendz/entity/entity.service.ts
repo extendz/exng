@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params, Router } from '@angular/router';
@@ -12,8 +12,8 @@ import {
   PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { forkJoin, Observable, of, zip } from 'rxjs';
-import { defaultIfEmpty, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError, zip } from 'rxjs';
+import { catchError, defaultIfEmpty, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
 
 export class PropertyFile {
   name: string;
@@ -42,7 +42,7 @@ export class EntityService implements AbstractEntityService {
   constructor(
     private router: Router,
     private http: HttpClient,
-    private entityMetaService: EntityMetaService,
+    public entityMetaService: EntityMetaService,
     public snackBar: MatSnackBar
   ) {}
 
@@ -69,6 +69,11 @@ export class EntityService implements AbstractEntityService {
         take(1)
       )
       .subscribe();
+  }
+
+  navigateExisting(property: Property, entity: ObjectWithLinks) {
+    const id = getId(entity._links.self.href);
+    this.navigate(property, id);
   }
 
   navigateNew(property: Property, parentEntity: ObjectWithLinks): void {
@@ -106,7 +111,11 @@ export class EntityService implements AbstractEntityService {
     if (original && original._links)
       sub = this.http.patch<ObjectWithLinks>(original._links.self.href, converted.payload).pipe(
         take(1),
-        finalize(() => {
+        catchError((e) => {
+          if (showSnackBar) this.showError(e);
+          return throwError(e);
+        }),
+        tap(() => {
           if (showSnackBar) this.showUpdated();
         })
       );
@@ -114,7 +123,11 @@ export class EntityService implements AbstractEntityService {
     else
       sub = this.http.post<ObjectWithLinks>(entityMeta.url, converted.payload).pipe(
         take(1),
-        finalize(() => {
+        catchError((e) => {
+          if (showSnackBar) this.showError(e);
+          return throwError(e);
+        }),
+        tap(() => {
           if (showSnackBar) this.showCreated();
         })
       );
@@ -133,11 +146,12 @@ export class EntityService implements AbstractEntityService {
           mergeMap((_) => this.finalizeSave(d, navigate))
         )
       ),
-      mergeMap((d) => {
-        return forkJoin(converted.patchRequests);
-      })
-      // patcheds
-      // zip(converted.patchRequests)
+      mergeMap((d) =>
+        forkJoin(converted.patchRequests).pipe(
+          defaultIfEmpty(d),
+          mergeMap((_) => of(d))
+        )
+      )
     );
     return sub;
     // return of();
@@ -157,6 +171,13 @@ export class EntityService implements AbstractEntityService {
 
   private showCreated() {
     this.snackBar.open('Created', null, { duration: 3000, panelClass: ['snack-bar-success'] });
+  }
+
+  private showError(res: HttpErrorResponse) {
+    this.snackBar.open(`Error : ${res.error.error}`, null, {
+      duration: 3000,
+      panelClass: ['snack-bar-error'],
+    });
   }
 
   private showUpdated() {
@@ -211,9 +232,9 @@ export class EntityService implements AbstractEntityService {
   }
 
   private process(newValue: any, entityMeta: EntityMeta): RestAndFiles {
-    console.log('-------------------------------- ');
-    console.log('---------- ' + entityMeta.name + ' ---------- ');
-    console.log('-------------------------------- ');
+    console.debug('-------------------------------- ');
+    console.debug('---------- ' + entityMeta.name + ' ---------- ');
+    console.debug('-------------------------------- ');
     // Detect ObjectWith links then convert them to id or id list
 
     const rest = {};
@@ -226,30 +247,37 @@ export class EntityService implements AbstractEntityService {
     properties.forEach((p) => {
       const key = p.name;
       const value = newValue[key];
-      // console.log(key, value);
+      if (value) console.debug(key, value);
 
       const type = p.type;
       if (p.generated) return;
       else if (!value) return;
       else if (type == PropertyType.objectList) {
+        let savedObjectList = [];
         (value as any[]).forEach((payload) => {
-          // post save only the
+          // post save only the object without id
           if (!payload._links)
             postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key });
           else if (payload._links) {
+            // Patch
             const url = clearUrl(payload._links.self.href);
-            var converted = this.convertObjectToHateos(payload, p.entityMeta);
-            console.log(converted);
-
+            let entityMeta = p.entityMeta;
+            if (!entityMeta) entityMeta = this.entityMetaService.getModelSync(p.reference);
+            var converted = this.convertObjectToHateos(payload, entityMeta);
             const patchReq = this.http.patch(url, converted).pipe(take(1));
             patches.push(patchReq);
+            // Update the current object
+            savedObjectList.push(url);
           }
+          rest[key] = savedObjectList;
         });
       } else if (type == PropertyType.matrix) {
         (value as any[]).forEach((payload) =>
           postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key })
         );
       } else if (type == PropertyType.image || type == PropertyType.file) {
+        console.log('is file', value instanceof File);
+
         if (value instanceof File) files.push({ file: value, name: key });
         else rest[key] = value;
       } else if (type == PropertyType.object) {
@@ -264,7 +292,7 @@ export class EntityService implements AbstractEntityService {
     var returnObject = {};
     Object.values(entityMeta.properties).forEach((property: Property) => {
       var currentValue = item[property.name];
-      // if (!currentValue) return;
+      if (!currentValue) return;
       switch (property.type) {
         case PropertyType.object:
           if (currentValue._links) returnObject[property.name] = currentValue._links.self.href;

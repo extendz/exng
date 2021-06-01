@@ -3,7 +3,6 @@ import { Search } from './search';
 import { Config } from './config';
 import { Command } from './command';
 
-
 export class Validation {
   on?: string;
   value?: string;
@@ -76,5 +75,5 @@ export class EntityMeta {
   /*** Validators */
   validators?: Validation[];
 
-
+  hidden?: boolean;
 }

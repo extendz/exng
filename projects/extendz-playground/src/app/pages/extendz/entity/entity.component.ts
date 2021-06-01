@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Action } from 'extendz/core';
+import { Action, ObjectWithLinks } from 'extendz/core';
 import { EntityComponentResolverData } from './entity-component-resolver.service';
 
 @Component({
@@ -18,6 +18,13 @@ export class EntityComponent implements OnInit {
   ngOnInit(): void {}
 
   onAction(action: Action) {
-    console.log(action);
+    switch (action.id) {
+      case 'createProject':
+        let saleOrder = action.entity as ObjectWithLinks;
+        console.log(saleOrder._links.self.href);
+        
+
+        break;
+    }
   }
 }

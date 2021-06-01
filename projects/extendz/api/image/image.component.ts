@@ -1,8 +1,8 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ImageCroppedPropertyEvent, Property, RelationshipType } from 'extendz/core';
+import { ImageCroppedPropertyEvent, Property } from 'extendz/core';
 import { take } from 'rxjs/operators';
 import { ImageCropperDialogComponent } from './image-cropper-dialog/image-cropper-dialog.component';
 
@@ -18,7 +18,7 @@ import { ImageCropperDialogComponent } from './image-cropper-dialog/image-croppe
     },
   ],
 })
-export class ExtImageComponent implements OnInit, ControlValueAccessor {
+export class ExtImageComponent implements ControlValueAccessor {
   @Input() property: Property;
   // @Input() entity: any;
   @Input() mini: boolean;
@@ -29,8 +29,6 @@ export class ExtImageComponent implements OnInit, ControlValueAccessor {
   public displayImages: SafeUrl[] = [];
 
   constructor(private sanitizer: DomSanitizer, private dialog: MatDialog) {}
-
-  ngOnInit(): void {}
 
   public onChange: any = () => {};
   public onTouched: any = () => {};
@@ -77,8 +75,8 @@ export class ExtImageComponent implements OnInit, ControlValueAccessor {
   } // handleFile()
 
   private handleUpdate(files: Blob[]) {
-    this.onChange(files);
-    // if (this.entity) this.entity[this.property.name] = files;
+    if (this.multiple) this.onChange(files);
+    else this.onChange(files[0]);
   }
 
   private getDialog(data: ImageCroppedPropertyEvent) {

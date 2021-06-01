@@ -26,6 +26,8 @@ export abstract class AbstractEntityService {
   /*** Navigate the given property with the id  */
   abstract navigate(property: Property, idField: string): void;
 
+  abstract navigateExisting(property: Property, entity: any): void;
+
   /*** Navigate to a new entity */
   abstract navigateNew(property: Property, parentEntity: any): void;
 }

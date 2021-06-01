@@ -8,7 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ExtImageModule } from '../../../image/image.module';
 import { ExtPipesModule } from 'extendz/pipes';
 import { ExtEmbeddedModule } from '../../../embedded/embedded.module';
 import { ExtInputTableModule } from '../../../input-table/input-table.module';
@@ -27,10 +30,13 @@ import { FlowComponent } from './flow.component';
     ExtSelectModule,
     ExtPipesModule,
     ExtMoneyModule,
+    ExtImageModule,
     ExtEmbeddedModule,
     // Mat
     MatButtonModule,
     MatSelectModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
     MatProgressSpinnerModule,
     MatIconModule,
     MatTabsModule,

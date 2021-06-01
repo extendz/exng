@@ -7,12 +7,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import {
   AbstractDataTableService,
-  AbstractEntityService,
   EntityMeta,
   ExtApiConfig,
   EXT_API_CONFIG,
   EXT_DATA_TABLE_SERVICE,
-  EXT_ENTITY_SERVICE,
   Property,
   PropertyType,
 } from 'extendz/core';
@@ -20,28 +18,19 @@ import { EntityMetaService } from 'extendz/service';
 import { iif, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, switchMap, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
-import { ExtAddNewComponent } from './dialog/add-new/add-new.component';
-import { ExtAdvanceSelectComponent } from './dialog/advance-select/advance-select.component';
-
-export interface ExtAdvanceSearchData {
-  entityMeta: EntityMeta;
-  entity: any;
-  property: Property;
-}
-
-export interface ExtAddNewData {
-  entityMeta: EntityMeta;
-}
+import { AddBasicComponent } from './add-basic/add-basic.component';
 
 @Component({
-  selector: 'ext-select',
-  templateUrl: './select.component.html',
-  styleUrls: ['./select.component.scss'],
-  providers: [{ provide: MatFormFieldControl, useExisting: forwardRef(() => ExtSelectComponent) }],
+  selector: 'ext-basic-select',
+  templateUrl: './basic-select.component.html',
+  styleUrls: ['./basic-select.component.scss'],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: forwardRef(() => ExtBasicSelectComponent) },
+  ],
 })
-export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit {
+export class ExtBasicSelectComponent extends ExtBaseSelectComponent implements OnInit {
   static nextId = 0;
-  id = `ext-select-${ExtSelectComponent.nextId++}`;
+  id = `ext-select-${ExtBasicSelectComponent.nextId++}`;
 
   get empty() {
     return this.value == undefined;
@@ -56,7 +45,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
   constructor(
     @Inject(EXT_API_CONFIG) public config: ExtApiConfig,
     @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService,
-    @Inject(EXT_ENTITY_SERVICE) protected entityService: AbstractEntityService,
     @Optional() @Self() ngControl: NgControl,
     private entityMetaService: EntityMetaService,
     private dialog: MatDialog,
@@ -118,21 +106,21 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     event.stopPropagation();
   }
 
-  onView(event: MouseEvent, property: Property) {
-    // this.entityMetaService.navigateToEntity(id, model);
-    this.entityService.navigateExisting(property, this.value);
-  }
+  onView() {}
 
   addNew(event: MouseEvent, property: Property) {
+    event.preventDefault();
     this.entityMetaService
       .getModel(property.reference)
       .pipe(take(1))
       .subscribe((entityMeta) => {
-        let data: ExtAddNewData = { entityMeta };
-        let dialogRef = this.dialog.open(ExtAddNewComponent, {
+        let data: any = { entityMeta };
+        console.log();
+
+        let dialogRef = this.dialog.open(AddBasicComponent, {
           data,
           panelClass: 'ext-advance-select',
-          width: '90vw',
+          width: '50vw',
         });
         dialogRef
           .afterClosed()
@@ -142,29 +130,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
           )
           .subscribe((result: any | any[]) => this.handleEmbedded(result));
       });
-  }
-
-  onAdvanceSearch(event: MouseEvent, replace: boolean) {
-    let data: ExtAdvanceSearchData = {
-      entityMeta: this.entityMeta,
-      entity: this.entity,
-      property: this.property,
-    };
-
-    let dialogRef = this.dialog.open(ExtAdvanceSelectComponent, {
-      data,
-      panelClass: 'ext-advance-select',
-      width: '90vw',
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(
-        take(1),
-        filter((r) => r != undefined)
-        // filter((r: string[]) => r.length <= 0)
-      )
-      .subscribe((result: any | any[]) => this.handleEmbedded(result));
   }
 
   private handleEmbedded(result: any | any[]) {

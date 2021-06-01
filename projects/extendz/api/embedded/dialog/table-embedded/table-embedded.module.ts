@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ExtPipesModule } from 'extendz/pipes';
-import { ExtSimpleEntityModule } from '../../core/simple-entity/simple-entity.module';
+import { ExtSimpleModule } from '../../../entity/views/simple/simple.module';
 import { ExtTableEmbeddedComponent } from './table-embedded.component';
 
 @NgModule({
@@ -14,7 +14,7 @@ import { ExtTableEmbeddedComponent } from './table-embedded.component';
   entryComponents: [ExtTableEmbeddedComponent],
   imports: [
     CommonModule, // Ext
-    ExtSimpleEntityModule,
+    ExtSimpleModule,
     FlexLayoutModule,
     ExtPipesModule,
     MatDialogModule,

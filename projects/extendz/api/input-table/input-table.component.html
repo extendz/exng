@@ -1,56 +1,69 @@
-<mat-toolbar> <button mat-button color="primary" (click)="addRow()">Add Row</button></mat-toolbar>
-<form [formGroup]="formGroup">
-  <mat-table
-    [dataSource]="dataSource"
-    formArrayName="data"
-    class="mat-elevation-z2"
-    fixedLayout="true"
+<mat-toolbar>
+  <button
+    *ngIf="property.entityMeta?.config?.table == null && property.entityMeta?.config?.table.enableAdd != false"
+    class="mat-elevation-z0"
+    mat-mini-fab
+    color="primary"
+    (click)="addRow()"
   >
+    <mat-icon>
+      <svg viewBox="0 0 24 24">
+        <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+      </svg>
+    </mat-icon>
+  </button>
+</mat-toolbar>
+<form [formGroup]="formGroup">
+  <table mat-table [dataSource]="dataSource" formArrayName="data" fixedLayout="true">
     <ng-container
       *ngFor="let p of property.entityMeta.properties | keyvalue"
       [matColumnDef]="p.key"
     >
-      <mat-header-cell *matHeaderCellDef [fxFlex.lg]="p?.value.width?.lg">
-        {{ p.key | camelCase }}
-      </mat-header-cell>
+      <th mat-header-cell *matHeaderCellDef [fxFlex.lg]="p.value?.width?.lg">
+        {{ p.value?.displayName || p.key | camelCase }}
+      </th>
 
-      <mat-cell
+      <td
+        mat-cell
         *matCellDef="let e; let i = index"
         [formGroupName]="i"
-        [fxFlex.lg]="p?.value?.width?.lg"
+        [fxFlex.lg]="p.value?.width?.lg"
       >
         <span [ngSwitch]="p?.value?.type">
+          <span *ngSwitchCase="'index'">
+            {{ i + 1 }}
+            <input style="display: none" [formControlName]="p?.value?.name" />
+          </span>
+
           <!-- number -->
-          <mat-form-field
-            *ngSwitchCase="'number'"
-            [fxFlex.lg]="p?.value.width?.lg || 80"
-            floatLabel="never"
-            appearance="outline"
-          >
+          <mat-form-field *ngSwitchCase="'number'">
             <input type="number" matInput autocomplete="off" [formControlName]="p?.value?.name" />
           </mat-form-field>
 
+          <!-- display -->
+          <span *ngSwitchCase="'display'">
+            <input style="outline: none; border: none" [formControlName]="p?.value?.name" />
+          </span>
+
+          <!-- Money -->
+          <mat-form-field *ngSwitchCase="'money'">
+            <ext-money [property]="p.value" [formControlName]="p?.value?.name"></ext-money>
+            <!-- <mat-error *ngIf="formGroup.controls[p?.value?.name].hasError('required')">
+              {{ p?.value?.name | camelCase }} is <strong>required!</strong>
+            </mat-error> -->
+          </mat-form-field>
+
           <!-- Sting -->
-          <mat-form-field
-            *ngSwitchCase="'string'"
-            floatLabel="never"
-            appearance="outline"
-            [fxFlex.lg]="p?.value.width?.lg || 80"
-          >
+          <mat-form-field *ngSwitchCase="'string'">
             <input type="text" matInput autocomplete="off" [formControlName]="p?.value?.name" />
-            <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-              {{ property.name | camelCase }} is
+            <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
+              {{ p?.value?.name | camelCase }} is
               <strong>required</strong>
             </mat-error>
           </mat-form-field>
 
           <!-- enum -->
-          <mat-form-field
-            *ngSwitchCase="'enum'"
-            floatLabel="never"
-            appearance="outline"
-            [fxFlex.lg]="p?.value.width?.lg || 80"
-          >
+          <mat-form-field *ngSwitchCase="'enum'">
             <mat-select [formControlName]="p.value.name">
               <mat-option *ngFor="let enum of p.value.enums" [value]="enum">
                 {{ enum }}
@@ -58,34 +71,36 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- object -->
-          <ext-select
-            *ngSwitchCase="'object'"
-            [property]="p.value"
-            [formControlName]="p.value.name"
-          >
-          </ext-select>
-        </span>
-      </mat-cell>
-    </ng-container>
+          <!-- Date -->
+          <mat-form-field *ngSwitchCase="'date'">
+            <input
+              matInput
+              autocomplete="off"
+              [matDatepicker]="picker"
+              [formControlName]="p.value.name"
+            />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker [touchUi]="media.isActive('xs')" #picker></mat-datepicker>
+            <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
+              {{ p?.value?.name | camelCase }} is
+              <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
 
-    <ng-container matColumnDef="save">
-      <mat-header-cell *matHeaderCellDef fxFlex="48px"> Save </mat-header-cell>
-      <mat-cell *matCellDef="let row" fxFlex="48px">
-        <button mat-icon-button (click)="save(row)">
-          <mat-icon>
-            <svg id="save" viewBox="0 0 24 24" class="primary-text">
-              <path d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
-              />
-            </svg>
-          </mat-icon>
-        </button>
-      </mat-cell>
+          <!-- object -->
+          <mat-form-field *ngSwitchCase="'object'">
+            <ext-select
+              (entityChange)="onSelectionChange($event, p?.value, i)"
+              [property]="p.value"
+              [formControlName]="p.value.name"
+            >
+            </ext-select>
+          </mat-form-field>
+        </span>
+      </td>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="allColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
-  </mat-table>
+  </table>
 </form>

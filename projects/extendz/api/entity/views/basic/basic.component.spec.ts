@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SimpleEntityComponent } from './simple-entity.component';
+import { ExtBasicComponent } from './basic.component';
 
-describe('SimpleEntityComponent', () => {
-  let component: SimpleEntityComponent;
-  let fixture: ComponentFixture<SimpleEntityComponent>;
+describe('BasicComponent', () => {
+  let component: ExtBasicComponent;
+  let fixture: ComponentFixture<ExtBasicComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SimpleEntityComponent ]
+      declarations: [ ExtBasicComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SimpleEntityComponent);
+    fixture = TestBed.createComponent(ExtBasicComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

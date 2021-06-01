@@ -1,14 +1,14 @@
-<form [formGroup]="priceFormGroup">
-  <mat-select formControlName="currency" fxFlex="15">
+<form [formGroup]="priceFormGroup" fxLayout="row" fxLayoutAlign="start center">
+  <mat-select formControlName="currency" fxFlex.lg="3vw" fxFlex.lg="4vw">
     <mat-option *ngFor="let c of currencies$ | async" [value]="c">
       {{ c.code }}
     </mat-option>
   </mat-select>
-
+  <div fxFlex="1"></div>
   <input
-    fxFlex
     matInput
     type="number"
+    min="1"
     formControlName="value"
     autocomplete="off"
     [placeholder]="placeholder"

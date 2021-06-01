@@ -78,21 +78,6 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Object -->
-    <mat-form-field
-      *ngIf="property.type == propertyTypes.object || property.type == propertyTypes.objectList"
-    >
-      <ext-basic-select
-        [property]="property"
-        [formControlName]="property.name"
-        [placeholder]="property.name | camelCase"
-      >
-      </ext-basic-select>
-      <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-        {{ property.name | camelCase }} is <strong>required!</strong>
-      </mat-error>
-    </mat-form-field>
-
     <!-- Money -->
     <mat-form-field *ngIf="property.type == propertyTypes.money">
       <ext-money

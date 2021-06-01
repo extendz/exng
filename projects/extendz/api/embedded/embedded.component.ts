@@ -1,6 +1,8 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { Component, ElementRef, forwardRef, OnInit, Optional, Self } from '@angular/core';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { EntityMeta, Property, PropertyType } from 'extendz/core';
 import { filter, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
@@ -21,21 +23,30 @@ export interface ExtEditEmbeddedComponentData {
   templateUrl: './embedded.component.html',
   styleUrls: ['./embedded.component.scss'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: forwardRef(() => ExtEmbeddedComponent),
-    },
+    { provide: MatFormFieldControl, useExisting: forwardRef(() => ExtEmbeddedComponent) },
   ],
 })
 export class ExtEmbeddedComponent
   extends ExtBaseSelectComponent
-  implements OnInit, ControlValueAccessor {
+  implements OnInit, ControlValueAccessor
+{
+  static nextId = 0;
+  id = `ext-embedded-${ExtEmbeddedComponent.nextId++}`;
+
+  get empty() {
+    return this.value != null;
+  }
+
   propertyType: PropertyType;
   propertyTypes = PropertyType;
 
-  constructor(private dialog: MatDialog) {
-    super();
+  constructor(
+    private dialog: MatDialog,
+    @Optional() @Self() ngControl: NgControl,
+    fm: FocusMonitor,
+    elRef: ElementRef
+  ) {
+    super(ngControl, fm, elRef);
   }
 
   ngOnInit() {
@@ -113,4 +124,12 @@ export class ExtEmbeddedComponent
   }
 
   setDisabledState?(isDisabled: boolean): void {}
+
+  setDescribedByIds(ids: string[]) {
+    throw new Error('Method not implemented.');
+  }
+
+  onContainerClick(event: MouseEvent) {
+    throw new Error('Method not implemented.');
+  }
 }

@@ -4,8 +4,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ExtSimpleEntityModule } from '../../core/simple-entity/simple-entity.module';
 import { ExtEditEmbeddedComponent } from './edit-embedded.component';
+import { ExtSimpleModule } from '../../../entity/views/simple/simple.module';
 
 @NgModule({
   declarations: [ExtEditEmbeddedComponent],
@@ -15,7 +15,7 @@ import { ExtEditEmbeddedComponent } from './edit-embedded.component';
     ReactiveFormsModule,
     FlexLayoutModule,
     // Extendz
-    ExtSimpleEntityModule,
+    ExtSimpleModule,
     // Mat
     MatDialogModule,
     MatButtonModule,

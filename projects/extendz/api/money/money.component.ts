@@ -39,7 +39,7 @@ import { debounceTime, map, mergeMap, tap } from 'rxjs/operators';
   styleUrls: ['./money.component.scss'],
   providers: [{ provide: MatFormFieldControl, useExisting: forwardRef(() => MoneyComponent) }],
 })
-export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFieldControl<Price> {
+export class MoneyComponent implements ControlValueAccessor, MatFormFieldControl<Price> {
   static nextId = 0;
   @Input() property: Property;
 
@@ -47,7 +47,6 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
   get placeholder() {
     return this._placeholder;
   }
-
   set placeholder(plh) {
     this._placeholder = plh;
     this.stateChanges.next();
@@ -133,7 +132,7 @@ export class MoneyComponent implements OnInit, ControlValueAccessor, MatFormFiel
     if (this.ngControl) this.ngControl.valueAccessor = this;
 
     this.priceFormGroup = this.formbuilder.group({
-      value: [null, Validators.required],
+      value: [null, [Validators.required, Validators.min(1)]],
       currency: [null, Validators.required],
     });
 

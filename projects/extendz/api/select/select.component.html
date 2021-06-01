@@ -1,4 +1,4 @@
-<mat-form-field fxFlex>
+<div fxLayout="row">
   <input
     [formControl]="autoCompleteControl"
     matInput
@@ -18,28 +18,29 @@
   <button
     [matMenuTriggerFor]="menu"
     mat-icon-button
-    matSuffix
+    class="small-icon-button"
     matTooltip="More"
     (click)="onMore($event)"
   >
-    <ng-container *ngTemplateOutlet="more"> </ng-container>
+    <ng-container *ngTemplateOutlet="more"></ng-container>
   </button>
-</mat-form-field>
+</div>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="addNew($event, property)">
-    <ng-container *ngTemplateOutlet="add"></ng-container>
-    <span>Add</span>
-  </button>
-  <button mat-menu-item (click)="onView()" [disabled]="value == undefined"> 
-    <ng-container *ngTemplateOutlet="view"></ng-container>
-    <span>View</span>
-  </button>
-
   <button mat-menu-item (click)="onAdvanceSearch($event, true)" mat-menu-item>
     <ng-container *ngTemplateOutlet="search"> </ng-container>
     <span>Search</span>
   </button>
+  <button mat-menu-item (click)="addNew($event, property)">
+    <ng-container *ngTemplateOutlet="add"></ng-container>
+    <span>Add</span>
+  </button>
+
+  <button mat-menu-item (click)="onView($event, property)" [disabled]="value == undefined">
+    <ng-container *ngTemplateOutlet="view"></ng-container>
+    <span>View</span>
+  </button>
+
   <button mat-menu-item (click)="onRemoveObject($event, property)">
     <ng-container *ngTemplateOutlet="clear"></ng-container>
     <span>Clear</span>
@@ -49,7 +50,7 @@
 <ng-template #more>
   <mat-icon>
     <svg viewBox="0 0 24 24">
-      <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+      <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
     </svg>
   </mat-icon>
 </ng-template>

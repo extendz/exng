@@ -1,14 +1,32 @@
+<mat-toolbar>
+  <mat-icon *ngIf="entityMeta" svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
+  <span fxFlex="0.5" fxFlex.xs="1"></span>
+  <span class="title">
+    {{ entityMeta?.displayName | camelCase }}
+  </span>
+  <span fxFlex="2" fxFlex.xs="1"></span>
+  <span *ngFor="let action of entityMeta.config?.entity?.toolbar?.actions">
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="canHide(action.hide)"
+      (click)="onAction(action)"
+    >
+      {{ action.displayName }}
+    </button>
+  </span>
+
+  <span fxFlex></span>
+</mat-toolbar>
+
 <div class="form-wrapper">
-  <div class="bottom-right" *ngIf="loading">
-    <mat-spinner diameter="30"></mat-spinner>
-  </div>
   <!-- {{ formGroup.value | json }} -->
   <form [formGroup]="formGroup" fxLayout="row wrap" fxLayoutAlign="space-between center">
     <span
       *ngFor="let property of properties"
       [fxFlex.lg]="property?.width?.lg || 24"
       [fxFlex.xs]="property?.width?.xs || 100"
-      style="height: 8vh"
+      fxLayoutAlign="start center"
     >
       <!-- String -->
       <mat-form-field *ngIf="property.type == propertyTypes.string">
@@ -67,12 +85,19 @@
       </mat-form-field>
 
       <!-- Object -->
-      <ext-select
-        *ngIf="property.type == propertyTypes.object"
-        [property]="property"
-        [formControlName]="property.name"
+      <mat-form-field
+        *ngIf="property.type == propertyTypes.object || property.type == propertyTypes.objectList"
       >
-      </ext-select>
+        <ext-select
+          [property]="property"
+          [formControlName]="property.name"
+          [placeholder]="property.name | camelCase"
+        >
+        </ext-select>
+        <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
+          {{ property.name | camelCase }} is <strong>required!</strong>
+        </mat-error>
+      </mat-form-field>
 
       <!-- Embebed -->
       <ext-embedded
@@ -82,6 +107,20 @@
         [formControlName]="property.name"
       >
       </ext-embedded>
+
+      <!-- Email -->
+      <mat-form-field *ngIf="property.type == propertyTypes.email">
+        <input
+          type="email"
+          matInput
+          [placeholder]="property.name | camelCase"
+          [formControlName]="property.name"
+        />
+        <mat-error *ngIf="formGroup.controls[property.name].hasError('email')">
+          {{ property.name | camelCase }} is
+          <strong>not valid</strong>
+        </mat-error>
+      </mat-form-field>
 
       <!-- Money -->
       <mat-form-field *ngIf="property.type == propertyTypes.money">
@@ -95,6 +134,24 @@
           {{ property.name | camelCase }} is <strong>required!</strong>
         </mat-error>
       </mat-form-field>
+
+      <!--Boolean -->
+      <mat-slide-toggle
+        *ngIf="property.type == propertyTypes.boolean"
+        [formControlName]="property.name"
+      >
+        {{ property.name | camelCase }}
+      </mat-slide-toggle>
+
+      <!-- Images -->
+
+      <ext-image
+        class="mat-elevation-z2"
+        *ngIf="property.type == propertyTypes.image || property.type == propertyTypes.imageList"
+        [property]="property"
+        [multiple]="property.type == 'imageList'"
+        [formControlName]="property.name"
+      ></ext-image>
 
       <!-- Tab -->
       <mat-tab-group *ngIf="property.type == propertyTypes.tabs">

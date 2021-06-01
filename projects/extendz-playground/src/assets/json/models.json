@@ -1,16 +1,48 @@
 {
+  "address": {
+    "name": "address",
+    "displayName": "Address",
+    "hidden": true,
+    "title": "line1",
+    "url": "addresses",
+    "properties": {
+      "line1": { "name": "line1", "type": "string", "required": true, "width": { "lg": "48" } },
+      "line2": { "name": "line2", "type": "string", "width": { "lg": "48" } },
+      "city": {
+        "name": "city",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "48" }
+      },
+      "type": {
+        "name": "type",
+        "type": "enum",
+        "enums": ["Delivery", "Document"],
+        "required": true,
+        "width": { "lg": "48" }
+      },
+      "default": { "name": "default", "type": "boolean" }
+    }
+  },
   "batch": {
     "name": "batch",
     "displayName": "Batch",
     "url": "batches",
     "properties": [
       { "name": "description", "type": "string", "width": { "lg": "48" } },
-      { "name": "initialQuantity", "type": "number", "required": true, "width": { "lg": "25" } },
-      { "name": "quantity", "type": "number", "width": { "lg": "25" } },
-      { "name": "reservedQuantity", "type": "number", "width": { "lg": "24" } },
-      { "name": "arrivedDate", "type": "date", "width": { "lg": "24" } },
+      { "name": "initialQuantity", "type": "number", "required": true, "width": { "lg": "24" } },
+      { "name": "onHandQuantity", "type": "number", "required": true, "width": { "lg": "24" } },
+      { "name": "reservedQuantity", "type": "number", "required": true, "width": { "lg": "24" } },
+      { "name": "arrivedDate", "type": "date", "required": true, "width": { "lg": "24" } },
       { "name": "expiryDate", "type": "date", "width": { "lg": "24" } },
-      { "name": "manufacturedDate", "type": "date", "width": { "lg": "24" } }
+      { "name": "manufacturedDate", "type": "date", "required": true, "width": { "lg": "24" } },
+      {
+        "name": "prodcut",
+        "type": "object",
+        "reference": "product",
+        "required": true,
+        "width": { "lg": "24" }
+      }
     ]
   },
   "category": {
@@ -18,16 +50,35 @@
     "displayName": "Category",
     "title": "name",
     "url": "categories",
+    "view": "flow",
+    "projections": {
+      "dataTable": [{ "name": "name", "type": "string" }]
+    },
     "properties": {
-      "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "100" } },
-      "image": { "name": "image", "type": "image" }
+      "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "48" } },
+      "_spacer": {
+        "width": { "lg": "100" }
+      },
+      "description": {
+        "name": "description",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "48" }
+      }
     }
   },
   "customer": {
     "name": "customer",
-    "displayName": "Customers",
+    "displayName": "Customer",
+    "view": "flow",
     "title": "firstName",
     "url": "customers",
+    "config": {
+      "entity": {
+        "enableProjection": true,
+        "projection": "entity"
+      }
+    },
     "properties": {
       "firstName": {
         "name": "firstName",
@@ -35,22 +86,22 @@
         "required": true,
         "width": { "lg": "48" }
       },
-      "address": {
-        "name": "address",
-        "type": "embedded",
-        "entityMeta": {
-          "properties": {
-            "line1": { "name": "line1", "type": "string" },
-            "line2": { "name": "line2", "type": "string" },
-            "City": { "name": "city", "type": "string" },
-            "type": { "name": "type", "type": "string" },
-            "default": { "name": "default", "type": "string" }
-          }
-        },
+      "lastName": {
+        "name": "lastName",
+        "type": "string",
+        "required": true,
         "width": { "lg": "48" }
       },
-      "telePhone": { "name": "telePhone", "type": "string" },
-      "lastName": { "name": "lastName", "type": "string", "width": { "lg": "48" } }
+      "addresses": {
+        "name": "addresses",
+        "type": "objectList",
+        "reference": "address",
+        "width": { "lg": "48" }
+      },
+      "telephone": { "name": "telephone", "type": "string", "width": { "lg": "48" } },
+      "mobile": { "name": "mobile", "type": "string", "width": { "lg": "48" } },
+      "email": { "name": "email", "type": "email", "width": { "lg": "48" } },
+      "active": { "name": "active", "type": "boolean", "width": { "lg": "48" } }
     }
   },
   "currency": {
@@ -71,46 +122,159 @@
       }
     ]
   },
-  "delivery": {
-    "name": "delivery",
-    "displayName": "Delivery",
+  "deliveryOrderLine": {
+    "name": "deliveryOrderLine",
+    "displayName": "delivery Order Line",
+    "hidden": true,
     "title": "quantity",
-    "url": "deliveries",
+    "url": "deliveryOrderLines",
+    "view": "flow",
     "properties": {
-      "quantity": {
-        "name": "quantity",
+      "lineNumber": {
+        "name": "lineNumber",
         "type": "number",
         "required": true,
-        "width": { "lg": "20" }
+        "width": { "lg": "24" }
       },
       "salesOrderLine": {
         "name": "salesOrderLine",
         "type": "object",
+        "reference": "salesOrderLine",
         "required": true,
-        "width": { "lg": "40" }
+        "width": { "lg": "30" }
+      },
+      "quantity": {
+        "name": "quantity",
+        "type": "number",
+        "required": true,
+        "width": { "lg": "24" }
+      },
+      "deliveryOrder": {
+        "name": "deliveryOrder",
+        "type": "object",
+        "reference": "deliveryOrder",
+        "required": true,
+        "width": { "lg": "30" }
       }
     }
   },
-  "deliveryOrders": {
-    "name": "deliveryOrders",
-    "displayName": "Delivery Orders",
+  "deliveryOrder": {
+    "name": "deliveryOrder",
+    "displayName": "Delivery Order",
+    "view": "flow",
     "title": "dispatchDate",
     "url": "deliveryOrders",
+    "config": {
+      "entity": {
+        "enableProjection": true,
+        "projection": "entity"
+      }
+    },
+    "projections": {
+      "dataTable": [
+        { "name": "dispatchDate", "type": "date" },
+        { "name": "status", "type": "string" }
+      ]
+    },
     "properties": {
       "dispatchDate": { "name": "dispatchDate", "type": "date", "width": { "lg": 30 } },
-      "deliveryVehicle": { "name": "deliveryVehicle", "type": "object", "width": { "lg": 30 } },
+      "vehicle": {
+        "name": "vehicle",
+        "type": "object",
+        "reference": "deliveryVehicle",
+        "width": { "lg": 30 }
+      },
       "note": { "name": "note", "type": "string", "width": { "lg": 30 } },
-      "status": { "name": "status", "type": "string", "width": { "lg": 30 } }
+      "status": {
+        "name": "status",
+        "type": "enum",
+        "enums": ["Planned", "OnRoute", "Closed"],
+        "width": { "lg": 30 }
+      },
+      "_tabs": {
+        "type": "tabs",
+        "width": { "lg": 100 },
+        "tabs": [
+          {
+            "name": "orderLines",
+            "displayName": "Delivery Lines",
+            "type": "objectList",
+            "reference": "deliveryOrderLine",
+            "mutations": {
+              "salesOrderLine": [
+                {
+                  "type": "update",
+                  "from": "quantity",
+                  "to": "salesOrderQuantity"
+                },
+                {
+                  "type": "update",
+                  "from": "salesOrder",
+                  "to": "salesOrder"
+                },
+                {
+                  "type": "update",
+                  "from": "product",
+                  "to": "product"
+                }
+              ]
+            },
+            "entityMeta": {
+              "properties": {
+                "lineNumber": {
+                  "name": "lineNumber",
+                  "type": "index",
+                  "width": { "lg": "10" }
+                },
+                "salesOrder": {
+                  "name": "salesOrder",
+                  "displayName": "Sales Order",
+                  "type": "display",
+                  "width": { "lg": "10" }
+                },
+                "salesOrderLine": {
+                  "name": "salesOrderLine",
+                  "type": "object",
+                  "reference": "salesOrderLine",
+                  "required": true,
+                  "width": { "lg": "15" }
+                },
+                "product": {
+                  "name": "product",
+                  "displayName": "Product",
+                  "type": "display",
+                  "width": { "lg": "20" }
+                },
+                "salesOrderQuantity": {
+                  "name": "salesOrderQuantity",
+                  "displayName": "Quantity",
+                  "type": "display",
+                  "width": { "lg": "6" }
+                },
+                "quantity": {
+                  "name": "quantity",
+                  "displayName": "Delivery Quantity",
+                  "type": "number",
+                  "required": true,
+                  "width": { "lg": "15" }
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   },
   "deliveryVehicle": {
     "name": "deliveryVehicle",
     "displayName": "Delivery Vehicle",
-    "title": "registorNumber",
+    "view": "flow",
+    "title": "registerNumber",
     "url": "deliveryVehicles",
     "properties": {
-      "registorNumber": { "name": "registorNumber", "type": "string", "width": { "lg": 30 } },
-      "description": { "name": "description", "type": "string", "width": { "lg": 30 } }
+      "registerNumber": { "name": "registerNumber", "type": "string", "width": { "lg": 30 } },
+      "description": { "name": "description", "type": "string", "width": { "lg": 30 } },
+      "active": { "name": "active", "type": "boolean" }
     }
   },
   "inventoryTransaction": {
@@ -142,21 +306,153 @@
         "projection": "entity"
       }
     },
+    "projections": {
+      "dataTable": [
+        { "name": "image", "type": "image" },
+        { "name": "name", "type": "string" }
+      ]
+    },
     "properties": {
-      "name": { "name": "name", "type": "string", "width": { "lg": "48" } }
+      "name": { "name": "name", "type": "string", "width": { "lg": "24" } },
+      "description": { "name": "description", "type": "string", "width": { "lg": "24" } },
+      "category": {
+        "name": "category",
+        "type": "object",
+        "reference": "category",
+        "width": { "lg": "24" }
+      },
+
+      "unitPrice": { "name": "unitPrice", "type": "money", "width": { "lg": "24" } },
+      "cost": { "name": "cost", "type": "money", "width": { "lg": "24" } },
+      "minimumQuantity": { "name": "minimumQuantity", "type": "number", "width": { "lg": "24" } },
+      "weight": { "name": "weight", "type": "string", "width": { "lg": "24" } },
+      "unitsPerSquareFeet": {
+        "name": "unitsPerSquareFeet",
+        "type": "number",
+        "width": { "lg": "24" }
+      },
+      "note": { "name": "note", "type": "string", "width": { "lg": "100" } },
+      "active": { "name": "active", "type": "boolean", "width": { "lg": "24" } },
+      "expirable": { "name": "expirable", "type": "boolean", "width": { "lg": "24" } },
+      "salesPart": { "name": "salesPart", "type": "boolean", "width": { "lg": "24" } },
+      "purchasePart": { "name": "purchasePart", "type": "boolean", "width": { "lg": "24" } },
+      "image": { "name": "image", "type": "image", "width": { "lg": "24" } }
     }
   },
-  "payment": {
-    "name": "payment",
-    "displayName": "Payment",
+  "customerPayment": {
+    "name": "customerPayment",
+    "displayName": "Customer Payment",
     "title": "amount",
-    "url": "payments",
+    "url": "customerPayments",
     "properties": {
-      "quantity": {
+      "lineNumber": {
+        "name": "lineNumber",
+        "type": "number"
+      },
+      "salesOrder": {
+        "name": "salesOrder",
+        "type": "object",
+        "reference": "salesOrder",
+        "width": { "lg": "24" }
+      },
+      "description": {
+        "name": "description",
+        "type": "string",
+        "width": { "lg": "20vw" }
+      },
+      "amount": {
         "name": "amount",
+        "type": "money",
+        "width": { "lg": "20vw" }
+      },
+      "note": {
+        "name": "note",
+        "type": "string"
+      }
+    }
+  },
+  "project": {
+    "name": "project",
+    "displayName": "Project",
+    "url": "projects",
+    "title": "id",
+    "projections": {
+      "dataTable": [{ "name": "id", "type": "string" }]
+    },
+    "properties": {
+      "id": {
+        "name": "id",
+        "generated": true,
+        "type": "string",
+        "width": { "lg": "24" }
+      },
+      "salesOrderRef": {
+        "name": "salesOrderRef",
+        "generated": true,
+        "type": "string",
+        "width": { "lg": "24" }
+      },
+      "customer": {
+        "name": "customer",
+        "generated": true,
+        "type": "string",
+        "width": { "lg": "24" }
+      },
+      "address": {
+        "name": "address",
+        "generated": true,
+        "type": "string",
+        "width": { "lg": "24" }
+      },
+      "team": { "name": "team", "type": "object", "reference": "team", "width": { "lg": "24" } },
+      "unitPrice": {
+        "name": "unitPrice",
+        "type": "money",
+        "width": { "lg": "24" }
+      },
+      "measureSquareFeet": {
+        "name": "measureSquareFeet",
         "type": "number",
-        "required": true,
-        "width": { "lg": "20" }
+        "width": { "lg": "24" }
+      },
+      "calculatedSquareFeet": {
+        "name": "calculatedSquareFeet",
+        "type": "number",
+        "width": { "lg": "24" }
+      },
+      "note": {
+        "name": "note",
+        "type": "number",
+        "width": { "lg": "75" }
+      },
+      "projectRevenue": {
+        "name": "projectRevenue",
+        "type": "money",
+        "width": { "lg": "24" }
+      },
+      "_tabs": {
+        "type": "tabs",
+        "width": { "lg": 100 },
+        "tabs": [
+          {
+            "name": "salesOrderLine",
+            "displayName": "Sales Order Lines",
+            "type": "objectList",
+            "reference": "salesOrderLine",
+            "entityMeta": {
+              "properties": {}
+            }
+          },
+          {
+            "name": "tools",
+            "displayName": "Tools",
+            "type": "objectList",
+            "reference": "tool",
+            "entityMeta": {
+              "properties": {}
+            }
+          }
+        ]
       }
     }
   },
@@ -173,12 +469,61 @@
   "supplier": {
     "name": "supplier",
     "displayName": "Supplier",
-    "url": "suppliers"
+    "url": "suppliers",
+    "view": "flow",
+    "title": "name",
+    "properties": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "48" }
+      },
+      "telephone": { "name": "telephone", "type": "string", "width": { "lg": "48" } },
+      "email": { "name": "email", "type": "email", "width": { "lg": "48" } },
+      "supplierForProducts": {
+        "name": "supplierForProducts",
+        "type": "objectList",
+        "reference": "supplierForProduct",
+        "width": { "lg": "48" }
+      },
+      "addresses": {
+        "name": "addresses",
+        "type": "objectList",
+        "reference": "address",
+        "width": { "lg": "48" }
+      },
+      "active": { "name": "active", "type": "boolean", "width": { "lg": "48" } }
+    }
   },
   "supplierForProduct": {
     "name": "supplierForProduct",
     "displayName": "Supplier For Product",
-    "url": "supplierForProducts"
+    "url": "supplierForProducts",
+    "view": "flow",
+    "hidden": true,
+    "title": "price",
+    "properties": {
+      "price": { "name": "price", "type": "money", "required": true, "width": { "lg": "24" } },
+      "note": {
+        "name": "note",
+        "type": "string",
+        "width": { "lg": "48" }
+      },
+      "supplier": {
+        "name": "supplier",
+        "type": "object",
+        "reference": "supplier",
+        "width": { "lg": "24" }
+      },
+      "product": {
+        "name": "product",
+        "type": "object",
+        "reference": "product",
+        "width": { "lg": "24" }
+      },
+      "active": { "name": "active", "type": "boolean", "width": { "lg": "10" } }
+    }
   },
   "salesRepresentative": {
     "name": "salesRepresentative",
@@ -197,7 +542,10 @@
         "type": "string",
         "required": true,
         "width": { "lg": "48" }
-      }
+      },
+      "telephone": { "name": "telephone", "type": "string", "width": { "lg": "48" } },
+      "mobile": { "name": "mobile", "type": "string", "width": { "lg": "48" } },
+      "email": { "name": "email", "type": "email", "width": { "lg": "48" } }
     }
   },
   "salesOrder": {
@@ -208,56 +556,59 @@
     "config": {
       "entity": {
         "enableProjection": true,
-        "projection": "entity"
+        "projection": "entity",
+        "toolbar": {
+          "actions": [
+            {
+              "id": "createProject",
+              "displayName": "Create Project",
+              "hide": {
+                "property": "project",
+                "assert": "Null"
+              }
+            },
+            {
+              "displayName": "View Project",
+              "hide": {
+                "property": "project",
+                "assert": "NotNull"
+              }
+            }
+          ]
+        }
       }
     },
     "projections": {
-      "dataTable": [{ "name": "number", "type": "number" }]
+      "dataTable": [
+        { "name": "id", "type": "string" },
+        { "name": "customer", "type": "string" },
+        { "name": "wantedDeliveryDate", "type": "date" },
+        { "name": "status", "type": "string" }
+      ]
     },
-    "validators": [
-      {
-        "on": "type",
-        "value": "Retailer",
-        "disable": ["measureSqft", "totalAmount"]
-      }
-    ],
     "properties": {
-      "number": {
-        "name": "number",
+      "id": {
+        "name": "id",
         "type": "string",
-        "required": true,
+        "generated": true,
         "width": { "lg": "24", "xs": "100" }
-      },
-      "type": {
-        "name": "type",
-        "type": "enum",
-        "enums": ["Retailer", "Project"],
-        "width": { "lg": "24" }
-      },
-      "wantedDeliveryDate": {
-        "name": "wantedDeliveryDate",
-        "type": "date",
-        "width": { "lg": "24" }
-      },
-      "startDate": {
-        "name": "startDate",
-        "type": "date",
-        "width": { "lg": "24" }
       },
       "customer": {
         "name": "customer",
         "type": "object",
+        "required": true,
         "reference": "customer",
         "width": { "lg": "24" }
       },
       "deliveryAddress": {
         "name": "deliveryAddress",
-        "type": "embedded",
-        "entityMeta": {
-          "properties": {
-            "line1": { "name": "line1", "type": "string" }
-          }
-        },
+        "type": "string",
+        "generated": true,
+        "width": { "lg": "49" }
+      },
+      "wantedDeliveryDate": {
+        "name": "wantedDeliveryDate",
+        "type": "date",
         "width": { "lg": "24" }
       },
       "salesRepresentative": {
@@ -266,16 +617,30 @@
         "reference": "salesRepresentative",
         "width": { "lg": "24" }
       },
-      "team": { "name": "team", "type": "string", "width": { "lg": "24" } },
-      "unitPrice": { "name": "unitPrice", "type": "money", "width": { "lg": "24" } },
-      "measureSqft": { "name": "measureSqft", "type": "number", "width": { "lg": "24" } },
-      "calculatedSqft": { "name": "calculatedSqft", "type": "number", "width": { "lg": "24" } },
+      "discountType": {
+        "name": "discountType",
+        "type": "enum",
+        "enums": ["Price", "Percentage"],
+        "width": { "lg": "24" }
+      },
+      "discount": {
+        "name": "discount",
+        "type": "money",
+        "width": { "lg": "24" }
+      },
       "totalAmount": { "name": "totalAmount", "type": "money", "width": { "lg": "24" } },
-      "_spacer": { "name": "spacer", "type": "spacer", "width": { "lg": "50", "xs": "0" } },
       "totalPaid": { "name": "totalPaid", "type": "money", "width": { "lg": "24" } },
-      "totalBePaid": { "name": "totalBePaid", "type": "money", "width": { "lg": "24" } },
+      "balancePayment": { "name": "balancePayment", "type": "money", "width": { "lg": "24" } },
+      "createdDate": {
+        "name": "createdDate",
+        "type": "date",
+        "generated": true,
+        "width": { "lg": "24", "xs": "100" }
+      },
+      "_spacer": { "width": { "lg": "24" } },
       "_tabs": {
         "type": "tabs",
+        "width": { "lg": "100" },
         "tabs": [
           {
             "name": "orderLines",
@@ -284,66 +649,74 @@
             "reference": "salesOrderLine",
             "entityMeta": {
               "properties": {
+                "lineNumber": {
+                  "name": "lineNumber",
+                  "type": "index",
+                  "width": { "lg": "8vw" }
+                },
                 "product": {
                   "name": "product",
                   "type": "object",
-                  "reference": "product",
-                  "width": { "lg": "20vw" }
+                  "reference": "product"
                 },
                 "quantity": {
                   "name": "quantity",
-                  "type": "number"
+                  "type": "number",
+                  "width": { "lg": "8vw" }
                 },
                 "deliveredQuantity": {
                   "name": "deliveredQuantity",
-                  "type": "number"
+                  "type": "number",
+                  "width": { "lg": "10vw" }
                 },
                 "price": {
                   "name": "price",
-                  "type": "number"
-                },
-                "discountType": {
-                  "name": "discountType",
-                  "type": "enum",
-                  "enums": ["Fixed", "Presentage"]
-                },
-                "discount": {
-                  "name": "discount",
-                  "type": "number"
+                  "type": "money",
+                  "width": { "lg": "15vw" }
                 },
                 "status": {
                   "name": "status",
                   "type": "enum",
-                  "enums": ["Deliverd", "Paid"]
+                  "enums": ["Planned", "Released", "Reserved", "PartiallyDelivered", "Delivered"],
+                  "width": { "lg": "10vw" }
                 }
               }
             }
           },
           {
-            "name": "salesOrderCharge",
+            "name": "charges",
             "displayName": "Charges",
+            "type": "objectList",
             "reference": "salesOrderCharge",
+            "mutations": {
+              "type": {
+                "type": "update",
+                "from": "defaultAmount",
+                "to": "amount"
+              }
+            },
             "entityMeta": {
               "properties": {
-                "amount": {
-                  "name": "amount",
-                  "type": "number"
-                },
-                "description": {
-                  "name": "description",
-                  "type": "string"
+                "lineNumber": {
+                  "name": "lineNumber",
+                  "type": "index",
+                  "width": { "lg": "8" }
                 },
                 "type": {
                   "name": "type",
                   "type": "object",
                   "reference": "salesChargeType",
-                  "mutations": [
-                    {
-                      "type": "update",
-                      "from": "defaultAmount",
-                      "to": "amount"
-                    }
-                  ]
+                  "width": { "lg": "20vw" }
+                },
+                "amount": {
+                  "name": "amount",
+                  "type": "money",
+                  "width": { "lg": "20vw" }
+                },
+                "description": {
+                  "name": "description",
+                  "type": "string",
+                  "width": { "lg": "20vw" }
                 }
               }
             }
@@ -351,11 +724,33 @@
           {
             "name": "deliveries",
             "displayName": "Deliveries",
-            "reference": "delivery",
+            "reference": "deliveryOrderLine",
             "entityMeta": {
+              "config": {
+                "table": {
+                  "enableAdd": false
+                }
+              },
               "properties": {
+                "deliveryOrder": {
+                  "name": "deliveryOrder",
+                  "generated": true,
+                  "type": "string"
+                },
+                "deliveryLineNumber": {
+                  "name": "deliveryLineNumber",
+                  "generated": true,
+                  "type": "number"
+                },
+                "dispatchDate": {
+                  "name": "dispatchDate",
+                  "generated": true,
+                  "type": "date"
+                },
+
                 "quantity": {
                   "name": "quantity",
+                  "generated": true,
                   "type": "number"
                 }
               }
@@ -364,38 +759,105 @@
           {
             "name": "payments",
             "displayName": "Payments",
-            "reference": "payment",
+            "reference": "customerPayment",
+            "type": "objectList",
             "entityMeta": {
               "properties": {
-                "quantity": {
-                  "name": "quantity",
-                  "type": "number"
+                "lineNumber": {
+                  "name": "lineNumber",
+                  "type": "index",
+                  "width": { "lg": "8" }
+                },
+                "description": {
+                  "name": "description",
+                  "type": "string",
+                  "width": { "lg": "20" }
+                },
+                "amount": {
+                  "name": "amount",
+                  "type": "money",
+                  "width": { "lg": "20" }
+                },
+                "note": {
+                  "name": "note",
+                  "type": "string"
                 }
               }
             }
           }
-        ],
-        "width": { "lg": "100" }
+        ]
       }
     }
   },
   "salesOrderLine": {
     "name": "salesOrderLine",
     "displayName": "Sales Order Lines",
-    "title": "name",
+    "title": "lineNumber",
     "url": "salesOrderLines",
+    "config": {
+      "select": {
+        "projection": "dataTable"
+      }
+    },
+    "projections": {
+      "dataTable": [
+        { "name": "salesOrder", "type": "string" },
+        { "name": "lineNumber", "type": "number" },
+        { "name": "product", "type": "string" },
+        { "name": "quantity", "type": "number" }
+      ]
+    },
     "properties": {
-      "quantity": { "name": "quantity", "type": "number", "width": { "lg": "100" } },
-      "salesOrder": { "name": "salesOrder", "type": "object" },
-      "product": { "name": "product", "type": "object" }
+      "lineNumber": { "name": "lineNumber", "type": "number" },
+      "quantity": { "name": "quantity", "type": "number", "width": { "lg": "24" } },
+      "salesOrder": {
+        "name": "salesOrder",
+        "type": "object",
+        "reference": "salesOrder",
+        "width": { "lg": "24" }
+      },
+      "product": {
+        "name": "product",
+        "type": "object",
+        "reference": "product",
+        "width": { "lg": "24" }
+      },
+      "deliveredQuantity": {
+        "name": "deliveredQuantity",
+        "type": "number",
+        "width": { "lg": "24" }
+      },
+      "price": { "name": "price", "type": "money", "width": { "lg": "24" } },
+      "status": {
+        "name": "status",
+        "type": "enum",
+        "enums": ["Planned", "Released", "Reserved", "PartiallyDelivered", "Delivered"]
+      },
+      "discountType": {
+        "name": "discountType",
+        "type": "enum",
+        "enums": ["Price", "Percentage"]
+      },
+      "discount": {
+        "name": "discount",
+        "type": "money",
+        "width": { "lg": "18vw" }
+      }
     }
   },
   "salesOrderCharge": {
     "name": "salesOrderCharge",
     "displayName": "Sales Order Charge",
     "title": "amount",
-    "url": "charges",
+    "url": "salesOrderCharges",
     "properties": {
+      "lineNumber": { "name": "lineNumber", "type": "number" },
+      "salesOrder": {
+        "name": "salesOrder",
+        "type": "object",
+        "reference": "salesOrder",
+        "width": { "lg": "24" }
+      },
       "description": { "name": "description", "type": "string", "width": { "lg": "48" } },
       "amount": { "name": "amount", "type": "number", "required": true, "width": { "lg": "24" } },
       "type": {
@@ -415,10 +877,11 @@
       "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "48" } },
       "defaultAmount": {
         "name": "defaultAmount",
-        "type": "number",
+        "type": "money",
         "required": true,
         "width": { "lg": "48" }
-      }
+      },
+      "active": { "name": "active", "type": "boolean" }
     }
   },
   "systemUser": {
@@ -436,6 +899,60 @@
       "password": {
         "name": "password",
         "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      }
+    }
+  },
+  "team": {
+    "name": "team",
+    "displayName": "Team",
+    "title": "name",
+    "url": "teams",
+    "properties": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      }
+    }
+  },
+  "tool": {
+    "name": "tool",
+    "displayName": "Tool",
+    "title": "name",
+    "url": "tools",
+    "properties": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      }
+    }
+  },
+  "unitOfMeasure": {
+    "name": "unitOfMeasure",
+    "displayName": "Unit Of Measure",
+    "title": "name",
+    "url": "unitOfMeasures",
+    "properties": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      },
+      "description": {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "width": { "lg": "20" }
+      },
+      "active": {
+        "name": "active",
+        "type": "boolean",
         "required": true,
         "width": { "lg": "20" }
       }
