@@ -17,9 +17,9 @@ export abstract class AbstractEntityService {
   /*** Save the current entity  */
   abstract save(
     entityMeta: EntityMeta,
-    newValue: object,
+    newValue: any,
     navigate: boolean,
-    original?: object,
+    original?: any,
     showSnackBar?: boolean
   ): Observable<any>;
 

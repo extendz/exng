@@ -1,10 +1,9 @@
-import { InjectionToken, Type } from '@angular/core';
+import { InjectionToken } from '@angular/core';
+import { ExtRootConfig } from './ext-root.config';
 
 export const EXT_DATA_TABLE_CONFIG = new InjectionToken('EXT_DATA_TABLE_CONFIG');
 
-export interface ExtDatatableConfig {
-  svgIconSet: string;
-  modelsJson: string;
+export interface ExtDatatableConfig extends ExtRootConfig {
   placeholderImage?: string;
   dataTableProjecion?: string;
   dateFormat?: 'yyyy/MM/dd';
@@ -12,4 +11,10 @@ export interface ExtDatatableConfig {
   pageSize?: number;
   showFirstLastButtons?: boolean;
   defaultPageSize?: number;
+  toolbar?: {
+    search?: {
+      width?: number;
+    };
+    color?: 'primary' | 'accent' | 'danger';
+  };
 }

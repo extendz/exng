@@ -1,19 +1,11 @@
 <form [formGroup]="formGroup" fxLayout="row wrap" fxLayoutAlign="space-between center">
   <span *ngFor="let property of properties" [fxFlex.lg]="property?.width?.lg">
     <!-- String -->
-    <mat-form-field *ngIf="property.type == propertyTypes.string">
-      <input
-        autocomplete="off"
-        matInput
-        [id]="property.name"
-        [placeholder]="property.name | camelCase"
-        [formControlName]="property.name"
-      />
-      <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-        {{ property.name | camelCase }} is
-        <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
+    <ext-input-string
+      *ngIf="property.type == propertyTypes.string"
+      [property]="property"
+      [control]="formGroup.controls[property.name]"
+    ></ext-input-string>
 
     <!-- Enums -->
     <mat-form-field *ngIf="property.type == propertyTypes.enum">
@@ -90,6 +82,24 @@
       </ext-basic-select>
       <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
         {{ property.name | camelCase }} is <strong>required!</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <p *ngIf="property.type == propertyTypes.checkbox">
+      <mat-checkbox [formControlName]="property.name">
+        {{ property.name | camelCase }}
+      </mat-checkbox>
+    </p>
+
+    <mat-form-field *ngIf="property.type == propertyTypes.phone">
+      <ext-phone
+        [property]="property"
+        [placeholder]="property.name | camelCase"
+        [formControlName]="property.name"
+      ></ext-phone>
+      <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
+        {{ property.name | camelCase }} is
+        <strong>required</strong>
       </mat-error>
     </mat-form-field>
 

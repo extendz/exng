@@ -5,18 +5,24 @@
     {{ entityMeta?.displayName | camelCase }}
   </span>
   <span fxFlex="2" fxFlex.xs="1"></span>
-  <span *ngFor="let action of entityMeta.config?.entity?.toolbar?.actions">
-    <button
-      mat-raised-button
-      color="primary"
-      *ngIf="canHide(action.hide)"
-      (click)="onAction(action)"
-    >
-      {{ action.displayName }}
-    </button>
+  <span fxLayoutGap="1vw">
+    <span *ngFor="let action of entityMeta.config?.entity?.toolbar?.actions">
+      <button
+        mat-raised-button
+        color="primary"
+        *ngIf="canHide(action?.hide)"
+        (click)="onAction(action)"
+      >
+        {{ action?.displayName }}
+      </button>
+    </span>
   </span>
 
   <span fxFlex></span>
+  <!-- <span fxFlex="15">
+    <p style="margin: 0;">Status</p>
+    <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+  </span> -->
 </mat-toolbar>
 
 <div class="form-wrapper">
@@ -24,32 +30,33 @@
   <form [formGroup]="formGroup" fxLayout="row wrap" fxLayoutAlign="space-between center">
     <span
       *ngFor="let property of properties"
-      [fxFlex.lg]="property?.width?.lg || 24"
       [fxFlex.xs]="property?.width?.xs || 100"
+      [fxFlex.sm]="property?.width?.sm || 48"
+      [fxFlex.md]="property?.width?.sm || 32"
+      [fxFlex.lg]="property?.width?.lg || 24"
       fxLayoutAlign="start center"
     >
       <!-- String -->
-      <mat-form-field *ngIf="property.type == propertyTypes.string">
-        <input
-          autocomplete="off"
-          matInput
-          [id]="property.name"
-          [placeholder]="property.name | camelCase"
-          [formControlName]="property.name"
-        />
-        <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property.name | camelCase }} is
-          <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
+      <ext-input-string
+        *ngIf="property.type == propertyTypes.string"
+        [property]="property"
+        [control]="formGroup.controls[property.name]"
+      ></ext-input-string>
 
       <!-- Enums -->
       <mat-form-field *ngIf="property.type == propertyTypes.enum">
-        <mat-select [placeholder]="property.name | camelCase" [formControlName]="property.name">
+        <mat-select
+          [placeholder]="property?.displayName || (property.name | camelCase)"
+          [formControlName]="property.name"
+        >
           <mat-option *ngFor="let enum of property.enums" [value]="enum">
             {{ enum }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
+          {{ property?.displayName || (property.name | camelCase) }} is
+          <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <!-- Number -->
@@ -58,11 +65,11 @@
           autocomplete="off"
           matInput
           type="number"
-          [placeholder]="property.name | camelCase"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
           [formControlName]="property.name"
         />
         <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property.name | camelCase }}
+          {{ property?.displayName || (property.name | camelCase) }}
           <strong>required</strong>
         </mat-error>
       </mat-form-field>
@@ -73,13 +80,13 @@
           matInput
           autocomplete="off"
           [matDatepicker]="picker"
-          [placeholder]="property.name | camelCase"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
           [formControlName]="property.name"
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker [touchUi]="media.isActive('xs')" #picker></mat-datepicker>
         <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property.name | camelCase }}
+          {{ property?.displayName || (property.name | camelCase) }}
           <strong>required</strong>
         </mat-error>
       </mat-form-field>
@@ -91,11 +98,12 @@
         <ext-select
           [property]="property"
           [formControlName]="property.name"
-          [placeholder]="property.name | camelCase"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
         >
         </ext-select>
         <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property.name | camelCase }} is <strong>required!</strong>
+          {{ property?.displayName || (property.name | camelCase) }} is
+          <strong>required</strong>
         </mat-error>
       </mat-form-field>
 
@@ -113,11 +121,11 @@
         <input
           type="email"
           matInput
-          [placeholder]="property.name | camelCase"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
           [formControlName]="property.name"
         />
         <mat-error *ngIf="formGroup.controls[property.name].hasError('email')">
-          {{ property.name | camelCase }} is
+          {{ property?.displayName || (property.name | camelCase) }} is
           <strong>not valid</strong>
         </mat-error>
       </mat-form-field>
@@ -126,12 +134,25 @@
       <mat-form-field *ngIf="property.type == propertyTypes.money">
         <ext-money
           [property]="property"
-          [placeholder]="property.name | camelCase"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
           [formControlName]="property.name"
         >
         </ext-money>
         <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property.name | camelCase }} is <strong>required!</strong>
+          {{ property?.displayName || (property.name | camelCase) }} is <strong>required!</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Phone -->
+      <mat-form-field *ngIf="property.type == propertyTypes.phone">
+        <ext-phone
+          [property]="property"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
+          [formControlName]="property.name"
+        ></ext-phone>
+        <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
+          {{ property?.displayName || (property.name | camelCase) }} is
+          <strong>required</strong>
         </mat-error>
       </mat-form-field>
 
@@ -140,11 +161,25 @@
         *ngIf="property.type == propertyTypes.boolean"
         [formControlName]="property.name"
       >
-        {{ property.name | camelCase }}
+        {{ property?.displayName || (property.name | camelCase) }}
       </mat-slide-toggle>
 
-      <!-- Images -->
+      <p *ngIf="property.type == propertyTypes.checkbox">
+        <mat-checkbox [formControlName]="property.name">
+          {{ property?.displayName || (property.name | camelCase) }}
+        </mat-checkbox>
+      </p>
 
+      <!-- Units -->
+      <mat-form-field *ngIf="property.type == propertyTypes.unit">
+        <ext-unit
+          [property]="property"
+          [formControlName]="property.name"
+          [placeholder]="property?.displayName || (property.name | camelCase)"
+        ></ext-unit>
+      </mat-form-field>
+
+      <!-- Images -->
       <ext-image
         class="mat-elevation-z2"
         *ngIf="property.type == propertyTypes.image || property.type == propertyTypes.imageList"

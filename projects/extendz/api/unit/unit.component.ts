@@ -5,6 +5,7 @@ import {
   ElementRef,
   forwardRef,
   HostListener,
+  Inject,
   Input,
   OnInit,
   Optional,
@@ -18,9 +19,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { Mesurement, Price, Property } from 'extendz/core';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import {
+  AbstractDataTableService,
+  ExtEntityConfig,
+  EXT_DATA_TABLE_SERVICE,
+  EXT_ENTITY_CONFIG,
+  Mesurement,
+  Property,
+  Unit,
+  UnitOfMeasurement,
+} from 'extendz/core';
+import { EntityMetaService } from 'extendz/service';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, map, mergeMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'ext-unit',
@@ -28,8 +39,7 @@ import { debounceTime } from 'rxjs/operators';
   styleUrls: ['./unit.component.scss'],
   providers: [{ provide: MatFormFieldControl, useExisting: forwardRef(() => UnitComponent) }],
 })
-export class UnitComponent
-  implements OnInit, ControlValueAccessor, MatFormFieldControl<Mesurement> {
+export class UnitComponent implements ControlValueAccessor, MatFormFieldControl<Mesurement> {
   static nextId = 0;
   @Input() property: Property;
 
@@ -83,7 +93,7 @@ export class UnitComponent
   formGroup: FormGroup;
 
   stateChanges = new Subject<void>();
-  id = `ext-money-${UnitComponent.nextId++}`;
+  id = `ext-unit-${UnitComponent.nextId++}`;
 
   focused: boolean = false;
 
@@ -112,7 +122,10 @@ export class UnitComponent
     private fb: FormBuilder,
     @Optional() @Self() public ngControl: NgControl,
     private fm: FocusMonitor,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private entityMetaService: EntityMetaService,
+    @Inject(EXT_DATA_TABLE_SERVICE) public dataTableService: AbstractDataTableService,
+    @Inject(EXT_ENTITY_CONFIG) public entityConfig: ExtEntityConfig
   ) {
     if (this.ngControl) this.ngControl.valueAccessor = this;
     this.formGroup = this.fb.group({
@@ -122,10 +135,6 @@ export class UnitComponent
     this.formGroup.valueChanges.pipe(debounceTime(100)).subscribe((v: Mesurement) => {
       if (v.unit && v.value) this.onChange(v);
     });
-  }
-
-  ngOnInit(): void {
-    this.formGroup.patchValue({ unit: this.property.units[0] });
   }
 
   ngOnDestroy() {
@@ -143,8 +152,28 @@ export class UnitComponent
     // }
   }
 
-  writeValue(price: Price): void {
-    if (price) this.formGroup.patchValue(price);
+  writeValue(value: any): void {
+    if (value) this.formGroup.patchValue(value);
+    this.getUnitsOfMeasurement(value);
+  }
+
+  units$: Observable<UnitOfMeasurement[]>;
+
+  getUnitsOfMeasurement(price: Unit) {
+    this.units$ = this.entityMetaService.getModel(this.entityConfig.unitOfMeasurement.model).pipe(
+      mergeMap((m) => this.dataTableService.getData(m)),
+      map((d) => d.data),
+      // Set default value if there is not currecy set at this time
+      tap((units: UnitOfMeasurement[]) => {
+        console.log(units);
+
+        let defaultCurrency = this.entityConfig.unitOfMeasurement;
+        if (price && price.unitOfMeasure) defaultCurrency.defaultUnit = price.unitOfMeasure.code;
+        let unit = units.filter((c) => c.code == defaultCurrency.defaultUnit)[0];
+        if (!unit) unit = units[0];
+        this.formGroup.patchValue({ unit });
+      })
+    );
   }
 
   registerOnChange(fn: any): void {

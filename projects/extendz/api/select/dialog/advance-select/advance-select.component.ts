@@ -17,7 +17,6 @@ export class ExtAdvanceSelectComponent {
     private dialogRef: MatDialogRef<ExtAdvanceSelectComponent>
   ) {
     this.multiSelect = data.property.type == PropertyType.object ? false : true;
-    console.log(data.property);
   }
 
   onOkay() {

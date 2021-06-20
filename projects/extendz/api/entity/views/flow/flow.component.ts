@@ -68,6 +68,7 @@ export class FlowComponent extends ExtBaseViewComponent implements OnInit, Abstr
   }
 
   canHide(hiden: Hidden) {
+    if (hiden == null) return true;
     const assert = hiden.assert;
 
     switch (assert) {

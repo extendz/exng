@@ -69,8 +69,6 @@ export class SimpleComponent extends ExtBaseViewComponent implements OnInit {
   }
 
   handleEntityMeta(propties: Property[]) {
-    console.log(propties);
-
     this.properties = propties;
   }
 

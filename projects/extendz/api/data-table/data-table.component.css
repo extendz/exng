@@ -37,6 +37,39 @@
   -webkit-animation: scale-in-center 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   animation: scale-in-center 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
+
+.bottom-right {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+}
+
+/* Expanded */
+ext-basic-table {
+  margin: 16px 0 16px 0;
+  width: 100%;
+}
+
+.expand-row {
+  border: none;
+  width: 100vw;
+  background-color: whitesmoke;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
 /* 
 .container {
   width: 150vw;

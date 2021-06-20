@@ -1,12 +1,21 @@
 import { InjectionToken } from '@angular/core';
+import { ExtRootConfig } from './ext-root.config';
 
 export const EXT_ENTITY_CONFIG = new InjectionToken('EXT_ENTITY_CONFIG');
 
-export interface ExtEntityConfig {
+export interface ExtEntityConfig extends ExtRootConfig {
   svgIconSet: string;
   modelsJson: string;
   placeholderImage?: string;
-  currency: {
+  unitOfMeasurement?: {
+    model: string;
+    defaultUnit?: string;
+  };
+  phone?: {
+    model: string;
+    defaultPhoneCode?: string;
+  };
+  currency?: {
     model: string;
     /**
      *  ISO currency code
@@ -14,6 +23,4 @@ export interface ExtEntityConfig {
      */
     defaultCurrency?: string;
   };
-
-  idFeild?: string;
 }

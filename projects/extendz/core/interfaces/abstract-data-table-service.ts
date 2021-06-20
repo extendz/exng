@@ -16,5 +16,5 @@ export abstract class AbstractDataTableService {
 
   abstract deleteByUrls(urls: string[]): Observable<any>;
 
-  abstract delete(entityMeta: EntityMeta, object: object[]): Observable<any>;
+  abstract delete(entityMeta: EntityMeta, object: any[]): Observable<any>;
 }

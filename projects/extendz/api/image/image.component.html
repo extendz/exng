@@ -8,7 +8,7 @@
         mat-button
         class="upload-base upload-button"
         (click)="imgFileInput.click()"
-        *ngIf="multiple || displayImages?.length === 0"
+        *ngIf="displayImages?.length === 0"
       >
         <ng-container *ngTemplateOutlet="add"> </ng-container>
       </button>

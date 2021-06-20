@@ -1,0 +1,17 @@
+<form [formGroup]="formGroup" fxLayout="row" fxLayoutAlign="start center">
+  <mat-select formControlName="country" fxFlex.lg="3vw" fxFlex.lg="4vw">
+    <mat-option *ngFor="let c of countries$ | async" [value]="c">
+      {{ c.phoneCode }}
+    </mat-option>
+  </mat-select>
+  <div fxFlex="1"></div>
+  <input
+    matInput
+    extPhoneMask
+    type="text"
+    formControlName="number"
+    autocomplete="off"
+    [placeholder]="placeholder"
+    [required]="required"
+  />
+</form>

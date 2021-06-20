@@ -3,24 +3,29 @@ import { EntityMeta } from './entity-meta';
 
 export class ImageMeta {
   /*** This will be selected as the avatar image */
-  public avatar?: boolean;
+  avatar?: boolean;
 
   /*** Image cropper enabled */
-  public cropper?: boolean;
+  cropper?: boolean;
 
   /*** Image crop width to height ratio */
-  public ratio?: number;
+  ratio?: number;
 
   /*** Image resized to given width */
-  public resizeToWidth?: number;
+  resizeToWidth?: number;
 
   /*** Image format need to be cropped */
-  public format?: string;
+  format?: string;
 }
 
 export class MatrixDefinition {
   static: MatrixRow[];
   rows: MatrixRow[];
+}
+
+export enum Operation {
+  delete = 'delete',
+  remove = 'remove',
 }
 
 export class MatrixRow {
@@ -39,6 +44,7 @@ export enum RelationshipType {
 export enum PropertyType {
   boolean = 'boolean',
   date = 'date',
+  checkbox = 'checkbox',
   embedded = 'embedded',
   embeddedList = 'embeddedList',
   email = 'email',
@@ -56,7 +62,9 @@ export enum PropertyType {
   money = 'money',
   color = 'color',
   unit = 'unit',
+  phone = 'phone',
   tabs = 'tabs',
+  spacer = 'spacer',
 }
 
 export enum MutationType {
@@ -69,27 +77,38 @@ export class Mutate {
   to?: string;
 }
 
+export enum PropertyValidationType {
+  Required = 'Required',
+  Email = 'Email',
+  MinValue = 'MinValue',
+  MaxValue = 'MaxValue',
+  MinLength = 'MinLength',
+  MaxLength = 'MaxLength',
+}
+
+export class PropertyValidation {
+  type?: PropertyValidationType;
+  value?: string;
+}
+
 export class Property {
-  /***
-   *
-   */
+  /*** mark as mandatory for the form */
   required?: boolean;
 
-  /***
-   *
-   */
+  /*** Generated value, input will be disabled*/
   generated?: boolean;
 
-  /***
-   *
-   */
+  /*** Name of the property  */
+  name: string;
+
+  /*** Will show as propery name, if not defined the name is used */
+  displayName?: boolean;
+
+  /*** Refence for object  */
   reference?: string;
 
   /*** */
   type: PropertyType;
-
-  /*** Name of the property  */
-  name: string;
 
   /*** Meta data of the entity */
   entityMeta?: EntityMeta;
@@ -131,8 +150,29 @@ export class Property {
 
   tabs?: Property[];
 
+  /*** Default value if not present */
+  default: any;
+
+  /*** Actions associalted with property */
+  operation: Operation;
+
   /*** Mutations on form */
   mutations?: {
     [key: string]: Mutate[];
+  };
+
+  /*** Validations */
+  validations?: PropertyValidation[];
+
+  /*** config */
+  config?: {
+    select?: {
+      allowSearch: boolean;
+      autocomplete: boolean;
+      displayFunction: {
+        feilds: string[];
+        delimiter: string;
+      };
+    };
   };
 }

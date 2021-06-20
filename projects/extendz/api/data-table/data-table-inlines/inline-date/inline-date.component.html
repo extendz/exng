@@ -1,0 +1,33 @@
+<form [formGroup]="formGroup" fxLayoutAlign="center center">
+  <span fxLayout="row" fxLayoutAlign="space-between center">
+    <p style="margin: 0">{{ formGroup.controls[property.name].value | date: format }}</p>
+    <button mat-icon-button (click)="datepicker.open()">
+      <ng-container [ngTemplateOutlet]="i_calendar_today"></ng-container>
+    </button>
+  </span>
+
+  <input
+    style="width: 0px; visibility: hidden"
+    matInput
+    [matDatepicker]="datepicker"
+    [formControlName]="property.name"
+  />
+</form>
+<mat-datepicker #datepicker>
+  <mat-datepicker-actions>
+    <button mat-button matDatepickerCancel>Cancel</button>
+    <button mat-raised-button color="primary" matDatepickerApply (click)="onDateApply()">
+      Apply
+    </button>
+  </mat-datepicker-actions>
+</mat-datepicker>
+<ng-template #i_calendar_today>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path
+        fill="currentColor"
+        d="M7,10H12V15H7M19,19H5V8H19M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z"
+      />
+    </svg>
+  </mat-icon>
+</ng-template>

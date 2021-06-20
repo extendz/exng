@@ -1,6 +1,9 @@
 <mat-toolbar>
   <button
-    *ngIf="property.entityMeta?.config?.table == null && property.entityMeta?.config?.table.enableAdd != false"
+    *ngIf="
+      property.entityMeta?.config?.table == null &&
+      property.entityMeta?.config?.table.enableAdd != false
+    "
     class="mat-elevation-z0"
     mat-mini-fab
     color="primary"
@@ -38,6 +41,9 @@
           <!-- number -->
           <mat-form-field *ngSwitchCase="'number'">
             <input type="number" matInput autocomplete="off" [formControlName]="p?.value?.name" />
+            <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
+              {{ p?.value?.name | camelCase }} is <strong>required!</strong>
+            </mat-error>
           </mat-form-field>
 
           <!-- display -->
@@ -96,6 +102,12 @@
             >
             </ext-select>
           </mat-form-field>
+
+          <span *ngSwitchCase="'action'">
+            <button mat-icon-button (click)="onOperation(p.value, i)">
+              <mat-icon class="primary" svgIcon="api-root:{{ p.value?.icon }}"></mat-icon>
+            </button>
+          </span>
         </span>
       </td>
     </ng-container>

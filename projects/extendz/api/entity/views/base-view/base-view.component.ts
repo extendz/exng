@@ -13,6 +13,7 @@ import {
   getValueByField,
   Property,
   PropertyType,
+  PropertyValidationType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { forkJoin, Subscription } from 'rxjs';
@@ -135,17 +136,48 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
       if (p.type == PropertyType.tabs) p.tabs.forEach((tp) => this.createCtrlForProp(tp));
       else this.createCtrlForProp(p);
     });
+    // update form
     if (this.entity) this.formGroup.patchValue(this.entity, { emitEvent: false });
     this.deepCopy(this.entity);
   }
 
   private createCtrlForProp(property: Property) {
     let ctrl = new FormControl(undefined);
+
+    // Validators
     let validators: ValidatorFn[] = [];
     if (property.required) validators.push(Validators.required);
     if (property.type == PropertyType.email) validators.push(Validators.email);
+
+    if (property.validations) {
+      property.validations.forEach((validation) => {
+        switch (validation.type) {
+          case PropertyValidationType.MaxLength:
+            validators.push(Validators.maxLength(+validation.value));
+            break;
+          case PropertyValidationType.MinLength:
+            validators.push(Validators.minLength(+validation.value));
+            break;
+        }
+      });
+    }
+
     ctrl.setValidators(validators);
+
+    // if generated the feild witll be disabled
     if (property.generated) ctrl.disable({});
+
+    if (property.default != null) {
+      let defaultVal = property.default;
+      if (property.type == PropertyType.date) {
+        if (defaultVal == '') defaultVal = new Date();
+        else defaultVal = new Date(defaultVal);
+      }
+      console.log(defaultVal);
+
+      ctrl.patchValue(defaultVal, { emitEvent: false });
+    }
+
     this.formGroup.addControl(property.name, ctrl);
   }
 

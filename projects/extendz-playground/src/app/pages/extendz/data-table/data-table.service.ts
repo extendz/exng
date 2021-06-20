@@ -1,28 +1,18 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar, MatSnackBarDismiss } from '@angular/material/snack-bar';
-import {
-  AbstractDataTableService,
-  EntityMeta,
-  ExtApiConfig,
-  EXT_API_CONFIG,
-  PagedData,
-} from 'extendz/core';
+import { AbstractDataTableService, EntityMeta, PagedData } from 'extendz/core';
 import { forkJoin, Observable, throwError } from 'rxjs';
-import { catchError, filter, flatMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, mergeMap, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class DataTableService extends AbstractDataTableService {
-  constructor(
-    public http: HttpClient,
-    public snackBar: MatSnackBar,
-    @Inject(EXT_API_CONFIG) public config: ExtApiConfig
-  ) {
+  constructor(public http: HttpClient, public snackBar: MatSnackBar) {
     super();
   }
 
-  public getData(
+  getData(
     entityMeta: EntityMeta,
     params?: HttpParams,
     pageEvent?: PageEvent
@@ -33,12 +23,10 @@ export class DataTableService extends AbstractDataTableService {
       params = params.append('pageSize', `${pageEvent.pageSize}`);
     }
 
-    return this.http
-      .get<PagedData>(entityMeta.url, { params })
-      .pipe(take(1));
+    return this.http.get<PagedData>(entityMeta.url, { params }).pipe(take(1));
   } // getData()
 
-  public delete(entityMeta: EntityMeta, objects: object[]): Observable<any> {
+  public delete(entityMeta: EntityMeta, objects: any[]): Observable<any> {
     let urls: string[] = objects.map((id) => `${entityMeta.url}/${id}`);
     return this.deleteByUrls(urls);
   }
@@ -49,10 +37,10 @@ export class DataTableService extends AbstractDataTableService {
       panelClass: ['snack-bar-info'],
     });
     let reqs: Observable<Object>[] = [];
-    urls.forEach((ulr) => reqs.push(this.http.delete(ulr).pipe(take(1))));
+    urls.forEach((u) => reqs.push(this.http.delete(u).pipe(take(1))));
     return ref.afterDismissed().pipe(
       filter((d: MatSnackBarDismiss) => d.dismissedByAction),
-      flatMap((_) => forkJoin(reqs)),
+      mergeMap((_) => forkJoin(reqs)),
       take(1),
       tap((_) =>
         this.snackBar.open('Deleted', null, {

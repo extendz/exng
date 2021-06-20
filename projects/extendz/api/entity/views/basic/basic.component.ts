@@ -1,8 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Property } from 'dist/extendz/core/public_api';
 import {
   AbstractEntityService,
   EntityMeta,
@@ -11,6 +9,7 @@ import {
   EXT_API_CONFIG,
   EXT_ENTITY_CONFIG,
   EXT_ENTITY_SERVICE,
+  Property,
   PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
@@ -44,7 +43,6 @@ export class ExtBasicComponent extends ExtBaseViewComponent implements OnInit {
     public media: MediaObserver
   ) {
     super(apiConfig, entityConfig, entityService, activatedRoute, entityMetaService);
-   
   }
 
   ngOnInit(): void {

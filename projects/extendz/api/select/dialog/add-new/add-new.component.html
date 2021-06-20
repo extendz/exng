@@ -8,5 +8,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <span fxFlex></span>
-  <button mat-button (click)="simple.onSave()">Save and add</button>
+  <button mat-button matDialogClose>Cancel</button>
+  <span fxFlex="2"></span>
+  <button mat-raised-button color="accent" (click)="simple.onSave()">Create and add</button>
 </mat-dialog-actions>

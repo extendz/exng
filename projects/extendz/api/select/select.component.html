@@ -2,6 +2,7 @@
   <input
     [formControl]="autoCompleteControl"
     matInput
+    autocomplete="off"
     [placeholder]="property?.name | camelCase"
     [matAutocomplete]="auto"
   />
@@ -16,6 +17,19 @@
   </mat-autocomplete>
 
   <button
+    *ngIf="showAddButton"
+    type="button"
+    mat-icon-button
+    class="small-icon-button"
+    matTooltip="Add"
+    (click)="addNew($event, property)"
+  >
+    <ng-container *ngTemplateOutlet="add"></ng-container>
+  </button>
+
+  <button
+    *ngIf="showMoreButton"
+    type="button"
     [matMenuTriggerFor]="menu"
     mat-icon-button
     class="small-icon-button"
@@ -27,16 +41,14 @@
 </div>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="onAdvanceSearch($event, true)" mat-menu-item>
+  <button *ngIf="allowSearch" mat-menu-item (click)="onAdvanceSearch($event, true)" mat-menu-item>
     <ng-container *ngTemplateOutlet="search"> </ng-container>
     <span>Search</span>
   </button>
-  <button mat-menu-item (click)="addNew($event, property)">
-    <ng-container *ngTemplateOutlet="add"></ng-container>
-    <span>Add</span>
-  </button>
 
-  <button mat-menu-item (click)="onView($event, property)" [disabled]="value == undefined">
+  <ng-container *ngTemplateOutlet="addButton"></ng-container>
+
+  <button *ngIf="value != undefined" mat-menu-item (click)="onView($event, property)">
     <ng-container *ngTemplateOutlet="view"></ng-container>
     <span>View</span>
   </button>
@@ -46,6 +58,13 @@
     <span>Clear</span>
   </button>
 </mat-menu>
+
+<ng-template #addButton>
+  <button mat-menu-item (click)="addNew($event, property)">
+    <ng-container *ngTemplateOutlet="add"></ng-container>
+    <span>Add</span>
+  </button>
+</ng-template>
 
 <ng-template #more>
   <mat-icon>

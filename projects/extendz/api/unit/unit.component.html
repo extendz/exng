@@ -1,15 +1,12 @@
 <form [formGroup]="formGroup">
-  <mat-select formControlName="unit" fxFlex="15">
-    <mat-option *ngFor="let u of this.property.units" [value]="u">
-      {{ u }}
+  <mat-select formControlName="unit" fxFlex.lg="3vw" fxFlex.lg="4vw">
+    <mat-option *ngFor="let u of units$ | async" [value]="u">
+      {{ u?.code }}
     </mat-option>
   </mat-select>
-
   <span fxFlex="1"></span>
-
   <input
     type="number"
-    fxFlex
     formControlName="value"
     [placeholder]="property.name | camelCase"
     matInput

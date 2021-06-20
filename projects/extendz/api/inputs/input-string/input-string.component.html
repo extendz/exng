@@ -1,0 +1,15 @@
+<mat-form-field>
+  <input
+    autocomplete="off"
+    matInput
+    [maxlength]="control.errors?.maxlength?.requiredLength"
+    [minlength]="control.errors?.minlength?.requiredLength"
+    [id]="property.name"
+    [placeholder]="property?.displayName || (property.name | camelCase)"
+    [formControl]="control"
+  />
+  <mat-error *ngIf="control.hasError('required')">
+    {{ property?.displayName || (property.name | camelCase) }} is
+    <strong>required</strong>
+  </mat-error>
+</mat-form-field>

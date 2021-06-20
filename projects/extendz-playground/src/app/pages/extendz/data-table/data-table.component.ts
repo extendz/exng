@@ -1,8 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityMeta, ExtApiConfig, EXT_API_CONFIG, getId } from 'extendz/core';
 import { ObjectWithLinks } from 'extendz/core/models/hateos/object-with-links';
 import { EntityMetaService } from 'extendz/service';
+import { Subscription } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 
 @Component({
@@ -10,8 +11,9 @@ import { map, mergeMap, tap } from 'rxjs/operators';
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent implements OnInit {
+export class DataTableComponent implements OnInit, OnDestroy {
   public entityMeta: EntityMeta;
+  private subscription: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -21,15 +23,18 @@ export class DataTableComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.params
+    this.subscription = this.activatedRoute.params
       .pipe(
         map((p) => p.model),
         mergeMap((name) => this.entityMetaService.getModel(name)),
         tap((model) => (this.entityMeta = model))
-        // flatMap(model => this.getData(model))
       )
       .subscribe();
-  } // ngOnInit()
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) this.subscription.unsubscribe();
+  }
 
   public onSelectEntity(entity: ObjectWithLinks): void {
     let id: string = 'new';

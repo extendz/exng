@@ -47,10 +47,15 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     return this.value == undefined;
   }
 
-  public autoCompleteControl: FormControl;
-  public autoCompleteData$: Observable<any>;
-  public entityMeta: EntityMeta;
-  public searchField: string;
+  autoCompleteControl: FormControl;
+  autoCompleteData$: Observable<any>;
+  entityMeta: EntityMeta;
+  searchField: string;
+
+  allowSearch: boolean = true;
+  showAddButton: boolean;
+  showMoreButton: boolean = true;
+
   private projection?: string;
 
   constructor(
@@ -89,7 +94,10 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
         return p;
       }),
       switchMap((p) => this.dataTableService.getData(this.entityMeta, p)),
-      map((d) => d.data)
+      map((d) => {
+        if (this.property?.config?.select?.autocomplete != false) return d.data;
+        else [];
+      })
     );
 
     this.autoCompleteData$ = iif(() => this.searchField != null, auto, of());
@@ -162,7 +170,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
       .pipe(
         take(1),
         filter((r) => r != undefined)
-        // filter((r: string[]) => r.length <= 0)
       )
       .subscribe((result: any | any[]) => this.handleEmbedded(result));
   }
@@ -171,17 +178,24 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     let type = this.property.type;
     if (type == PropertyType.object) {
       this.value = result;
-      this.onChange(this.value);
       this.autoCompleteControl.setValue(result);
+      this.onChange(this.value);
     } else if (type == PropertyType.objectList) {
       if (Array.isArray(result)) this.value = result;
       else this.value = [result];
-      let len = (this.value as any[]).length;
-      this.onChange(this.value);
-      this.displayValue = `${len} selected`;
+      let fun = this.property.config?.select?.displayFunction;
+      if (fun) {
+        const firstItem = this.value[0];
+        if (firstItem) this.displayValue = fun.feilds.map((f) => firstItem[f]).join(fun.delimiter);
+        else this.value = null;
+      } else {
+        let len = (this.value as any[]).length;
+        this.displayValue = `${len} selected`;
+      }
       this.autoCompleteControl.setValue(this.displayValue);
+      this.onChange(this.value);
     }
-    this.entityChange.emit(this.value);
+    setTimeout(() => this.entityChange.emit(this.value), 0);
   }
 
   onAutoComple(event: MouseEvent) {
@@ -203,10 +217,29 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
   }
 
   writeValue(obj: any): void {
-    if (obj) this.handleEmbedded(obj);
+    if (this.property?.config?.select?.allowSearch == false) {
+      this.allowSearch = false;
+      this.showMoreButton = false;
+    }
+    if (obj) {
+      this.handleEmbedded(obj);
+      this.showMoreButton = true;
+    }
+    if (obj == undefined) this.showAddButton = true;
   }
 
-  setDisabledState(isDisabled: boolean): void {}
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    if (isDisabled) {
+      this.autoCompleteControl.disable();
+      this.showMoreButton = false;
+      this.showAddButton = false;
+    } else {
+      this.autoCompleteControl.enable();
+      this.showMoreButton = true;
+      this.showAddButton = false;
+    }
+  }
 
   setDescribedByIds(ids: string[]) {
     this.describedBy = ids.join(' ');

@@ -7,7 +7,6 @@ import {
   HostListener,
   Inject,
   Input,
-  OnInit,
   Optional,
   Self,
 } from '@angular/core';
@@ -136,11 +135,13 @@ export class MoneyComponent implements ControlValueAccessor, MatFormFieldControl
       currency: [null, Validators.required],
     });
 
-    this.priceFormGroup.valueChanges.pipe(debounceTime(100)).subscribe((v: Price) => {
-      if (v.currency && v.value) {
-        const url = getValueByField(this.entityConfig.idFeild, v.currency);
-        this.onChange({ value: v.value, currency: url });
-      }
+    this.priceFormGroup.valueChanges.pipe(debounceTime(100)).subscribe((_) => {
+      if (this.priceFormGroup.valid) {
+        let v = this.priceFormGroup.getRawValue();
+        const currency = getValueByField(this.entityConfig.idFeild, v.currency);
+        const value = v.value;
+        this.onChange({ value, currency });
+      } else this.onChange(null);
     });
 
     fm.monitor(elRef.nativeElement, true).subscribe((origin) => {
@@ -148,8 +149,6 @@ export class MoneyComponent implements ControlValueAccessor, MatFormFieldControl
       // this.stateChanges.next();
     });
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy() {
     this.stateChanges.complete();
@@ -181,6 +180,7 @@ export class MoneyComponent implements ControlValueAccessor, MatFormFieldControl
         if (price && price.currency) defaultCurrency.defaultCurrency = price.currency.code;
         let currency = currencies.filter((c) => c.code == defaultCurrency.defaultCurrency)[0];
         if (!currency) currency = currencies[0];
+        if (currencies.length == 1) this.priceFormGroup.controls['currency'].disable();
         this.priceFormGroup.patchValue({ currency });
       })
     );

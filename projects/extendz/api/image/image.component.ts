@@ -2,7 +2,7 @@ import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ImageCroppedPropertyEvent, Property } from 'extendz/core';
+import { ImageCroppedPropertyEvent, Property, PropertyType } from 'extendz/core';
 import { take } from 'rxjs/operators';
 import { ImageCropperDialogComponent } from './image-cropper-dialog/image-cropper-dialog.component';
 
@@ -34,11 +34,15 @@ export class ExtImageComponent implements ControlValueAccessor {
   public onTouched: any = () => {};
 
   writeValue(urls: string | string[]): void {
-    if (Array.isArray(urls))
-      this.displayImages = urls.map((path) =>
+    if (urls == null) return;
+
+    if (this.property.type == PropertyType.image) {
+      this.displayImages = [this.sanitizer.bypassSecurityTrustStyle(`url(${urls})`)];
+    } else if (this.property.type == PropertyType.imageList) {
+      this.displayImages = (urls as string[]).map((path) =>
         this.sanitizer.bypassSecurityTrustStyle(`url(${path})`)
       );
-    else if (urls) this.displayImages = [this.sanitizer.bypassSecurityTrustStyle(`url(${urls})`)];
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -96,8 +100,16 @@ export class ExtImageComponent implements ControlValueAccessor {
     reader.onload = (event: ProgressEvent) => {
       let path = <string>reader.result;
       let image = this.sanitizer.bypassSecurityTrustStyle(`url(${path})`);
+      const isMutiple = this.isMutiple();
+      if (!isMutiple) this.displayImages = [];
       this.displayImages.unshift(image);
     };
     reader.readAsDataURL(file);
+  }
+
+  private isMutiple() {
+    const type = this.property.type;
+    if (type == PropertyType.image) return false;
+    else if (type == PropertyType.imageList) return true;
   }
 }

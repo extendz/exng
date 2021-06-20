@@ -1,0 +1,34 @@
+<!--   -->
+<mat-table *ngIf="page?.length > 0; else nothing" [dataSource]="data">
+  <ng-container *ngFor="let p of properties" [matColumnDef]="p.name">
+    <mat-header-cell *matHeaderCellDef>
+      <span>{{ p?.displayName || (p.name | camelCase) }}</span>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let e">
+      <span [ngSwitch]="p.type">
+        <span *ngSwitchDefault>
+          <span [ngSwitch]="p.type">
+            <span *ngSwitchCase="'date'">
+              {{ e[p.name] | date: dataTableConfig.dateFormat }}
+            </span>
+            <span *ngSwitchCase="'image'">
+              <img
+                class="image"
+                [src]="e[p.name] || dataTableConfig.placeholderImage"
+                alt="Image"
+              />
+            </span>
+            <span *ngSwitchDefault>
+              {{ e[p.name] }}
+            </span>
+          </span>
+        </span>
+      </span>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="allColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
+</mat-table>
+<ng-template #nothing>
+  <p class="no-data mat-title" *ngIf="!loading">No Data</p>
+</ng-template>

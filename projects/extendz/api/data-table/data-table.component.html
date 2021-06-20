@@ -1,51 +1,42 @@
-<mat-toolbar>
+<mat-toolbar [color]="dataTableConfig?.toolbar?.color">
   <mat-icon *ngIf="entityMeta" svgIcon="api-root:{{ entityMeta?.name }}"></mat-icon>
   <span fxFlex="0.5" fxFlex.xs="1"></span>
   <span fxFlex class="title">
     {{ entityMeta?.displayName | camelCase }}
   </span>
-  <form fxFlex [formGroup]="searchFormGroup" fxHide.xs>
+  <form
+    [fxFlex]="dataTableConfig?.toolbar?.search?.width || 50"
+    [formGroup]="searchFormGroup"
+    fxHide.xs
+  >
     <input
       formControlName="text"
       type="search"
       class="search mat-elevation-z1"
       placeholder="Search by {{ searchField | camelCase }}"
     />
-    <button mat-icon-button class="scale-in-center" matTooltip="Filter" (click)="onNew()">
+    <button
+      type="button"
+      mat-icon-button
+      class="scale-in-center"
+      matTooltip="Filter"
+      [matMenuTriggerFor]="appMenu"
+    >
       <ng-container *ngTemplateOutlet="filter"> </ng-container>
     </button>
   </form>
 
-  <span fxFlex fxLayout="row">
+  <!-- <span fxFlex fxLayout="row">
     <span fxFlex> </span>
     <div fxLayout="row" fxLayoutAlign="center center">
       <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-      <!-- Add -->
-      <button
-        mat-icon-button
-        *ngIf="selection?.selected?.length <= 0 && !allowNew"
-        class="scale-in-center add"
-        matTooltip="Add new"
-        (click)="onNew()"
-      >
-        <ng-container *ngTemplateOutlet="add"> </ng-container>
-      </button>
-      <!-- Detele -->
-      <button
-        mat-icon-button
-        *ngIf="selection?.selected?.length > 0 && !allowNew"
-        matTooltip="Delete selected"
-        (click)="onDelete()"
-        class="scale-in-center"
-      >
-        <ng-container *ngTemplateOutlet="deleteIcon"> </ng-container>
-      </button>
     </div>
-  </span>
+  </span> -->
+  <span fxFlex="4" fxFlex.xs="1"></span>
 </mat-toolbar>
 
 <div fxLayout="column">
-  <mat-table *ngIf="page?.length > 0; else nothig" [dataSource]="data">
+  <mat-table *ngIf="page?.length > 0; else nothig" [dataSource]="data" multiTemplateDataRows>
     <!-- Select Column -->
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef fxFlex="48px">
@@ -63,13 +54,37 @@
 
     <ng-container *ngFor="let p of properties" [matColumnDef]="p.name">
       <mat-header-cell *matHeaderCellDef>
-        <span>{{ p.name | camelCase }}</span>
+        <span>{{ p?.displayName || (p.name | camelCase) }}</span>
       </mat-header-cell>
       <mat-cell *matCellDef="let e">
         <span [ngSwitch]="p.type">
           <span *ngSwitchCase="'date'">
-            {{ e[p.name] | date: dataTableConfig.dateFormat }}
+            <!-- <p
+              style="cursor: pointer"
+              cdkOverlayOrigin
+              #trigger="cdkOverlayOrigin"
+              (click)="isPopoverOpen = !isPopoverOpen"
+            >
+              {{ e[p.name] | date: dataTableConfig.dateFormat }}
+            </p>
+            <ng-template
+              cdkConnectedOverlay
+              cdkConnectedOverlayPanelClass="custom-popover"
+              [cdkConnectedOverlayHasBackdrop]="true"
+              [cdkConnectedOverlayOpen]="isPopoverOpen"
+              [cdkConnectedOverlayOrigin]="trigger"
+              (backdropClick)="isPopoverOpen = false"
+            >
+              <mat-card style="width: 100%"> Hi </mat-card>
+            </ng-template> -->
+            <ext-inline-date
+              [entity]="e"
+              [property]="p"
+              [format]="dataTableConfig.dateFormat"
+              (change)="onRowChange($event, p, e)"
+            ></ext-inline-date>
           </span>
+
           <span *ngSwitchCase="'image'">
             <img class="image" [src]="e[p.name] || dataTableConfig.placeholderImage" alt="Image" />
           </span>
@@ -87,8 +102,38 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row" fxFlex="48px">
         <button mat-icon-button (click)="editRow(row)">
-          <ng-container *ngTemplateOutlet="edit"> </ng-container>
+          <ng-container *ngTemplateOutlet="i_pencil_outline"> </ng-container>
         </button>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Expand Column -->
+    <ng-container matColumnDef="expand">
+      <mat-header-cell *matHeaderCellDef fxFlex="48px">
+        <span>More</span>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row" fxFlex="48px">
+        <mat-spinner *ngIf="row._loading; else expand" diameter="25"></mat-spinner>
+        <ng-template #expand>
+          <button
+            *ngIf="expands.length > 1"
+            mat-icon-button
+            #expandMenuButton
+            [matMenuTriggerFor]="expandMenu"
+            [matMenuTriggerData]="{ row: row }"
+          >
+            <ng-container
+              *ngTemplateOutlet="i_chevron; context: { expanded: row == expandedElement }"
+            >
+            </ng-container>
+          </button>
+          <button *ngIf="expands.length <= 1" mat-icon-button (click)="onExpand(row, expands[0])">
+            <ng-container
+              *ngTemplateOutlet="i_chevron; context: { expanded: row == expandedElement }"
+            >
+            </ng-container>
+          </button>
+        </ng-template>
       </mat-cell>
     </ng-container>
 
@@ -109,13 +154,76 @@
       </mat-footer-cell>
     </ng-container>
 
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let expanded" class="expand-row">
+        <div
+          class="example-element-detail"
+          [@detailExpand]="expanded == expandedElement ? 'expanded' : 'collapsed'"
+        >
+          <ng-container *ngIf="expanded == expandedElement">
+            <ext-basic-table
+              [entityMeta]="expandedEntityMeta"
+              [filter]="expandFilter"
+              (done)="onExpandDone()"
+            ></ext-basic-table>
+          </ng-container>
+        </div>
+      </td>
+    </ng-container>
+
     <mat-header-row *matHeaderRowDef="allColumns; sticky: true"></mat-header-row>
-    <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: allColumns"></mat-row>
+    <mat-row
+      [@rowsAnimation]=""
+      *matRowDef="let row; columns: allColumns"
+      class="example-element-row"
+      [class.example-expanded-row]="expandedElement === row"
+    ></mat-row>
+    <tr
+      mat-row
+      *matRowDef="let expanded; columns: ['expandedDetail']"
+      class="example-detail-row"
+    ></tr>
     <mat-footer-row *matFooterRowDef="['page']; sticky: true"></mat-footer-row>
   </mat-table>
 
   <!-- <span fxFlex></span> -->
 </div>
+
+<!-- expand menu -->
+<mat-menu #expandMenu="matMenu">
+  <ng-template matMenuContent let-r="row">
+    <button *ngFor="let e of expands" mat-menu-item (click)="onExpand(r, e)">
+      {{ e?.displayName }}
+    </button>
+  </ng-template>
+</mat-menu>
+
+<ng-container *ngTemplateOutlet="saveButton"></ng-container>
+
+<ng-template #saveButton>
+  <!-- Add -->
+  <button
+    mat-fab
+    *ngIf="selection?.selected?.length <= 0 && !allowNew"
+    class="scale-in-center add bottom-right"
+    matTooltip="Add new"
+    (click)="onNew()"
+  >
+    <ng-container *ngTemplateOutlet="add"> </ng-container>
+  </button>
+  <!-- Detele -->
+  <button
+    mat-fab
+    color="warn"
+    *ngIf="selection?.selected?.length > 0 && !allowNew"
+    matTooltip="Delete selected"
+    (click)="onDelete()"
+    class="scale-in-center bottom-right"
+  >
+    <ng-container *ngTemplateOutlet="deleteIcon"> </ng-container>
+  </button>
+  <mat-spinner diameter="60" class="bottom-right" *ngIf="loading"></mat-spinner>
+</ng-template>
 
 <ng-template #nothig>
   <div fxLayout="row" fxLayoutAlign="center center" class="nothing">
@@ -129,7 +237,7 @@
       <h1 *ngIf="loading">Loading</h1>
       <h1 *ngIf="!loading">
         <span *ngIf="httpError">
-          <span style="color: #c00;">{{ httpError?.error?.status }} </span>
+          <span style="color: #c00">{{ httpError?.error?.status }} </span>
           {{ httpError?.error?.error }}
         </span>
         <span *ngIf="!httpError">No {{ entityMeta?.displayName | camelCase }} found !</span>
@@ -137,6 +245,46 @@
     </div>
   </div>
 </ng-template>
+
+<mat-menu #appMenu="matMenu">
+  <ng-container *ngFor="let property of entityMeta?.properties | keyvalue; trackBy: trackItem">
+    <button
+      mat-menu-item
+      (click)="onSeachField(property?.key)"
+      *ngIf="property?.value?.type != 'object'"
+    >
+      {{ property?.key | camelCase }}
+    </button>
+    <!-- Sub menu -->
+    <ng-container>
+      <button
+        mat-menu-item
+        *ngIf="property?.value?.type == 'object'"
+        [matMenuTriggerFor]="secondMenu"
+        [matMenuTriggerData]="{
+          properties: getProperty(property?.key) | async,
+          name: property?.key
+        }"
+      >
+        {{ property?.key | camelCase }}
+      </button>
+    </ng-container>
+  </ng-container>
+</mat-menu>
+
+<mat-menu #secondMenu="matMenu">
+  <ng-template matMenuContent let-properties="properties" let-name="name">
+    <ng-container *ngFor="let p of properties | keyvalue; trackBy: trackItem">
+      <button
+        mat-menu-item
+        (click)="onSeachFieldPropery(p.value, name)"
+        *ngIf="p?.value.type != 'object'"
+      >
+        {{ p.key | camelCase }}
+      </button>
+    </ng-container>
+  </ng-template>
+</mat-menu>
 
 <ng-template #selectAll>
   <mat-checkbox
@@ -156,13 +304,27 @@
   </mat-icon>
 </ng-template>
 
-<ng-template #edit>
+<ng-template #i_chevron let-e="expanded">
+  <mat-icon *ngIf="!e">
+    <svg viewBox="0 0 24 24">
+      <path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+    </svg>
+  </mat-icon>
+
+  <mat-icon *ngIf="e">
+    <svg viewBox="0 0 24 24">
+      <path fill="currentColor" d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+    </svg>
+  </mat-icon>
+</ng-template>
+
+<ng-template #i_pencil_outline>
   <mat-icon>
-    <svg id="edit" class="icon-button" viewBox="0 0 24 24">
+    <svg viewBox="0 0 24 24">
       <path
-        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+        fill="currentColor"
+        d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z"
       />
-      <path d="M0 0h24v24H0z" fill="none" />
     </svg>
   </mat-icon>
 </ng-template>

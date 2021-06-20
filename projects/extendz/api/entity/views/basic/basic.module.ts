@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtPipesModule } from 'extendz/pipes';
-import { ExtBasicSelectModule } from '../../../basic-select/basic-select.module';
+import { ExtInputsModule } from '../../../inputs/inputs.module';
 import { ExtMoneyModule } from '../../../money/money.module';
 import { ExtBasicComponent } from './basic.component';
 
@@ -19,6 +19,7 @@ import { ExtBasicComponent } from './basic.component';
     CommonModule,
     FlexLayoutModule,
     ExtPipesModule,
+    ExtInputsModule,
     ExtMoneyModule,
     ReactiveFormsModule,
     MatDialogModule,

@@ -1,10 +1,12 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { ThisReceiver } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params, Router } from '@angular/router';
 import {
   AbstractEntityService,
   clearUrl,
+  deepCopy,
   EntityMeta,
   getId,
   ObjectWithLinks,
@@ -12,8 +14,8 @@ import {
   PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { forkJoin, Observable, of, throwError, zip } from 'rxjs';
-import { catchError, defaultIfEmpty, finalize, map, mergeMap, take, tap } from 'rxjs/operators';
+import { forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { catchError, defaultIfEmpty, delay, map, mergeMap, take, tap } from 'rxjs/operators';
 
 export class PropertyFile {
   name: string;
@@ -99,74 +101,66 @@ export class EntityService implements AbstractEntityService {
     original?: ObjectWithLinks,
     showSnackBar?: boolean
   ): Observable<any> {
-    // get tabs and merget with parent properties
-    let _tabs = entityMeta.properties['_tabs'];
-    if (_tabs) _tabs.tabs.forEach((prop) => (entityMeta.properties[prop.name] = prop));
+    const entityMetaClone = deepCopy(entityMeta);
 
-    let converted: RestAndFiles = this.process(newValue, entityMeta);
+    // get tabs and merget with parent properties
+    let _tabs = entityMetaClone.properties['_tabs'];
+    if (_tabs) _tabs.tabs.forEach((prop) => (entityMetaClone.properties[prop.name] = prop));
+
+    let converted: RestAndFiles = this.process(newValue, entityMetaClone);
     console.log('converted', converted);
+    let payload = converted.payload;
     let sub: Observable<any>;
+    let update: boolean = false;
 
     // PATCH;
-    if (original && original._links)
-      sub = this.http.patch<ObjectWithLinks>(original._links.self.href, converted.payload).pipe(
-        take(1),
-        catchError((e) => {
-          if (showSnackBar) this.showError(e);
-          return throwError(e);
-        }),
-        tap(() => {
-          if (showSnackBar) this.showUpdated();
-        })
-      );
-    // POST
-    else
-      sub = this.http.post<ObjectWithLinks>(entityMeta.url, converted.payload).pipe(
-        take(1),
-        catchError((e) => {
-          if (showSnackBar) this.showError(e);
-          return throwError(e);
-        }),
-        tap(() => {
-          if (showSnackBar) this.showCreated();
-        })
-      );
+    if (original && original._links) {
+      update = true;
+      sub = this.http.patch<ObjectWithLinks>(original._links.self.href, payload);
+    } else sub = this.http.post<ObjectWithLinks>(entityMetaClone.url, payload);
 
     sub = sub.pipe(
+      // after save/update take 1
+      take(1),
       // Save files
-      mergeMap((d) =>
-        this.uploadFiles(d, converted.files).pipe(
-          take(1),
-          map((_) => d)
-        )
-      ),
+      mergeMap((d) => this.uploadFiles(d, converted.files).pipe(map((_) => d))),
       // Post saves
       mergeMap((d) =>
-        this.getPostSave([...converted.postSave], d._links.self.href).pipe(
-          mergeMap((_) => this.finalizeSave(d, navigate))
-        )
+        this.getPostSave([...converted.postSave], d._links.self.href).pipe(map((_) => d))
       ),
+      // Patch requests
       mergeMap((d) =>
         forkJoin(converted.patchRequests).pipe(
           defaultIfEmpty(d),
-          mergeMap((_) => of(d))
+          map((_) => d)
         )
-      )
+      ),
+      mergeMap((d) => this.finalizeSave(d, navigate))
     );
-    return sub;
-    // return of();
+
+    return sub.pipe(
+      tap((_) => {
+        if (showSnackBar && !update) this.showCreated();
+        else if (showSnackBar && update) this.showUpdated();
+      }),
+      catchError((e) => {
+        if (showSnackBar) this.showError(e);
+        return throwError(e);
+      })
+    );
   }
 
-  uploadFiles(entity: ObjectWithLinks, files: PropertyFile[]): Observable<unknown[]> {
-    let reqs = [];
-    files.forEach((v) => {
-      const pathVar = v.name;
-      const url = `${entity._links.self.href}/${pathVar}`;
-      let formData = new FormData();
-      formData.append(pathVar, v.file);
-      reqs.push(this.http.post(url, formData).pipe(take(1)));
-    });
-    return forkJoin(reqs).pipe(defaultIfEmpty(null));
+  uploadFiles(entity: ObjectWithLinks, files: PropertyFile[]) {
+    return from(files).pipe(
+      mergeMap((file) => {
+        const pathVar = file.name;
+        const url = `${entity._links.self.href}/${pathVar}`;
+        let formData = new FormData();
+        formData.append(pathVar, file.file);
+        return this.http.post(url, formData).pipe(take(1), delay(1500));
+      }),
+      defaultIfEmpty()
+    );
   }
 
   private showCreated() {
@@ -205,6 +199,8 @@ export class EntityService implements AbstractEntityService {
   }
 
   private finalizeSave(savedEntity: ObjectWithLinks, navigate: boolean = true) {
+    console.log('saved entitty', savedEntity);
+
     let path = this.getRelativePath();
     if (navigate) {
       let id = getId(savedEntity._links.self.href);
@@ -220,15 +216,6 @@ export class EntityService implements AbstractEntityService {
   private getEntityMetaFromParent(e: EntityMeta, propertyName: string): Observable<EntityMeta> {
     const p = e.properties[propertyName];
     return this.entityMetaService.getModel(p.reference);
-  }
-
-  private clean(object: any) {
-    for (var propName in object) {
-      if (object[propName] === null || object[propName] === undefined) {
-        delete object[propName];
-      }
-    }
-    return object;
   }
 
   private process(newValue: any, entityMeta: EntityMeta): RestAndFiles {
@@ -247,18 +234,19 @@ export class EntityService implements AbstractEntityService {
     properties.forEach((p) => {
       const key = p.name;
       const value = newValue[key];
-      if (value) console.debug(key, value);
-
       const type = p.type;
+
+      if (value != null) console.debug(key, value, type);
+
       if (p.generated) return;
-      else if (!value) return;
+      else if (value == null) return;
       else if (type == PropertyType.objectList) {
         let savedObjectList = [];
         (value as any[]).forEach((payload) => {
           // post save only the object without id
-          if (!payload._links)
+          if (payload._links == null)
             postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key });
-          else if (payload._links) {
+          else if (payload._links != null) {
             // Patch
             const url = clearUrl(payload._links.self.href);
             let entityMeta = p.entityMeta;
@@ -269,15 +257,13 @@ export class EntityService implements AbstractEntityService {
             // Update the current object
             savedObjectList.push(url);
           }
-          rest[key] = savedObjectList;
+          if (savedObjectList.length > 0) rest[key] = savedObjectList;
         });
       } else if (type == PropertyType.matrix) {
         (value as any[]).forEach((payload) =>
           postSave.push({ parentEntityMeta: entityMeta, payload, propertyName: key })
         );
       } else if (type == PropertyType.image || type == PropertyType.file) {
-        console.log('is file', value instanceof File);
-
         if (value instanceof File) files.push({ file: value, name: key });
         else rest[key] = value;
       } else if (type == PropertyType.object) {
