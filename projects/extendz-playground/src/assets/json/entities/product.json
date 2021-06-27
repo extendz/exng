@@ -1,0 +1,59 @@
+{
+  "name": "product",
+  "title": "name",
+  "config": {
+    "dataTable": {
+      "expands": [
+        {
+          "displayName": "Batches",
+          "property": { "name": "batches" },
+          "filter": { "key": "product.id" }
+        }
+      ]
+    },
+    "entity": {
+      "enableProjection": true,
+      "projection": "entity"
+    },
+    "select": {
+      "projection": "select"
+    }
+  },
+  "projections": {
+    "dataTable": [
+      { "name": "image", "type": "image" },
+      { "name": "name", "type": "string" }
+    ]
+  },
+  "properties": {
+    "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "24" } },
+    "description": { "name": "description", "type": "string", "width": { "lg": "24" } },
+    "category": {
+      "name": "category",
+      "type": "object",
+      "reference": "category",
+      "width": { "lg": "24" }
+    },
+    "batches": {
+      "name": "batches",
+      "type": "objectList",
+      "reference": "batch",
+      "width": { "lg": "24" }
+    },
+    "unitPrice": { "name": "unitPrice", "type": "money", "width": { "lg": "24" } },
+    "cost": { "name": "cost", "type": "money", "width": { "lg": "24" } },
+    "minimumQuantity": { "name": "minimumQuantity", "type": "number", "width": { "lg": "24" } },
+    "weight": { "name": "weight", "type": "unit", "width": { "lg": "24" } },
+    "unitsPerSquareFeet": {
+      "name": "unitsPerSquareFeet",
+      "type": "number",
+      "width": { "lg": "24" }
+    },
+    "note": { "name": "note", "type": "string", "width": { "lg": "100" } },
+    "active": { "name": "active", "type": "boolean", "default": "true", "width": { "lg": "24" } },
+    "expirable": { "name": "expirable", "type": "boolean", "width": { "lg": "24" } },
+    "salesPart": { "name": "salesPart", "type": "boolean", "width": { "lg": "24" } },
+    "purchasePart": { "name": "purchasePart", "type": "boolean", "width": { "lg": "24" } },
+    "image": { "name": "image", "type": "image", "width": { "lg": "24" } }
+  }
+}

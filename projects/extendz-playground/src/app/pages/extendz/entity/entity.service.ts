@@ -1,5 +1,4 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { ThisReceiver } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params, Router } from '@angular/router';
@@ -12,10 +11,20 @@ import {
   ObjectWithLinks,
   Property,
   PropertyType,
+  SelectProperty,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, defaultIfEmpty, delay, map, mergeMap, take, tap } from 'rxjs/operators';
+import {
+  catchError,
+  defaultIfEmpty,
+  delay,
+  map,
+  mergeMap,
+  shareReplay,
+  take,
+  tap,
+} from 'rxjs/operators';
 
 export class PropertyFile {
   name: string;
@@ -59,7 +68,7 @@ export class EntityService implements AbstractEntityService {
     return this.http.get<ObjectWithLinks>(url, { params }).pipe(take(1));
   }
 
-  navigate(property: Property, idField: string): void {
+  navigate(property: SelectProperty, idField: string): void {
     this.entityMetaService
       .getModel(property.reference)
       .pipe(
@@ -78,7 +87,7 @@ export class EntityService implements AbstractEntityService {
     this.navigate(property, id);
   }
 
-  navigateNew(property: Property, parentEntity: ObjectWithLinks): void {
+  navigateNew(property: SelectProperty, parentEntity: ObjectWithLinks): void {
     const id = getId(parentEntity._links.self.href);
     const queryParams: Params = {};
     queryParams[property.mappedBy] = id;
@@ -108,7 +117,7 @@ export class EntityService implements AbstractEntityService {
     if (_tabs) _tabs.tabs.forEach((prop) => (entityMetaClone.properties[prop.name] = prop));
 
     let converted: RestAndFiles = this.process(newValue, entityMetaClone);
-    console.log('converted', converted);
+    console.debug('converted', converted);
     let payload = converted.payload;
     let sub: Observable<any>;
     let update: boolean = false;
@@ -116,7 +125,8 @@ export class EntityService implements AbstractEntityService {
     // PATCH;
     if (original && original._links) {
       update = true;
-      sub = this.http.patch<ObjectWithLinks>(original._links.self.href, payload);
+      const url = clearUrl(original._links.self.href);
+      sub = this.http.patch<ObjectWithLinks>(url, payload);
     } else sub = this.http.post<ObjectWithLinks>(entityMetaClone.url, payload);
 
     sub = sub.pipe(
@@ -199,7 +209,7 @@ export class EntityService implements AbstractEntityService {
   }
 
   private finalizeSave(savedEntity: ObjectWithLinks, navigate: boolean = true) {
-    console.log('saved entitty', savedEntity);
+    // console.log('saved entitty', savedEntity);
 
     let path = this.getRelativePath();
     if (navigate) {
@@ -214,7 +224,7 @@ export class EntityService implements AbstractEntityService {
   }
 
   private getEntityMetaFromParent(e: EntityMeta, propertyName: string): Observable<EntityMeta> {
-    const p = e.properties[propertyName];
+    const p: SelectProperty = e.properties[propertyName];
     return this.entityMetaService.getModel(p.reference);
   }
 
@@ -250,7 +260,8 @@ export class EntityService implements AbstractEntityService {
             // Patch
             const url = clearUrl(payload._links.self.href);
             let entityMeta = p.entityMeta;
-            if (!entityMeta) entityMeta = this.entityMetaService.getModelSync(p.reference);
+            if (entityMeta == undefined) throw 'Entity meta now found';
+            // if (!entityMeta) entityMeta = this.entityMetaService.getModelSync(p.reference);
             var converted = this.convertObjectToHateos(payload, entityMeta);
             const patchReq = this.http.patch(url, converted).pipe(take(1));
             patches.push(patchReq);

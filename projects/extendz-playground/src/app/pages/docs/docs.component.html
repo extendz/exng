@@ -1,9 +1,44 @@
+<mat-toolbar>
+  <!-- <span fxFlex="5"></span> -->
+  <span fxFlex="15">
+    <img src="assets/img/logo.png" routerLink="/" height="30" />
+  </span>
+  <!-- <span fxFlex="10"></span> -->
+  <a mat-raised-button color="primary" routerLink="/api">Getting Started</a>
+  <a mat-button routerLink="/api">Demo</a>
+  <span fxFlex></span>
+  <span>V 11.1.26</span>
+</mat-toolbar>
 <mat-drawer-container>
   <mat-drawer mode="side" opened>
-    <span class="components">Components</span>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/api">Demo</a>
+    <mat-nav-list dense>
+      <div mat-subheader>Compound Modules</div>
+      <a mat-list-item [routerLink]="i.url" *ngFor="let i of compound">
+        <mat-icon mat-list-icon>{{ i.icon }}</mat-icon>
+        <span>{{ i.name }}</span>
+        
+      </a>
+
+      <div mat-subheader>Core Modules</div>
+      <a mat-list-item [routerLink]="i.url" *ngFor="let i of core">
+        <mat-icon mat-list-icon>{{ i.icon }}</mat-icon>
+        <span>{{ i.name }}</span>
+      </a>
+
+      <div mat-subheader>Pro Modules</div>
+      <a mat-list-item [routerLink]="i.url" *ngFor="let i of pro">
+        <mat-icon mat-list-icon>{{ i.icon }}</mat-icon>
+        <span>{{ i.name }}</span>
+      </a>
+
+      <div mat-subheader>Basic</div>
+      <a mat-list-item [routerLink]="i.url" *ngFor="let i of basic">
+        <mat-icon mat-list-icon>{{ i.icon }}</mat-icon>
+        <span>{{ i.name }}</span>
+      </a>
     </mat-nav-list>
   </mat-drawer>
-  <mat-drawer-content>Description</mat-drawer-content>
+  <mat-drawer-content>
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
 </mat-drawer-container>

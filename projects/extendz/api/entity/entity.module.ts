@@ -21,7 +21,7 @@ export class ExtEntityModule {
       ngModule: ExtEntityModule,
       providers: [
         { provide: EXT_ENTITY_CONFIG, useValue: config },
-        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson) },
+        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson, config.partials) },
       ],
     };
   }

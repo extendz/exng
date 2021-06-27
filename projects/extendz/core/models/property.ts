@@ -1,3 +1,4 @@
+import { Action } from './config';
 import { Command } from './command';
 import { EntityMeta } from './entity-meta';
 
@@ -47,9 +48,10 @@ export enum PropertyType {
   checkbox = 'checkbox',
   embedded = 'embedded',
   embeddedList = 'embeddedList',
+  enum = 'enum',
   email = 'email',
   index = 'index',
-  enum = 'enum',
+  display = 'display',
   file = 'file',
   image = 'image',
   imageList = 'imageList',
@@ -68,13 +70,18 @@ export enum PropertyType {
 }
 
 export enum MutationType {
-  Update,
-  Delete,
+  Update = 'Update',
+  Delete = 'Delete',
+  Disable = 'Disable',
+  Enable = 'Enable',
 }
 
 export class Mutate {
-  from?: MutationType;
-  to?: string;
+  type?: MutationType;
+  from?: string;
+  /*** extract children value rather than direct one */
+  deep?: boolean;
+  to?: string[];
 }
 
 export enum PropertyValidationType {
@@ -103,9 +110,6 @@ export class Property {
 
   /*** Will show as propery name, if not defined the name is used */
   displayName?: boolean;
-
-  /*** Refence for object  */
-  reference?: string;
 
   /*** */
   type: PropertyType;
@@ -137,6 +141,7 @@ export class Property {
   units?: string[];
 
   width?: {
+    value?: string;
     xs?: string;
     md?: string;
     lg?: string;
@@ -161,13 +166,30 @@ export class Property {
     [key: string]: Mutate[];
   };
 
+  events?: {
+    [key: string]: Mutate[];
+  };
+
   /*** Validations */
   validations?: PropertyValidation[];
+
+  actions: Action[];
+
+  /*** If false no floatigns */
+  labelFloat: boolean;
+
+  /*** Inline edit enable */
+  inlineEdit?: {
+    enabled?: boolean;
+    showAlways?: boolean;
+    fxLayoutAlign?: string;
+  };
 
   /*** config */
   config?: {
     select?: {
       allowSearch: boolean;
+      allowAdd: boolean;
       autocomplete: boolean;
       displayFunction: {
         feilds: string[];

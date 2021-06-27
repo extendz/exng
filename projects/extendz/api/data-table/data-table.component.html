@@ -15,7 +15,7 @@
       class="search mat-elevation-z1"
       placeholder="Search by {{ searchField | camelCase }}"
     />
-    <button
+    <!-- <button
       type="button"
       mat-icon-button
       class="scale-in-center"
@@ -23,7 +23,7 @@
       [matMenuTriggerFor]="appMenu"
     >
       <ng-container *ngTemplateOutlet="filter"> </ng-container>
-    </button>
+    </button> -->
   </form>
 
   <!-- <span fxFlex fxLayout="row">
@@ -57,32 +57,22 @@
         <span>{{ p?.displayName || (p.name | camelCase) }}</span>
       </mat-header-cell>
       <mat-cell *matCellDef="let e">
-        <span [ngSwitch]="p.type">
+        <span [ngSwitch]="p.type" style="width: 100%">
           <span *ngSwitchCase="'date'">
-            <!-- <p
-              style="cursor: pointer"
-              cdkOverlayOrigin
-              #trigger="cdkOverlayOrigin"
-              (click)="isPopoverOpen = !isPopoverOpen"
-            >
-              {{ e[p.name] | date: dataTableConfig.dateFormat }}
-            </p>
-            <ng-template
-              cdkConnectedOverlay
-              cdkConnectedOverlayPanelClass="custom-popover"
-              [cdkConnectedOverlayHasBackdrop]="true"
-              [cdkConnectedOverlayOpen]="isPopoverOpen"
-              [cdkConnectedOverlayOrigin]="trigger"
-              (backdropClick)="isPopoverOpen = false"
-            >
-              <mat-card style="width: 100%"> Hi </mat-card>
-            </ng-template> -->
             <ext-inline-date
               [entity]="e"
               [property]="p"
               [format]="dataTableConfig.dateFormat"
               (change)="onRowChange($event, p, e)"
             ></ext-inline-date>
+          </span>
+
+          <span *ngSwitchCase="'number'">
+            <ext-inline-number
+              [entity]="e"
+              [property]="p"
+              (change)="onRowChange($event, p, e)"
+            ></ext-inline-number>
           </span>
 
           <span *ngSwitchCase="'image'">
@@ -246,7 +236,7 @@
   </div>
 </ng-template>
 
-<mat-menu #appMenu="matMenu">
+<!-- <mat-menu #appMenu="matMenu">
   <ng-container *ngFor="let property of entityMeta?.properties | keyvalue; trackBy: trackItem">
     <button
       mat-menu-item
@@ -255,7 +245,7 @@
     >
       {{ property?.key | camelCase }}
     </button>
-    <!-- Sub menu -->
+
     <ng-container>
       <button
         mat-menu-item
@@ -270,7 +260,7 @@
       </button>
     </ng-container>
   </ng-container>
-</mat-menu>
+</mat-menu> -->
 
 <mat-menu #secondMenu="matMenu">
   <ng-template matMenuContent let-properties="properties" let-name="name">

@@ -1,4 +1,3 @@
-<!--   -->
 <mat-table *ngIf="page?.length > 0; else nothing" [dataSource]="data">
   <ng-container *ngFor="let p of properties" [matColumnDef]="p.name">
     <mat-header-cell *matHeaderCellDef>

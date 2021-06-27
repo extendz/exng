@@ -1,10 +1,21 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChange,
+  SimpleChanges,
+} from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Property } from 'extendz/core';
-import { Subject } from 'rxjs';
+import { EntityEvent } from 'extendz/core';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'ext-base-select',
@@ -15,6 +26,10 @@ export abstract class ExtBaseSelectComponent
 {
   stateChanges = new Subject<void>();
   abstract id: string;
+
+  /*** Events from parent form */
+  @Input() events: Observable<EntityEvent>;
+  protected eventSubscription: Subscription;
 
   @Input()
   get placeholder() {
@@ -37,7 +52,8 @@ export abstract class ExtBaseSelectComponent
   abstract empty: boolean;
 
   get shouldLabelFloat() {
-    return this.focused || !this.empty;
+    if (this.property.labelFloat == false) return false;
+    else return this.focused || !this.empty;
   }
 
   @Input()
@@ -76,6 +92,10 @@ export abstract class ExtBaseSelectComponent
       this.focused = !!origin;
       if (this.focused) this.stateChanges.next();
     });
+  }
+
+  ngOnDestroy() {
+    if (this.eventSubscription) this.eventSubscription.unsubscribe();
   }
 
   abstract writeValue(obj: any);

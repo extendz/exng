@@ -37,9 +37,10 @@ import {
   getValueByField,
   Property,
   PropertyType,
+  SelectProperty,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -91,10 +92,12 @@ export class ExtDataTableComponent implements OnInit {
   /*** Multi select in the table enable/dissable */
   @Input() multiSelect: boolean;
 
-  /***
-   * Allow to create new entity
-   */
-  @Input() public allowNew: boolean;
+  /*** Extra parameters to append URL */
+  @Input() params: Map<string, string>;
+
+  /*** Allow to create new entity   */
+  @Input() allowNew: boolean;
+
   /***
    * Selection change event
    */
@@ -110,27 +113,27 @@ export class ExtDataTableComponent implements OnInit {
   /***
    * Columns that based on the Entity meta model. It take propery/projection name only here.
    */
-  public properties: Property[];
+  properties: Property[];
   /***
    * All the columns including selec,entity metal model,edit
    */
-  public allColumns: string[];
+  allColumns: string[];
   /***
    * Pagination data
    */
-  public page: PageEvent;
+  page: PageEvent;
   /***
    * Selection model
    */
-  public selection: SelectionModel<any>;
+  selection: SelectionModel<any>;
   /***
    * loading indicator
    */
-  public loading: boolean = false;
+  loading: boolean = false;
   /***
    * Default search placeholder
    */
-  public searchField: string;
+  searchField: string;
 
   /*** Search form group */
   searchFormGroup: FormGroup;
@@ -141,7 +144,7 @@ export class ExtDataTableComponent implements OnInit {
   /***
    *
    */
-  private searchParams: HttpParams;
+  private searchParams = new HttpParams();
 
   trackItem: TrackByFunction<any> = (i, property) => property.key;
 
@@ -184,7 +187,6 @@ export class ExtDataTableComponent implements OnInit {
       .pipe(
         debounceTime(500),
         mergeMap((v) => {
-          this.searchParams = new HttpParams();
           this.searchParams = this.searchParams.append(this.searchField, v.text);
           return this.getData(this.entityMeta, this.page).pipe(take(1));
         })
@@ -237,7 +239,7 @@ export class ExtDataTableComponent implements OnInit {
     row._loading = true;
     if (this.expandedElement) this.expandedElement._loading = false;
 
-    const expandingProperty = this.entityMeta.properties[expand.property.name];
+    const expandingProperty: SelectProperty = this.entityMeta.properties[expand.property.name];
     // const filter =
     const idField = getValueByField(this.entityConfig.idFeild, row);
     const id = getId(idField);
@@ -268,13 +270,15 @@ export class ExtDataTableComponent implements OnInit {
     this.entityService.save(this.entityMeta, entity, false, original, true).subscribe();
   }
 
-  onDateClick(entity: any, event: MouseEvent) {
-    event.preventDefault();
-    console.log(event);
-  }
-
   private getData(entityMeta: EntityMeta, pageEvent: PageEvent) {
     this.loading = true;
+    // Append extra params
+    if (this.params != null) {
+      Object.keys(this.params).forEach((k) => {
+        this.searchParams = this.searchParams.append(k, this.params[k]);
+      });
+    }
+
     return this.dataTableService.getData(entityMeta, this.searchParams, pageEvent).pipe(
       take(1),
       tap((p) => (this.page = p.page)),
@@ -303,12 +307,15 @@ export class ExtDataTableComponent implements OnInit {
    * For seaching on the sub levels in seach filter
    */
   getProperty(parentProperty: string) {
-    if (!parentProperty) return null;
-    return this.entityMetaService.getModel(parentProperty).pipe(
-      filter((x) => x != null && x.properties != null),
-      map((d) => d.properties),
-      take(1)
-    );
+    console.log(parentProperty);
+
+    // if (!parentProperty) return null;
+    // return this.entityMetaService.getModel(parentProperty).pipe(
+    //   take(1),
+    //   filter((x) => x != null && x.properties != null),
+    //   map((d) => d.properties)
+    // );
+    return of('');
   }
 
   /***
@@ -331,7 +338,6 @@ export class ExtDataTableComponent implements OnInit {
 
   /*** Create a new entity */
   onNew() {
-    console.log(this.entityMeta);
     if (this.entityMeta?.config?.dataTable?.simpleAdd) {
       let dialogRef = this.matDialog.open(ExtDataTableAddComponent, {
         data: this.entityMeta,

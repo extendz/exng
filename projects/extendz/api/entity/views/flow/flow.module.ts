@@ -9,7 +9,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -17,6 +16,7 @@ import { ExtPipesModule } from 'extendz/pipes';
 import { ExtEmbeddedModule } from '../../../embedded/embedded.module';
 import { ExtImageModule } from '../../../image/image.module';
 import { ExtInputTableModule } from '../../../input-table/input-table.module';
+import { InputsProModule } from '../../../inputs-pro/inputs-pro.module';
 import { ExtInputsModule } from '../../../inputs/inputs.module';
 import { ExtMoneyModule } from '../../../money/money.module';
 import { ExtPhoneModule } from '../../../phone/phone.module';
@@ -41,6 +41,7 @@ import { FlowComponent } from './flow.component';
     ExtImageModule,
     ExtEmbeddedModule,
     ExtInputsModule,
+    InputsProModule,
     // Mat
     MatButtonModule,
     MatCheckboxModule,
@@ -49,7 +50,7 @@ import { FlowComponent } from './flow.component';
     MatInputModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
+
     MatSlideToggleModule,
     MatTabsModule,
     MatToolbarModule,

@@ -2,9 +2,15 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { clearUrl, EntityMeta, HateosPagedResponse, ObjectWithLinks, PagedData } from 'extendz/core';
+import {
+  clearUrl,
+  EntityMeta,
+  HateosPagedResponse,
+  ObjectWithLinks,
+  PagedData,
+} from 'extendz/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { DataTableService } from './data-table.service';
 
 @Injectable({ providedIn: 'root' })

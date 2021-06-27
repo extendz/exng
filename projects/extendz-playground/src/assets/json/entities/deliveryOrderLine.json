@@ -1,0 +1,34 @@
+{
+  "title": "quantity",
+  "name": "deliveryOrderLine",
+  "properties": {
+    "lineNumber": {
+      "name": "lineNumber",
+      "type": "number",
+      "required": true,
+
+      "width": { "lg": "24" }
+    },
+    "salesOrderLine": {
+      "name": "salesOrderLine",
+      "type": "object",
+      "reference": "salesOrderLine",
+      "required": true,
+
+      "width": { "lg": "30" }
+    },
+    "quantity": {
+      "name": "quantity",
+      "type": "number",
+      "required": true,
+      "width": { "lg": "24" }
+    },
+    "deliveryOrder": {
+      "name": "deliveryOrder",
+      "type": "object",
+      "reference": "deliveryOrder",
+      "required": true,
+      "width": { "lg": "30" }
+    }
+  }
+}

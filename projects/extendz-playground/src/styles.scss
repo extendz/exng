@@ -11,8 +11,8 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$extendz-playground-primary: mat-palette($mat-purple);
-$extendz-playground-accent: mat-palette($mat-light-blue);
+$extendz-playground-primary: mat-palette($mat-pink);
+$extendz-playground-accent: mat-palette($mat-blue);
 
 // The warn palette is optional (defaults to red).
 $extendz-playground-warn: mat-palette($mat-red);
@@ -77,3 +77,23 @@ body {
 .ext-advance-select .mat-dialog-container {
   padding-top: 0;
 }
+
+// ----------------------------------- Custom scrollbar -----------------------------------
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(222, 222, 222, 0.75);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+

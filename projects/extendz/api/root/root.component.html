@@ -12,7 +12,7 @@
     class="mat-elevation-z2 root-container"
     fxLayout="row"
     fxLayoutAlign="start center"
-    (click)="onSelect(item.value)"
+    (click)="onSelect(item.key)"
   >
     <mat-icon *ngIf="item?.key" class="primary" svgIcon="api-root:{{ item?.key }}"></mat-icon>
 

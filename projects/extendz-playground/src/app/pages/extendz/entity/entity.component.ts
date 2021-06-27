@@ -22,8 +22,6 @@ export class EntityComponent implements OnInit {
       case 'createProject':
         let saleOrder = action.entity as ObjectWithLinks;
         console.log(saleOrder._links.self.href);
-        
-
         break;
     }
   }

@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ExtEntityModule } from 'extendz/api';
 import { EXT_DATA_TABLE_CONFIG } from 'extendz/core';
-import { DATA_TABLE_CONFIG, DATA_TABLE_SERVICE } from '../data-table/data-table.config';
+import { ENTITY_CONFIG, DATA_TABLE_SERVICE, ENTITY_SERVICE, DATA_TABLE_CONFIG } from '../extendz.config';
 import { EntityRoutingModule } from './entity-routing.module';
 import { EntityComponent } from './entity.component';
-import { ENTITY_CONFIG, ENTITY_SERVICE } from './entity.config';
 
 @NgModule({
   declarations: [EntityComponent],

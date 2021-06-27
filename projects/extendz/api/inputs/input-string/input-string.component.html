@@ -12,4 +12,14 @@
     {{ property?.displayName || (property.name | camelCase) }} is
     <strong>required</strong>
   </mat-error>
+
+  <mat-error *ngIf="control.hasError('maxlength')">
+    {{ property?.displayName || (property.name | camelCase) }}
+    <strong>max length</strong> is {{ control.errors?.maxlength?.requiredLength }}
+  </mat-error>
+
+  <mat-error *ngIf="control.hasError('maxlength')">
+    {{ property?.displayName || (property.name | camelCase) }}
+    <strong>min length</strong> is {{ control.errors?.minlength?.requiredLength }}
+  </mat-error>
 </mat-form-field>

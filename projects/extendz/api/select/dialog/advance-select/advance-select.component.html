@@ -1,8 +1,9 @@
 <mat-dialog-content>
   <ext-data-table
     [entityMeta]="data.entityMeta"
-    [multiSelect]="multiSelect"
+    [multiSelect]="data.multiSelect"
     [(selected)]="selected"
+    [params]="data.params"
     allowNew="false"
   >
   </ext-data-table>

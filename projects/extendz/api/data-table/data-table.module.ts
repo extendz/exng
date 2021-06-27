@@ -64,8 +64,11 @@ export class ExtDataTableModule {
     return {
       ngModule: ExtDataTableModule,
       providers: [
-        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson) },
         { provide: EXT_DATA_TABLE_CONFIG, useValue: config },
+        {
+          provide: EXT_API_CONFIG,
+          useValue: new ExtApiConfig(config.modelsJson, config.partials),
+        },
       ],
     };
   }

@@ -1,0 +1,16 @@
+{
+  "name": "currency",
+  "title": "code",
+  "properties": [
+    {
+      "name": "name",
+      "type": "string",
+      "width": { "lg": "48" }
+    },
+    {
+      "name": "code",
+      "type": "string",
+      "width": { "lg": "48" }
+    }
+  ]
+}

@@ -40,4 +40,4 @@ Under the **_projects_** dir there are two main dirs.
 
 ## release
 
-npm publish --ignore-scripts
+npm publish --ignore-prepublish

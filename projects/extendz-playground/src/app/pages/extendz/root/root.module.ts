@@ -4,9 +4,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ExtRootModule } from 'extendz/api';
+import { ROOT_CONFIG } from '../extendz.config';
 import { RootRoutingModule } from './root-routing.module';
 import { RootComponent } from './root.component';
-import { LOCAL_ROOT_CONFIG } from './root.config';
 
 @NgModule({
   declarations: [RootComponent],
@@ -14,7 +14,7 @@ import { LOCAL_ROOT_CONFIG } from './root.config';
     CommonModule,
     FlexLayoutModule,
     RootRoutingModule,
-    ExtRootModule.forFeature(LOCAL_ROOT_CONFIG),
+    ExtRootModule.forFeature(ROOT_CONFIG),
     MatToolbarModule,
     MatButtonModule,
   ],

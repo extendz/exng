@@ -16,37 +16,19 @@
     </mat-option>
   </mat-autocomplete>
 
-  <button
-    *ngIf="showAddButton"
-    type="button"
-    mat-icon-button
-    class="small-icon-button"
-    matTooltip="Add"
-    (click)="addNew($event, property)"
-  >
-    <ng-container *ngTemplateOutlet="add"></ng-container>
-  </button>
-
-  <button
-    *ngIf="showMoreButton"
-    type="button"
-    [matMenuTriggerFor]="menu"
-    mat-icon-button
-    class="small-icon-button"
-    matTooltip="More"
-    (click)="onMore($event)"
-  >
-    <ng-container *ngTemplateOutlet="more"></ng-container>
-  </button>
+  <button [matMenuTriggerFor]="menu" style="visibility: hidden"></button>
 </div>
 
 <mat-menu #menu="matMenu">
-  <button *ngIf="allowSearch" mat-menu-item (click)="onAdvanceSearch($event, true)" mat-menu-item>
+  <button *ngIf="!property?.showSearch" mat-menu-item (click)="onAdvanceSearch()" mat-menu-item>
     <ng-container *ngTemplateOutlet="search"> </ng-container>
     <span>Search</span>
   </button>
 
-  <ng-container *ngTemplateOutlet="addButton"></ng-container>
+  <button *ngIf="!property?.showAdd" mat-menu-item (click)="addNew()">
+    <mat-icon svgIcon="api-root:{{ property?.addIcon || 'add' }}"></mat-icon>
+    <span>Add</span>
+  </button>
 
   <button *ngIf="value != undefined" mat-menu-item (click)="onView($event, property)">
     <ng-container *ngTemplateOutlet="view"></ng-container>
@@ -58,13 +40,6 @@
     <span>Clear</span>
   </button>
 </mat-menu>
-
-<ng-template #addButton>
-  <button mat-menu-item (click)="addNew($event, property)">
-    <ng-container *ngTemplateOutlet="add"></ng-container>
-    <span>Add</span>
-  </button>
-</ng-template>
 
 <ng-template #more>
   <mat-icon>

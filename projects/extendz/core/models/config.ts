@@ -11,11 +11,23 @@ export class Hidden {
   assert?: Assert;
 }
 
-export class Action {
+export interface Action {
   id: string;
   entity?: any;
-  displayName: string;
+  /*** Display text for the action */
+  displayName?: string;
   hide?: Hidden;
+  color?: 'primary' | 'accent' | 'warn';
+  icon?: string;
+}
+
+export interface TabAction extends Action {
+  /*** Reference object */
+  reference?: string;
+  /*** Selection type */
+  multiSelect?: boolean;
+  /*** params */
+  params?: Map<string, string>;
 }
 
 export class Toolbar {
@@ -63,6 +75,12 @@ export class ExpandConfig {
   projection?: string;
 }
 
+export interface ToolbarConfig {
+  enabled?: boolean;
+  color?: 'primary' | 'accent' | 'warn';
+  fab?: Action;
+}
+
 /***
  * Entity level configurations
  */
@@ -72,4 +90,5 @@ export class Config {
   select?: SelectConfig;
   table?: TableConfig;
   expand?: ExpandConfig;
+  toolbar?: ToolbarConfig;
 }

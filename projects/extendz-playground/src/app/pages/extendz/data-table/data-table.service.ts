@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar, MatSnackBarDismiss } from '@angular/material/snack-bar';
 import { AbstractDataTableService, EntityMeta, PagedData } from 'extendz/core';
 import { forkJoin, Observable, throwError } from 'rxjs';
-import { catchError, filter, mergeMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, mergeMap, shareReplay, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class DataTableService extends AbstractDataTableService {

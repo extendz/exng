@@ -6,4 +6,6 @@ export interface ExtRootConfig {
   svgIconSet: string;
   modelsJson: string;
   idFeild?: string;
+  /*** Location for additinal infomation on enetity meta */
+  partials?: string;
 }

@@ -1,0 +1,149 @@
+{
+  "name": "project",
+  "title": "id",
+  "config": {
+    "entity": {
+      "enableProjection": true,
+      "projection": "entity",
+      "toolbar": {
+        "actions": [
+          {
+            "id": "viewSalesOrder",
+            "displayName": "View Order"
+          }
+        ]
+      }
+    },
+    "select": {
+      "projection": "select"
+    }
+  },
+  "projections": {
+    "dataTable": [{ "name": "id", "type": "string" }]
+  },
+  "properties": {
+    "id": {
+      "name": "id",
+      "generated": true,
+      "type": "string",
+      "width": { "lg": "24" }
+    },
+    "salesOrderNumber": {
+      "name": "salesOrderNumber",
+      "generated": true,
+      "type": "string",
+      "width": { "lg": "24" }
+    },
+    "customer": {
+      "name": "customer",
+      "generated": true,
+      "type": "string",
+      "width": { "lg": "24" }
+    },
+    "address": {
+      "name": "address",
+      "generated": true,
+      "type": "string",
+      "width": { "lg": "24" }
+    },
+    "team": { "name": "team", "type": "object", "reference": "team", "width": { "lg": "24" } },
+    "unitPrice": {
+      "name": "unitPrice",
+      "type": "money",
+      "width": { "lg": "24" }
+    },
+    "measureSquareFeet": {
+      "name": "measureSquareFeet",
+      "type": "number",
+      "width": { "lg": "24" }
+    },
+    "calculatedSquareFeet": {
+      "name": "calculatedSquareFeet",
+      "type": "number",
+      "width": { "lg": "24" }
+    },
+    "note": {
+      "name": "note",
+      "type": "number",
+      "width": { "lg": "50" }
+    },
+    "status": {
+      "name": "status",
+      "type": "enum",
+      "enums": ["InProgress", "OnHold", "Completed"],
+      "width": { "lg": "24" }
+    },
+    "projectRevenue": {
+      "name": "projectRevenue",
+      "type": "money",
+      "width": { "lg": "24" }
+    },
+    "_tabs": {
+      "type": "tabs",
+      "width": { "lg": 100 },
+      "tabs": [
+        {
+          "name": "orderLines",
+          "displayName": "Order Lines",
+          "type": "objectList",
+          "reference": "salesOrderLine",
+          "entityMeta": {
+            "config": {
+              "table": {
+                "enableAdd": false
+              }
+            },
+            "properties": {
+              "lineNumber": {
+                "name": "lineNumber",
+                "generated": true,
+                "type": "index",
+                "width": { "lg": "8vw" }
+              },
+              "product": {
+                "name": "product",
+                "generated": true,
+                "type": "object",
+                "reference": "product"
+              },
+              "quantity": {
+                "name": "quantity",
+                "generated": true,
+                "type": "number",
+                "width": { "lg": "8vw" }
+              },
+              "deliveredQuantity": {
+                "name": "deliveredQuantity",
+                "type": "number",
+                "generated": true,
+                "width": { "lg": "10vw" }
+              },
+              "price": {
+                "name": "price",
+                "type": "money",
+                "generated": true,
+                "width": { "lg": "15vw" }
+              },
+              "status": {
+                "name": "status",
+                "type": "enum",
+                "generated": true,
+                "enums": ["Planned", "Released", "Reserved", "PartiallyDelivered", "Delivered"],
+                "width": { "lg": "10vw" }
+              }
+            }
+          }
+        },
+        {
+          "name": "tools",
+          "displayName": "Tools",
+          "type": "objectList",
+          "reference": "tool",
+          "entityMeta": {
+            "properties": {}
+          }
+        }
+      ]
+    }
+  }
+}

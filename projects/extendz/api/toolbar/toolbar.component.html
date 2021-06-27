@@ -1,0 +1,11 @@
+<mat-toolbar [color]="config?.color">
+  <button
+    *ngIf="fab"
+    class="mat-elevation-z0"
+    mat-mini-fab
+    [color]="color"
+    (click)="action.emit(fab)"
+  >
+    <mat-icon svgIcon="api-root:{{ fab.icon }}"> </mat-icon>
+  </button>
+</mat-toolbar>

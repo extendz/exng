@@ -1,10 +1,20 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { HttpParams } from '@angular/common/http';
-import { Component, ElementRef, forwardRef, Inject, OnInit, Optional, Self } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  forwardRef,
+  Inject,
+  Input,
+  Optional,
+  Self,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, NgControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatMenuTrigger } from '@angular/material/menu';
 import {
   AbstractDataTableService,
   AbstractEntityService,
@@ -15,6 +25,7 @@ import {
   EXT_ENTITY_SERVICE,
   Property,
   PropertyType,
+  SelectProperty,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { iif, Observable, of } from 'rxjs';
@@ -25,8 +36,9 @@ import { ExtAdvanceSelectComponent } from './dialog/advance-select/advance-selec
 
 export interface ExtAdvanceSearchData {
   entityMeta: EntityMeta;
-  entity: any;
-  property: Property;
+  entity?: any;
+  multiSelect?: boolean;
+  params?: Map<string, string>;
 }
 
 export interface ExtAddNewData {
@@ -39,7 +51,11 @@ export interface ExtAddNewData {
   styleUrls: ['./select.component.scss'],
   providers: [{ provide: MatFormFieldControl, useExisting: forwardRef(() => ExtSelectComponent) }],
 })
-export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit {
+export class ExtSelectComponent extends ExtBaseSelectComponent {
+  @Input() property: SelectProperty;
+
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+
   static nextId = 0;
   id = `ext-select-${ExtSelectComponent.nextId++}`;
 
@@ -49,11 +65,12 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
 
   autoCompleteControl: FormControl;
   autoCompleteData$: Observable<any>;
-  entityMeta: EntityMeta;
+  entityMeta?: EntityMeta;
   searchField: string;
 
   allowSearch: boolean = true;
   showAddButton: boolean;
+  showSeachButton: boolean;
   showMoreButton: boolean = true;
 
   private projection?: string;
@@ -73,20 +90,17 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     this.autoCompleteControl = new FormControl(null);
   }
 
-  ngOnInit(): void {
-    this.entityMetaService.getModel(this.property.reference).subscribe((d) => {
-      if (!d) throw new Error(`Entity model for ${this.property.reference} could not be found!`);
-      this.entityMeta = d;
-      // Set search
-      if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
-      else this.searchField = Object.values(this.entityMeta.properties)[0].name;
-      // projection
-      if (this.entityMeta.config && this.entityMeta.config.select)
-        this.projection = this.entityMeta.config.select.projection;
-    });
+  get getDisplayValue() {
+    return (entity: any) => {
+      if (entity == null) return null;
+      else if (typeof entity == 'string') return entity;
+      else if (Object.keys(entity).length === 0) return null;
+      else return entity[this.entityMeta?.title];
+    };
+  }
 
+  private initAutoComplete() {
     const auto = this.autoCompleteControl.valueChanges.pipe(
-      // startWith(''),
       debounceTime(100),
       map((v: string) => {
         let p = new HttpParams().append(this.searchField, v);
@@ -101,15 +115,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     );
 
     this.autoCompleteData$ = iif(() => this.searchField != null, auto, of());
-  }
-
-  get getDisplayValue() {
-    return (entity: any) => {
-      if (!entity) return null;
-      else if (typeof entity == 'string') return entity;
-      else if (Object.keys(entity).length === 0) return null;
-      else return entity[this.entityMeta.title];
-    };
   }
 
   /***
@@ -131,9 +136,9 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
     this.entityService.navigateExisting(property, this.value);
   }
 
-  addNew(event: MouseEvent, property: Property) {
+  addNew() {
     this.entityMetaService
-      .getModel(property.reference)
+      .getModel(this.property.reference)
       .pipe(take(1))
       .subscribe((entityMeta) => {
         let data: ExtAddNewData = { entityMeta };
@@ -152,11 +157,13 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
       });
   }
 
-  onAdvanceSearch(event: MouseEvent, replace: boolean) {
+  onAdvanceSearch() {
+    const multiSelect = this.property.type == PropertyType.object ? false : true;
     let data: ExtAdvanceSearchData = {
       entityMeta: this.entityMeta,
       entity: this.entity,
-      property: this.property,
+      multiSelect,
+      // property: this.property,
     };
 
     let dialogRef = this.dialog.open(ExtAdvanceSelectComponent, {
@@ -176,6 +183,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
 
   private handleEmbedded(result: any | any[]) {
     let type = this.property.type;
+
     if (type == PropertyType.object) {
       this.value = result;
       this.autoCompleteControl.setValue(result);
@@ -217,15 +225,38 @@ export class ExtSelectComponent extends ExtBaseSelectComponent implements OnInit
   }
 
   writeValue(obj: any): void {
+    this.entityMetaService.getModel(this.property.reference).subscribe((d) => {
+      if (!d) throw new Error(`Entity model for ${this.property.reference} could not be found!`);
+      this.entityMeta = d;
+      // Set search
+      if (this.entityMeta.search) this.searchField = this.entityMeta.search.default;
+      else this.searchField = Object.values(this.entityMeta.properties)[0].name;
+      // projection
+      if (this.entityMeta.config && this.entityMeta.config.select)
+        this.projection = this.entityMeta.config.select.projection;
+
+      this.initAutoComplete();
+
+      if (obj) {
+        this.handleEmbedded(obj);
+        this.showMoreButton = true;
+      }
+    });
+
+    if (obj == undefined) this.showAddButton = true;
+
     if (this.property?.config?.select?.allowSearch == false) {
       this.allowSearch = false;
       this.showMoreButton = false;
-    }
-    if (obj) {
-      this.handleEmbedded(obj);
+    } else {
+      this.showSeachButton = true;
       this.showMoreButton = true;
     }
-    if (obj == undefined) this.showAddButton = true;
+
+    if (this.property?.config?.select?.allowAdd == false) {
+      this.showAddButton = false;
+      this.showMoreButton = true;
+    }
   }
 
   setDisabledState(isDisabled: boolean): void {

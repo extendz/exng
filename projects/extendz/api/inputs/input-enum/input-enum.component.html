@@ -1,0 +1,14 @@
+<mat-form-field>
+  <mat-select
+    [placeholder]="property?.displayName || (property.name | camelCase)"
+    [formControl]="control"
+  >
+    <mat-option *ngFor="let enum of property.enums" [value]="enum">
+      {{ enum }}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="control.hasError('required')">
+    {{ property?.displayName || (property.name | camelCase) }} is
+    <strong>required</strong>
+  </mat-error>
+</mat-form-field>

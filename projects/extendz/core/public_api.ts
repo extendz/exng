@@ -24,6 +24,9 @@ export * from './models/mesurement/mesurement';
 export * from './models/money/price';
 export * from './models/phone/phone';
 export * from './models/property';
+// properties
+export * from './models/property/enum-property';
+export * from './models/property/select-property';
 export * from './models/unit-of-measurement/unit-of-measurement';
 // utils
 export * from './utils/entity-utils';

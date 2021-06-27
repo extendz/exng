@@ -9,6 +9,15 @@ export class Validation {
   disable?: string[];
 }
 
+export enum EntityEventType {
+  LoadStarted = 'LoadStarted',
+  Saved = 'Saved',
+}
+
+export interface EntityEvent {
+  type?: EntityEventType;
+}
+
 export class EntityMeta {
   /**
    * Custom action

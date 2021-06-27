@@ -1,0 +1,162 @@
+{
+  "title": "dispatchDate",
+  "name": "deliveryOrder",
+  "config": {
+    "entity": {
+      "enableProjection": true,
+      "projection": "entity",
+      "toolbar": {
+        "actions": [
+          {
+            "id": "viewSalesOrder",
+            "displayName": "Stat Delivery"
+          },
+          {
+            "id": "viewSalesOrder",
+            "displayName": "Complete"
+          }
+        ]
+      }
+    }
+  },
+  "projections": {
+    "dataTable": [
+      { "name": "dispatchDate", "type": "date" },
+      { "name": "status", "type": "string" }
+    ]
+  },
+  "properties": {
+    "dispatchDate": {
+      "name": "dispatchDate",
+      "type": "date",
+      "default": "",
+      "required": true,
+      "width": { "lg": 30 }
+    },
+    "vehicle": {
+      "name": "vehicle",
+      "type": "object",
+      "required": true,
+      "reference": "deliveryVehicle",
+      "width": { "lg": 30 }
+    },
+    "note": { "name": "note", "type": "string", "width": { "lg": 30 } },
+    "status": {
+      "name": "status",
+      "type": "enum",
+      "required": true,
+      "default": "Planned",
+      "enums": ["Planned", "OnRoute", "Closed"],
+      "width": { "lg": 30 }
+    },
+    "_tabs": {
+      "type": "tabs",
+      "width": { "lg": 100 },
+
+      "tabs": [
+        {
+          "name": "orderLines",
+          "displayName": "Delivery Lines",
+          "type": "objectList",
+          "reference": "deliveryOrderLine",
+          "required": true,
+          "mutations": {
+            "salesOrderLine": [
+              {
+                "type": "update",
+                "from": "quantity",
+                "to": ["salesOrderQuantity"]
+              },
+              {
+                "type": "update",
+                "from": "salesOrder",
+                "to": ["salesOrder"]
+              },
+              {
+                "type": "update",
+                "from": ".",
+                "to": ["salesOrderLine"]
+              },
+              {
+                "type": "update",
+                "from": "product",
+                "to": ["product"]
+              }
+            ]
+          },
+          "entityMeta": {
+            "config": {
+              "toolbar": {
+                "enabled": true,
+                "fab": {
+                  "id": "__add__",
+                  "reference": "salesOrderLine",
+                  "multiSelect": true,
+                  "params": {
+                    "reservedQuantity": 0,
+                    "projection": "dataTable"
+                  },
+                  "color": "accent",
+                  "icon": "add"
+                }
+              }
+            },
+            "properties": {
+              "lineNumber": {
+                "name": "lineNumber",
+                "type": "index",
+                "width": { "lg": "10" }
+              },
+              "salesOrder": {
+                "name": "salesOrder",
+                "displayName": "Sales Order",
+                "type": "display",
+                "width": { "lg": "10" }
+              },
+              "salesOrderLine": {
+                "name": "salesOrderLine",
+                "displayName": "Sales Order Line",
+                "type": "display",
+                "displayField": "lineNumber",
+                "width": { "lg": "15" }
+              },
+              "product": {
+                "name": "product",
+                "displayName": "Product",
+                "type": "display",
+                "width": { "lg": "40" }
+              },
+              "salesOrderQuantity": {
+                "name": "salesOrderQuantity",
+                "displayName": "Quantity",
+                "type": "display",
+                "width": { "lg": "6" }
+              },
+              "quantity": {
+                "name": "quantity",
+                "displayName": "Delivery Quantity",
+                "type": "number",
+                "required": true,
+                "width": { "lg": "15" }
+              },
+              "delete": {
+                "name": "delete",
+                "type": "action",
+                "operation": "delete",
+                "icon": "delete",
+                "width": { "lg": "4" }
+              },
+              "remove": {
+                "name": "remove",
+                "type": "action",
+                "operation": "remove",
+                "icon": "close",
+                "width": { "lg": "4" }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "title": "lineNumber",
+  "name": "salesOrderLine",
+  "config": {
+    "select": {
+      "projection": "dataTable"
+    }
+  },
+  "projections": {
+    "dataTable": [
+      { "name": "salesOrder", "type": "string" },
+      { "name": "lineNumber", "type": "number" },
+      { "name": "product", "type": "string" },
+      { "name": "quantity", "type": "number" },
+      { "name": "reservedQuantity", "type": "number" }
+    ]
+  },
+  "properties": {
+    "lineNumber": { "name": "lineNumber", "type": "number" },
+    "quantity": { "name": "quantity", "type": "number", "width": { "lg": "24" } },
+    "salesOrder": {
+      "name": "salesOrder",
+      "type": "object",
+      "reference": "salesOrder",
+      "width": { "lg": "24" }
+    },
+    "product": {
+      "name": "product",
+      "type": "object",
+      "reference": "product",
+      "width": { "lg": "24" }
+    },
+    "deliveredQuantity": {
+      "name": "deliveredQuantity",
+      "type": "number",
+      "width": { "lg": "24" }
+    },
+    "reservedQuantity": {
+      "name": "reservedQuantity",
+      "type": "number",
+      "width": { "lg": "24" }
+    },
+    "price": { "name": "price", "type": "money", "width": { "lg": "24" } },
+    "status": {
+      "name": "status",
+      "type": "enum",
+      "enums": ["Planned", "Released", "Reserved", "PartiallyDelivered", "Delivered"]
+    },
+    "discountType": {
+      "name": "discountType",
+      "type": "enum",
+      "enums": ["Price", "Percentage"]
+    },
+    "discount": {
+      "name": "discount",
+      "type": "money",
+      "width": { "lg": "18vw" }
+    }
+  }
+}

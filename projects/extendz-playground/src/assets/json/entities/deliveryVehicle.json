@@ -1,0 +1,9 @@
+{
+  "name": "deliveryVehicle",
+  "title": "registerNumber",
+  "properties": {
+    "registerNumber": { "name": "registerNumber", "type": "string", "width": { "lg": 30 } },
+    "description": { "name": "description", "type": "string", "width": { "lg": 30 } },
+    "active": { "name": "active", "type": "boolean" }
+  }
+}

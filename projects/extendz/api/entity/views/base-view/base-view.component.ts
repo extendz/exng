@@ -6,6 +6,8 @@ import {
   AbstractEntityService,
   Action,
   deepCopy,
+  EntityEvent,
+  EntityEventType,
   EntityMeta,
   ExtApiConfig,
   ExtEntityConfig,
@@ -16,7 +18,7 @@ import {
   PropertyValidationType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, Subject, Subscription } from 'rxjs';
 import { defaultIfEmpty, finalize, mergeMap, skip, take, tap } from 'rxjs/operators';
 import { AbstractView } from '../abstact-view';
 
@@ -51,6 +53,9 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
   @Output() saved: EventEmitter<any> = new EventEmitter<any>();
 
   private activatedRouteSub: Subscription;
+
+  /*** Emmit entity events  */
+  eventsSubject: Subject<EntityEvent> = new Subject<EntityEvent>();
 
   constructor(
     protected apiConfig: ExtApiConfig,
@@ -173,8 +178,6 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
         if (defaultVal == '') defaultVal = new Date();
         else defaultVal = new Date(defaultVal);
       }
-      console.log(defaultVal);
-
       ctrl.patchValue(defaultVal, { emitEvent: false });
     }
 
@@ -192,11 +195,13 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
       this.entityService
         .save(this.entityMeta, this.formGroup.value, true, this.originalEntity, showSnackBar)
         .pipe(
-          tap(console.log),
           tap((d) => (this.entity = d)),
           tap((d) => this.deepCopy(d)),
           tap((d) => this.saved.emit(d)),
-          finalize(() => (this.loading = false)),
+          finalize(() => {
+            this.loading = false;
+            this.eventsSubject.next({ type: EntityEventType.Saved });
+          }),
           take(1)
         )
         .subscribe();

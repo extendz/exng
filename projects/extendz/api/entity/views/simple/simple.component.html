@@ -5,7 +5,8 @@
       *ngIf="property.type == propertyTypes.string"
       [property]="property"
       [control]="formGroup.controls[property.name]"
-    ></ext-input-string>
+    >
+    </ext-input-string>
 
     <!-- Enums -->
     <mat-form-field *ngIf="property.type == propertyTypes.enum">

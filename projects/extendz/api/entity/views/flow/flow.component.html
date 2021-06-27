@@ -41,23 +41,16 @@
         *ngIf="property.type == propertyTypes.string"
         [property]="property"
         [control]="formGroup.controls[property.name]"
-      ></ext-input-string>
+      >
+      </ext-input-string>
 
       <!-- Enums -->
-      <mat-form-field *ngIf="property.type == propertyTypes.enum">
-        <mat-select
-          [placeholder]="property?.displayName || (property.name | camelCase)"
-          [formControlName]="property.name"
-        >
-          <mat-option *ngFor="let enum of property.enums" [value]="enum">
-            {{ enum }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property?.displayName || (property.name | camelCase) }} is
-          <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
+      <ext-input-enum
+        *ngIf="property.type == propertyTypes.enum"
+        [property]="property"
+        [control]="formGroup.controls[property.name]"
+      >
+      </ext-input-enum>
 
       <!-- Number -->
       <mat-form-field *ngIf="property.type == propertyTypes.number">
@@ -92,27 +85,20 @@
       </mat-form-field>
 
       <!-- Object -->
-      <mat-form-field
+      <ext-inputs-select
         *ngIf="property.type == propertyTypes.object || property.type == propertyTypes.objectList"
+        [property]="property"
+        [control]="formGroup.controls[property.name]"
+        [events]="eventsSubject.asObservable()"
       >
-        <ext-select
-          [property]="property"
-          [formControlName]="property.name"
-          [placeholder]="property?.displayName || (property.name | camelCase)"
-        >
-        </ext-select>
-        <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
-          {{ property?.displayName || (property.name | camelCase) }} is
-          <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-
+      </ext-inputs-select>
       <!-- Embebed -->
       <ext-embedded
         *ngIf="property.type == propertyTypes.embedded"
         [property]="property"
         [(entity)]="entity"
         [formControlName]="property.name"
+        [events]="eventsSubject.asObservable()"
       >
       </ext-embedded>
 
@@ -197,7 +183,11 @@
           </ng-template>
 
           <ng-template matTabContent>
-            <ext-input-table [property]="tab" [formControlName]="tab.name"></ext-input-table>
+            <ext-input-table
+              [property]="tab"
+              [formControlName]="tab.name"
+              [events]="eventsSubject.asObservable()"
+            ></ext-input-table>
           </ng-template>
         </mat-tab>
       </mat-tab-group>
@@ -214,7 +204,7 @@
     id="btnSave"
     matTooltip="Save"
     type="submit"
-    [disabled]="loading"
+    [disabled]="loading || formGroup.invalid"
     class="bottom-right"
     (click)="onSave(true)"
   >

@@ -1,6 +1,15 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { HttpParams } from '@angular/common/http';
-import { Component, ElementRef, forwardRef, Inject, OnInit, Optional, Self } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  forwardRef,
+  Inject,
+  Input,
+  OnInit,
+  Optional,
+  Self,
+} from '@angular/core';
 import { FormControl, NgControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,6 +24,7 @@ import {
   PropertyType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
+import { SelectProperty } from 'extendz/core';
 import { iif, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, switchMap, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
@@ -29,6 +39,8 @@ import { AddBasicComponent } from './add-basic/add-basic.component';
   ],
 })
 export class ExtBasicSelectComponent extends ExtBaseSelectComponent implements OnInit {
+  @Input() property: SelectProperty;
+
   static nextId = 0;
   id = `ext-select-${ExtBasicSelectComponent.nextId++}`;
 
@@ -81,6 +93,7 @@ export class ExtBasicSelectComponent extends ExtBaseSelectComponent implements O
     );
 
     this.autoCompleteData$ = iif(() => this.searchField != null, auto, of());
+    
   }
 
   get getDisplayValue() {
@@ -108,7 +121,7 @@ export class ExtBasicSelectComponent extends ExtBaseSelectComponent implements O
 
   onView() {}
 
-  addNew(event: MouseEvent, property: Property) {
+  addNew(event: MouseEvent, property: SelectProperty) {
     event.preventDefault();
     this.entityMetaService
       .getModel(property.reference)

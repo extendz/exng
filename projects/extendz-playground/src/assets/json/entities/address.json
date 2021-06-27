@@ -1,0 +1,25 @@
+{
+  "name": "address",
+  "title": "line1",
+  "properties": {
+    "line1": { "name": "line1", "type": "string", "required": true, "width": { "lg": "48" } },
+    "line2": { "name": "line2", "type": "string", "width": { "lg": "48" } },
+    "city": {
+      "name": "city",
+      "type": "string",
+      "required": true,
+      "width": { "lg": "48" }
+    },
+    "delivery": {
+      "name": "delivery",
+      "type": "checkbox",
+      "width": { "lg": "10" }
+    },
+    "billing": {
+      "name": "billing",
+      "type": "checkbox",
+      "width": { "lg": "10" }
+    },
+    "_spacer": { "type": "spacer", "width": { "lg": "20" } }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "title": "firstName",
+  "name": "salesRepresentative",
+  "projections": {
+    "dataTable": [
+      { "name": "nicFront", "type": "image" },
+      { "name": "firstName" },
+      { "name": "lastName" }
+    ]
+  },
+  "properties": {
+    "firstName": {
+      "name": "firstName",
+      "type": "string",
+      "required": true,
+      "width": { "lg": "48" }
+    },
+    "lastName": {
+      "name": "lastName",
+      "type": "string",
+      "required": true,
+      "width": { "lg": "48" }
+    },
+    "nic": {
+      "name": "nic",
+      "type": "string",
+      "displayName": "NIC",
+      "required": true,
+      "validations": [
+        {
+          "type": "MaxLength",
+          "value": "10"
+        }
+      ],
+      "width": { "lg": "48" }
+    },
+    "mobile": { "name": "mobile", "type": "phone", "width": { "lg": "48" } },
+    "telephone": {
+      "name": "telephone",
+      "displayName": "Altanative Contact Number",
+      "type": "phone",
+      "width": { "lg": "48" }
+    },
+    "email": { "name": "email", "type": "email", "width": { "lg": "48" } },
+    "_spacer": { "width": { "lg": "48" } },
+    "nicFront": { "name": "nicFront", "type": "image", "width": { "lg": "24" } },
+    "nicBack": { "name": "nicBack", "type": "image", "width": { "lg": "24" } },
+    "_spacer2": { "width": { "lg": "48" } }
+  }
+}

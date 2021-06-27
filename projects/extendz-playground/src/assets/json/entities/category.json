@@ -1,0 +1,22 @@
+{
+  "name": "category",
+  "title": "name",
+  "view": "flow",
+  "config": {
+    "dataTable": {
+      "simpleAdd": true
+    }
+  },
+  "projections": {
+    "dataTable": [{ "name": "name", "type": "string" }]
+  },
+  "properties": {
+    "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "48" } },
+    "description": {
+      "name": "description",
+      "type": "string",
+      "required": true,
+      "width": { "lg": "48" }
+    }
+  }
+}

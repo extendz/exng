@@ -7,10 +7,8 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { MatTable } from '@angular/material/table';
 import {
   AbstractDataTableService,
   EntityMeta,
@@ -21,7 +19,7 @@ import {
   Property,
   PropertyType,
 } from 'extendz/core';
-import { delay, finalize, map, take, tap } from 'rxjs/operators';
+import { finalize, map, take, tap } from 'rxjs/operators';
 import { INPUT_ENTITY_META } from '../api.consts';
 
 @Component({
@@ -77,7 +75,6 @@ export class BasicTableComponent implements OnChanges {
   private getData(entityMeta: EntityMeta, pageEvent: PageEvent) {
     this.loading = true;
     return this.dataTableService.getData(entityMeta, this.params, pageEvent).pipe(
-      delay(2000),
       take(1),
       tap((p) => (this.page = p.page)),
       map((d) => d.data),

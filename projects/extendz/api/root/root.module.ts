@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule, Type } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
@@ -33,7 +33,7 @@ export class ExtRootModule {
       ngModule: ExtRootModule,
       providers: [
         { provide: EXT_ROOT_CONFIG, useValue: config },
-        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson) },
+        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson, config.partials) },
       ],
     };
   }

@@ -1,21 +1,9 @@
-<mat-toolbar>
-  <button
-    *ngIf="
-      property.entityMeta?.config?.table == null &&
-      property.entityMeta?.config?.table.enableAdd != false
-    "
-    class="mat-elevation-z0"
-    mat-mini-fab
-    color="primary"
-    (click)="addRow()"
-  >
-    <mat-icon>
-      <svg viewBox="0 0 24 24">
-        <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
-      </svg>
-    </mat-icon>
-  </button>
-</mat-toolbar>
+<ext-toolbar
+  *ngIf="toolbarConfig?.enabled"
+  [config]="toolbarConfig"
+  (action)="onToolbarAction($event)"
+></ext-toolbar>
+
 <form [formGroup]="formGroup">
   <table mat-table [dataSource]="dataSource" formArrayName="data" fixedLayout="true">
     <ng-container
@@ -39,16 +27,39 @@
           </span>
 
           <!-- number -->
-          <mat-form-field *ngSwitchCase="'number'">
-            <input type="number" matInput autocomplete="off" [formControlName]="p?.value?.name" />
-            <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
-              {{ p?.value?.name | camelCase }} is <strong>required!</strong>
-            </mat-error>
-          </mat-form-field>
+          <span *ngSwitchCase="'number'">
+            <mat-form-field *ngIf="!p.value?.inlineEdit?.enabled; else inline">
+              <input
+                type="number"
+                matInput
+                autocomplete="off"
+                [formControlName]="p?.value?.name"
+                (input)="onNumberChange($event, i, p?.value)"
+              />
+              <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
+                {{ p?.value?.name | camelCase }} is <strong>required!</strong>
+              </mat-error>
+            </mat-form-field>
+            <ng-template #inline>
+              <ext-inline-number
+                *ngSwitchCase="'number'"
+                [control]="getController(p.key, i)"
+                [property]="p.value"
+                (change)="onRowChange($event, p.value, e)"
+              ></ext-inline-number>
+            </ng-template>
+          </span>
+
+          <!--  -->
 
           <!-- display -->
           <span *ngSwitchCase="'display'">
-            <input style="outline: none; border: none" [formControlName]="p?.value?.name" />
+            <input
+              style="outline: none; border: none; background-color: transparent"
+              [formControlName]="p?.value?.name"
+              [displayField]="p?.value?.displayField"
+              displayMask
+            />
           </span>
 
           <!-- Money -->
@@ -60,13 +71,20 @@
           </mat-form-field>
 
           <!-- Sting -->
-          <mat-form-field *ngSwitchCase="'string'">
+          <!-- <mat-form-field *ngSwitchCase="'string'">
             <input type="text" matInput autocomplete="off" [formControlName]="p?.value?.name" />
             <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
               {{ p?.value?.name | camelCase }} is
               <strong>required</strong>
             </mat-error>
-          </mat-form-field>
+          </mat-form-field> -->
+
+          <ext-input-string
+            *ngSwitchCase="'string'"
+            [property]="p?.value"
+            [control]="getController(p.key, i)"
+          >
+          </ext-input-string>
 
           <!-- enum -->
           <mat-form-field *ngSwitchCase="'enum'">
@@ -94,14 +112,13 @@
           </mat-form-field>
 
           <!-- object -->
-          <mat-form-field *ngSwitchCase="'object'">
-            <ext-select
-              (entityChange)="onSelectionChange($event, p?.value, i)"
-              [property]="p.value"
-              [formControlName]="p.value.name"
-            >
-            </ext-select>
-          </mat-form-field>
+          <ext-inputs-select
+            *ngSwitchCase="'object'"
+            (change)="onSelectionChange($event, p.key, i)"
+            [property]="p?.value"
+            [control]="getController(p.key, i)"
+          >
+          </ext-inputs-select>
 
           <span *ngSwitchCase="'action'">
             <button mat-icon-button (click)="onOperation(p.value, i)">
@@ -116,3 +133,14 @@
     <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
   </table>
 </form>
+
+<ng-template #i_save_edit>
+  <mat-icon>
+    <svg viewBox="0 0 24 24">
+      <path
+        fill="currentColor"
+        d="M4 19H10V21H4C2.89 21 2 20.1 2 19V5C2 3.9 2.89 3 4 3H16L20 7V9.12L18 11.12V7.83L15.17 5H4V19M14 10V6H5V10H14M20.42 12.3C20.31 12.19 20.18 12.13 20.04 12.13C19.9 12.13 19.76 12.19 19.65 12.3L18.65 13.3L20.7 15.35L21.7 14.35C21.92 14.14 21.92 13.79 21.7 13.58L20.42 12.3M12 19.94V22H14.06L20.12 15.93L18.07 13.88L12 19.94M14 15C14 13.34 12.66 12 11 12S8 13.34 8 15 9.34 18 11 18C11.04 18 11.08 18 11.13 18L14 15.13C14 15.09 14 15.05 14 15"
+      />
+    </svg>
+  </mat-icon>
+</ng-template>

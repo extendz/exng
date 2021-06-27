@@ -1,24 +1,22 @@
-<form [formGroup]="formGroup" fxLayoutAlign="center center">
-  <span fxLayout="row" fxLayoutAlign="space-between center">
-    <p style="margin: 0">{{ formGroup.controls[property.name].value | date: format }}</p>
-    <button mat-icon-button (click)="datepicker.open()">
-      <ng-container [ngTemplateOutlet]="i_calendar_today"></ng-container>
-    </button>
-  </span>
+<span
+  fxLayout="row"
+  fxLayoutAlign="start center"
+  (mouseenter)="this.property?.inlineEdit?.enabled && (edit = true)"
+  (mouseleave)="edit = false"
+>
+  <p>{{ formGroup.controls[property.name].value | date: format }}</p>
+  <button *ngIf="edit" mat-icon-button class="fade-in-fwd" (click)="datepicker.open()">
+    <ng-container [ngTemplateOutlet]="i_calendar_today"></ng-container>
+  </button>
+  <form [formGroup]="formGroup" style="width: 1px; visibility: hidden">
+    <input [matDatepicker]="datepicker" [formControlName]="property.name" />
+  </form>
+</span>
 
-  <input
-    style="width: 0px; visibility: hidden"
-    matInput
-    [matDatepicker]="datepicker"
-    [formControlName]="property.name"
-  />
-</form>
 <mat-datepicker #datepicker>
   <mat-datepicker-actions>
     <button mat-button matDatepickerCancel>Cancel</button>
-    <button mat-raised-button color="primary" matDatepickerApply (click)="onDateApply()">
-      Apply
-    </button>
+    <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
   </mat-datepicker-actions>
 </mat-datepicker>
 <ng-template #i_calendar_today>

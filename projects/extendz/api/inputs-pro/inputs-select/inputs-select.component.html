@@ -1,0 +1,34 @@
+<mat-form-field [style.width]="property?.width?.value">
+  <ext-select
+    #extSelect
+    [property]="property"
+    [formControl]="control"
+    (entityChange)="change.emit($event)"
+    [placeholder]="property?.displayName || (property.name | camelCase)"
+    [events]="events"
+  >
+  </ext-select>
+  <button *ngIf="property?.showAdd" mat-icon-button matSuffix (click)="extSelect.addNew()">
+    <mat-icon svgIcon="api-root:{{ property?.addIcon || 'add' }}"></mat-icon>
+  </button>
+  <button
+    *ngIf="property?.showSearch"
+    mat-icon-button
+    matSuffix
+    (click)="extSelect.onAdvanceSearch()"
+  >
+    <mat-icon>search</mat-icon>
+  </button>
+  <button
+    *ngIf="property?.showMore"
+    mat-icon-button
+    matSuffix
+    (click)="extSelect.trigger.openMenu()"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-error *ngIf="control?.hasError('required')">
+    {{ property?.displayName || (property.name | camelCase) }} is
+    <strong>required</strong>
+  </mat-error>
+</mat-form-field>

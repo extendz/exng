@@ -1,0 +1,63 @@
+{
+  "title": "firstName",
+  "name": "customer",
+  "config": {
+    "entity": {
+      "enableProjection": true,
+      "projection": "entity"
+    },
+    "select": {
+      "projection": "entity"
+    }
+  },
+  "projections": {
+    "dataTable": [
+      { "name": "id" },
+      { "name": "firstName" },
+      { "name": "lastName" },
+      { "name": "telephone" }
+    ]
+  },
+  "properties": {
+    "id": {
+      "name": "id",
+      "type": "string",
+      "generated": true,
+      "required": true,
+      "width": { "lg": "33" }
+    },
+    "firstName": {
+      "name": "firstName",
+      "type": "string",
+      "required": true,
+      "width": { "lg": "33" }
+    },
+    "lastName": {
+      "name": "lastName",
+      "type": "string",
+      "required": true,
+      "width": { "lg": "33" }
+    },
+    
+    "addresses": {
+      "name": "addresses",
+      "type": "objectList",
+      "reference": "address",
+      "config": {
+        "select": {
+          "allowSearch": false,
+          "autocomplete": false,
+          "displayFunction": {
+            "feilds": ["line1", "line2", "city"],
+            "delimiter": ","
+          }
+        }
+      },
+      "width": { "lg": "48" }
+    },
+    "telephone": { "name": "telephone", "type": "phone", "width": { "lg": "48" } },
+    "mobile": { "name": "mobile", "type": "phone", "width": { "lg": "48" } },
+    "email": { "name": "email", "type": "email", "width": { "lg": "48" } },
+    "active": { "name": "active", "type": "boolean", "default": "true", "width": { "lg": "48" } }
+  }
+}

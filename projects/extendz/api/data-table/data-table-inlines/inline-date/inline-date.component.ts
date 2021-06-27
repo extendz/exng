@@ -20,6 +20,7 @@ export class InlineDateComponent implements OnInit, OnDestroy {
 
   formGroup: FormGroup;
   subscription: Subscription;
+  edit: boolean = false;
 
   constructor(private formBuilder: FormBuilder) {}
 
@@ -36,6 +37,4 @@ export class InlineDateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
   }
-
-  onDateApply() {}
 }

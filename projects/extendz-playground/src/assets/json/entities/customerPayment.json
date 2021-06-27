@@ -1,0 +1,30 @@
+{
+  "name": "customerPayment",
+  "title": "amount",
+  "properties": {
+    "lineNumber": {
+      "name": "lineNumber",
+      "type": "number"
+    },
+    "salesOrder": {
+      "name": "salesOrder",
+      "type": "object",
+      "reference": "salesOrder",
+      "width": { "lg": "24" }
+    },
+    "description": {
+      "name": "description",
+      "type": "string",
+      "width": { "lg": "20vw" }
+    },
+    "amount": {
+      "name": "amount",
+      "type": "money",
+      "width": { "lg": "20vw" }
+    },
+    "note": {
+      "name": "note",
+      "type": "string"
+    }
+  }
+}

@@ -6,7 +6,7 @@ export const EXT_DATA_TABLE_CONFIG = new InjectionToken('EXT_DATA_TABLE_CONFIG')
 export interface ExtDatatableConfig extends ExtRootConfig {
   placeholderImage?: string;
   dataTableProjecion?: string;
-  dateFormat?: 'yyyy/MM/dd';
+  dateFormat?: string;
   pageSizeOptions?: number[];
   pageSize?: number;
   showFirstLastButtons?: boolean;

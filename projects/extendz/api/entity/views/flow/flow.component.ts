@@ -30,6 +30,7 @@ import { ExtBaseViewComponent } from '../base-view/base-view.component';
 export class FlowComponent extends ExtBaseViewComponent implements OnInit, AbstractView {
   properties: Property[];
   propertyTypes = PropertyType;
+  
 
   constructor(
     @Inject(EXT_API_CONFIG) protected apiConfig: ExtApiConfig,
