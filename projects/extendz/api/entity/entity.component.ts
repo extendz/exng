@@ -41,7 +41,7 @@ export class ExtEntityComponent implements OnInit, OnChanges {
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    let view = this.entityMeta.view || 'flow';
+    let view = this.entityMeta?.view || 'flow';
     let component: Type<any>;
     switch (view) {
       case 'avatar':

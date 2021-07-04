@@ -25,20 +25,23 @@
       "type": "object",
       "reference": "product",
       "required": true,
-      "width": { "lg": "24" }
+      "config": {
+        "select": { "search": { "show": true } }
+      },
+      "width": { "lg": "32" }
     },
     "initialQuantity": {
       "name": "initialQuantity",
       "type": "number",
       "required": true,
-      "width": { "lg": "24" }
+      "width": { "lg": "32" }
     },
     "manufacturedDate": {
       "name": "manufacturedDate",
       "type": "date",
       "required": true,
-      "width": { "lg": "24" }
+      "width": { "lg": "32" }
     },
-    "note": { "name": "note", "type": "string", "width": { "lg": "48" } }
+    "note": { "name": "note", "type": "string", "width": { "lg": "100" } }
   }
 }

@@ -127,6 +127,8 @@ export function diff(obj1: object, obj2: object) {
     }
   }
 
+  if (obj1 == null) obj1 = {};
+
   // Loop through the second object and find missing items
   for (key in obj2) {
     if (obj2.hasOwnProperty(key)) {
@@ -138,4 +140,23 @@ export function diff(obj1: object, obj2: object) {
 
   // Return the object of differences
   return diffs;
+}
+
+/*** Clear null values from object */
+export function clean(obj: any): void {
+  var propNames = Object.getOwnPropertyNames(obj);
+  for (var i = 0; i < propNames.length; i++) {
+    var propName = propNames[i];
+    if (obj[propName] === null || obj[propName] === undefined) {
+      delete obj[propName];
+    }
+  }
+}
+
+export function getSelectedFields(names: string[], entity: any) {
+  const newObject = {};
+  Object.keys(entity)
+    .filter((key) => names.indexOf(key) > -1)
+    .forEach((key) => (newObject[key] = entity[key]));
+  return newObject;
 }

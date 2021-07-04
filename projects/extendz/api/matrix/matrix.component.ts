@@ -19,7 +19,6 @@ import {
   MatrixRow,
   Property,
   PropertyType,
-  RelationshipType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { Subscription } from 'rxjs';

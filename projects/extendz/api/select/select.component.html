@@ -20,7 +20,7 @@
 </div>
 
 <mat-menu #menu="matMenu">
-  <button *ngIf="!property?.showSearch" mat-menu-item (click)="onAdvanceSearch()" mat-menu-item>
+  <button  *ngIf="!property?.showSearch" mat-menu-item (click)="onAdvanceSearch()" mat-menu-item>
     <ng-container *ngTemplateOutlet="search"> </ng-container>
     <span>Search</span>
   </button>

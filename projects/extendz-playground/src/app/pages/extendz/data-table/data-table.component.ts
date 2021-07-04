@@ -26,6 +26,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
     this.subscription = this.activatedRoute.params
       .pipe(
         map((p) => p.model),
+        tap(console.log),
         mergeMap((name) => this.entityMetaService.getModel(name)),
         tap((model) => (this.entityMeta = model))
       )

@@ -1,5 +1,4 @@
-import { ThisReceiver } from '@angular/compiler';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -18,6 +17,7 @@ import {
   Validation,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
+import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AbstractView } from '../abstact-view';
 import { ExtBaseViewComponent } from '../base-view/base-view.component';
@@ -27,10 +27,11 @@ import { ExtBaseViewComponent } from '../base-view/base-view.component';
   templateUrl: './flow.component.html',
   styleUrls: ['./flow.component.scss'],
 })
-export class FlowComponent extends ExtBaseViewComponent implements OnInit, AbstractView {
+export class FlowComponent extends ExtBaseViewComponent implements OnInit, OnDestroy, AbstractView {
   properties: Property[];
   propertyTypes = PropertyType;
-  
+
+  validateSub: Subscription;
 
   constructor(
     @Inject(EXT_API_CONFIG) protected apiConfig: ExtApiConfig,
@@ -49,10 +50,17 @@ export class FlowComponent extends ExtBaseViewComponent implements OnInit, Abstr
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.validateSub = this.formGroup.valueChanges
+      .pipe(
+        tap((_) => this.validate(this.entityMeta.validators))
+        // tap(console.log)
+      )
+      .subscribe();
+  }
 
-    this.formGroup.valueChanges
-      .pipe(tap((_) => this.validate(this.entityMeta.validators)))
-      .subscribe((v) => {});
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    if (this.validateSub) this.validateSub.unsubscribe();
   }
 
   handleEntityMeta(propties: Property[]) {
@@ -62,23 +70,13 @@ export class FlowComponent extends ExtBaseViewComponent implements OnInit, Abstr
   validate(validations: Validation[]) {
     if (validations)
       validations.forEach((v) => {
-        if (this.formGroup.controls[v.on].value == v.value)
-          v.disable.forEach((d) => this.formGroup.controls[d].disable({ emitEvent: false }));
-        else v.disable.forEach((d) => this.formGroup.controls[d].enable({ emitEvent: false }));
+        switch (v.assert) {
+          case Assert.NotEqual:
+            if (this.formGroup.controls[v.on].value != v.value)
+              v.disable.forEach((d) => this.formGroup.controls[d].disable({ emitEvent: false }));
+            else v.disable.forEach((d) => this.formGroup.controls[d].enable({ emitEvent: false }));
+            break;
+        }
       });
-  }
-
-  canHide(hiden: Hidden) {
-    if (hiden == null) return true;
-    const assert = hiden.assert;
-
-    switch (assert) {
-      case Assert.NotNull:
-        if (this.entity && this.entity[hiden.property] != null) return true;
-        break;
-      case Assert.Null:
-        if (this.entity && this.entity[hiden.property] == null) return true;
-        break;
-    }
   }
 }

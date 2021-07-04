@@ -25,15 +25,15 @@ import { RootComponent } from './root.component';
   ],
 })
 export class ExtRootModule {
-  static forFeature(
-    config: ExtRootConfig
-    // service?: Type<any>
-  ): ModuleWithProviders<ExtRootModule> {
+  static forFeature(config: ExtRootConfig): ModuleWithProviders<ExtRootModule> {
     return {
       ngModule: ExtRootModule,
       providers: [
         { provide: EXT_ROOT_CONFIG, useValue: config },
-        { provide: EXT_API_CONFIG, useValue: new ExtApiConfig(config.modelsJson, config.partials) },
+        {
+          provide: EXT_API_CONFIG,
+          useValue: new ExtApiConfig(config.modelsJson, config.partials, config.cache),
+        },
       ],
     };
   }

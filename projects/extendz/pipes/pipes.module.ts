@@ -6,6 +6,6 @@ import { CamelCasePipe } from './camel-case.pipe';
  */
 @NgModule({
   declarations: [CamelCasePipe],
-  exports: [CamelCasePipe]
+  exports: [CamelCasePipe],
 })
 export class ExtPipesModule {}

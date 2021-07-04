@@ -5,20 +5,24 @@ import { ActivatedRoute, Params } from '@angular/router';
 import {
   AbstractEntityService,
   Action,
+  clean,
   deepCopy,
+  diff,
   EntityEvent,
   EntityEventType,
   EntityMeta,
+  EventAction,
   ExtApiConfig,
   ExtEntityConfig,
   EXT_ENTITY_CONFIG,
+  getSelectedFields,
   getValueByField,
   Property,
   PropertyType,
   PropertyValidationType,
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { forkJoin, Subject, Subscription } from 'rxjs';
+import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
 import { defaultIfEmpty, finalize, mergeMap, skip, take, tap } from 'rxjs/operators';
 import { AbstractView } from '../abstact-view';
 
@@ -55,7 +59,8 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
   private activatedRouteSub: Subscription;
 
   /*** Emmit entity events  */
-  eventsSubject: Subject<EntityEvent> = new Subject<EntityEvent>();
+  events: Subject<EntityEvent> = new Subject<EntityEvent>();
+  eventsSub: Subscription;
 
   constructor(
     protected apiConfig: ExtApiConfig,
@@ -65,7 +70,7 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
     protected entityMetaService: EntityMetaService
   ) {
     super();
-    this.activatedRouteSub = this.activatedRoute.params.pipe(skip(1)).subscribe((d) => this.init());
+    this.activatedRouteSub = this.activatedRoute.params.pipe(skip(1)).subscribe((_) => this.init());
   }
 
   ngOnInit(): void {
@@ -98,6 +103,22 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
     forkJoin(reqs)
       .pipe(defaultIfEmpty(null))
       .subscribe((_) => this.init());
+
+    const eventsConfig = this.entityMeta?.config?.entity?.events;
+    if (eventsConfig) {
+      const eSub = this.events.subscribe((e) => {
+        const actions: EventAction[] = eventsConfig[e.type];
+        if (actions)
+          actions.forEach((a) => {
+            switch (a.action) {
+              case '__fetch_entity__':
+                this.getCurrentEntity().subscribe();
+                break;
+            }
+          });
+      });
+      this.activatedRouteSub.add(eSub);
+    }
   }
 
   ngOnDestroy(): void {
@@ -133,7 +154,7 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
     this.handleEntity(filteredProperties);
   }
 
-  abstract handleEntityMeta(propties: Property[]);
+  abstract handleEntityMeta(propties: Property[]): void;
 
   private handleEntity(properties: Property[]) {
     // Create form
@@ -169,7 +190,7 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
 
     ctrl.setValidators(validators);
 
-    // if generated the feild witll be disabled
+    // if generated the feild will be disabled
     if (property.generated) ctrl.disable({});
 
     if (property.default != null) {
@@ -188,8 +209,29 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
     this.originalEntity = deepCopy(entity);
   }
 
+  private getCurrentEntity(): Observable<any> {
+    return this.entityService
+      .getOneByEntity(this.entityMeta, this.entity)
+      .pipe(tap((entity) => this.formGroup.patchValue(entity, { emitEvent: true })));
+  }
+
   /*** save */
   public onSave(showSnackBar?: boolean): void {
+    let formValue = { ...this.formGroup.value };
+    let diffrence: any;
+    /*** on new entity,formgroup should remove all null values */
+    if (this.entity == null) {
+      clean(formValue);
+      diffrence = diff(this.entity, formValue);
+    } else {
+      /*** on update we need to get updated values.only changed onces are consideted*/
+      const updated = Object.keys(formValue).filter((name: string) => {
+        const currentControl = this.formGroup.controls[name];
+        return currentControl.dirty;
+      });
+      diffrence = getSelectedFields(updated, formValue);
+    }
+
     if (this.formGroup.valid) {
       this.loading = true;
       this.entityService
@@ -198,10 +240,9 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
           tap((d) => (this.entity = d)),
           tap((d) => this.deepCopy(d)),
           tap((d) => this.saved.emit(d)),
-          finalize(() => {
-            this.loading = false;
-            this.eventsSubject.next({ type: EntityEventType.Saved });
-          }),
+          mergeMap((d) => this.getCurrentEntity()),
+          tap((payload) => this.events.next({ type: EntityEventType.Saved, payload })),
+          finalize(() => (this.loading = false)),
           take(1)
         )
         .subscribe();

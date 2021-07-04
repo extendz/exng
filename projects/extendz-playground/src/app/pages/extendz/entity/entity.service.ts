@@ -15,16 +15,7 @@ import {
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import {
-  catchError,
-  defaultIfEmpty,
-  delay,
-  map,
-  mergeMap,
-  shareReplay,
-  take,
-  tap,
-} from 'rxjs/operators';
+import { catchError, defaultIfEmpty, delay, map, mergeMap, take, tap } from 'rxjs/operators';
 
 export class PropertyFile {
   name: string;
@@ -57,6 +48,20 @@ export class EntityService implements AbstractEntityService {
     public snackBar: MatSnackBar
   ) {}
 
+  post(url: string, payload: any): Observable<any> {
+    return this.http.post(url, payload).pipe(
+      take(1),
+
+      catchError((e: HttpErrorResponse) => {
+        this.snackBar.open(e.error?.message, null, {
+          duration: 3000,
+          panelClass: ['snack-bar-error'],
+        });
+        return throwError(e);
+      })
+    );
+  }
+
   getOne(entityMeta: EntityMeta, id: string | number): Observable<ObjectWithLinks> {
     let params = new HttpParams();
     if (entityMeta?.config?.entity?.enableProjection)
@@ -66,6 +71,13 @@ export class EntityService implements AbstractEntityService {
 
   getOneByUrl(url: string, params: HttpParams): Observable<ObjectWithLinks> {
     return this.http.get<ObjectWithLinks>(url, { params }).pipe(take(1));
+  }
+
+  getOneByEntity(entityMeta: EntityMeta, entity: ObjectWithLinks): Observable<any> {
+    let params = new HttpParams();
+    if (entityMeta?.config?.entity?.enableProjection)
+      params = params.append('projection', entityMeta.config.entity.projection);
+    return this.http.get(entity._links.self.href, { params }).pipe(take(1));
   }
 
   navigate(property: SelectProperty, idField: string): void {
@@ -209,8 +221,6 @@ export class EntityService implements AbstractEntityService {
   }
 
   private finalizeSave(savedEntity: ObjectWithLinks, navigate: boolean = true) {
-    // console.log('saved entitty', savedEntity);
-
     let path = this.getRelativePath();
     if (navigate) {
       let id = getId(savedEntity._links.self.href);
@@ -246,7 +256,7 @@ export class EntityService implements AbstractEntityService {
       const value = newValue[key];
       const type = p.type;
 
-      if (value != null) console.debug(key, value, type);
+      if (value != null) console.debug(key + ' > ', type + ' > ', value);
 
       if (p.generated) return;
       else if (value == null) return;
@@ -259,13 +269,16 @@ export class EntityService implements AbstractEntityService {
           else if (payload._links != null) {
             // Patch
             const url = clearUrl(payload._links.self.href);
-            let entityMeta = p.entityMeta;
-            if (entityMeta == undefined) throw 'Entity meta now found';
-            // if (!entityMeta) entityMeta = this.entityMetaService.getModelSync(p.reference);
-            var converted = this.convertObjectToHateos(payload, entityMeta);
-            const patchReq = this.http.patch(url, converted).pipe(take(1));
+            // get Reference based entity meta
+            const selectProperty = p as SelectProperty;
+            const patchReq = this.entityMetaService.getModel(selectProperty.reference).pipe(
+              map((em) => this.convertObjectToHateos(payload, em)),
+              mergeMap((c) => {
+                return this.http.patch(url, c).pipe(take(1));
+              }),
+              take(1)
+            );
             patches.push(patchReq);
-            // Update the current object
             savedObjectList.push(url);
           }
           if (savedObjectList.length > 0) rest[key] = savedObjectList;

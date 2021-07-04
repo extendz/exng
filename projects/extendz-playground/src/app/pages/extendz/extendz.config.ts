@@ -1,5 +1,6 @@
 import {
   ExtDatatableConfig,
+  ExtEntityConfig,
   ExtRootConfig,
   EXT_DATA_TABLE_SERVICE,
   EXT_ENTITY_CONFIG,
@@ -30,7 +31,7 @@ export const DATA_TABLE_CONFIG: ExtDatatableConfig = {
   },
 };
 
-export const ENTITY_CONFIG = {
+export const ENTITY_CONFIG: ExtEntityConfig = {
   ...ROOT_CONFIG,
   placeholderImage: 'assets/img/placeholder.png',
   unitOfMeasurement: {
@@ -45,6 +46,9 @@ export const ENTITY_CONFIG = {
     defaultCurrency: 'LKR',
   },
   idFeild: '_links.self.href',
+  defaultProperties: {
+    update: ['_links'],
+  },
 };
 
 export const ENTITY_SERVICE = {

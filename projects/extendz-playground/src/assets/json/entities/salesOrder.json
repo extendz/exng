@@ -6,13 +6,17 @@
       "projection": "entity",
       "toolbar": {
         "color": "primary",
+        "status": {
+          "text": "status",
+          "progress": "progress"
+        },
         "actions": [
           {
             "id": "createProject",
             "displayName": "Create Project",
             "hide": {
               "property": "project",
-              "assert": "Null"
+              "assert": "NotNull"
             }
           },
           {
@@ -20,16 +24,23 @@
             "displayName": "View Project",
             "hide": {
               "property": "project",
-              "assert": "NotNull"
+              "assert": "Null"
             }
           }
         ]
+      },
+      "events": {
+        "RowUpdated": [{ "action": "__fetch_entity__" }]
       }
     }
   },
+  "validators": [
+    { "on": "status", "value": "Planned", "assert": "NotEqual", "disable": ["customer"] }
+  ],
   "projections": {
     "dataTable": [
-      { "name": "id", "type": "string" },
+      { "name": "id", "type": "link" },
+      { "name": "createdDate", "type": "date" },
       { "name": "customer", "type": "string" },
       { "name": "wantedDeliveryDate", "type": "date", "enableInlineEdit": true },
       { "name": "status", "type": "string" }
@@ -47,9 +58,9 @@
       "type": "object",
       "required": true,
       "reference": "customer",
-      "showAdd": true,
-      "showSearch": true,
-      "showMore": true,
+      "config": {
+        "select": { "search": { "show": true }, "add": { "show": true }, "more": { "show": true } }
+      },
       "width": { "lg": "24" }
     },
     "deliveryAddress": {
@@ -61,16 +72,15 @@
     "wantedDeliveryDate": {
       "name": "wantedDeliveryDate",
       "type": "date",
-
       "width": { "lg": "24" }
     },
     "salesRepresentative": {
       "name": "salesRepresentative",
       "type": "object",
       "reference": "salesRepresentative",
-      "showAdd": true,
-      "showSearch": true,
-      "showMore": true,
+      "config": {
+        "select": { "search": { "show": true }, "add": { "show": true }, "more": { "show": true } }
+      },
       "width": { "lg": "24" }
     },
     "discountType": {
@@ -93,6 +103,20 @@
       "generated": true,
       "width": { "lg": "24", "xs": "100" }
     },
+    "progress": { "name": "progress" },
+    "status": {
+      "name": "status",
+      "default": "Planned",
+      "enums": [
+        "Planned",
+        "PartiallyReserved",
+        "Reserved",
+        "PartiallyDelivered",
+        "Delivered",
+        "PaidClosed",
+        "Cancelled"
+      ]
+    },
     "_spacer": { "width": { "lg": "24" } },
     "_tabs": {
       "type": "tabs",
@@ -103,6 +127,7 @@
           "displayName": "Order Lines",
           "type": "objectList",
           "reference": "salesOrderLine",
+          "width": { "lg": "100vw" },
           "mutations": {
             "product": [
               {
@@ -133,11 +158,14 @@
                 }
               }
             },
+            "validators": [
+              { "on": "status", "value": "Planned", "assert": "NotEqual", "disable": ["product"] }
+            ],
             "properties": {
               "lineNumber": {
                 "name": "lineNumber",
                 "type": "index",
-                "width": { "lg": "8vw" }
+                "width": { "lg": "8" }
               },
               "product": {
                 "name": "product",
@@ -145,14 +173,22 @@
                 "reference": "product",
                 "required": true,
                 "labelFloat": false,
-                "showAdd": false,
-                "showSearch": true,
+                "config": {
+                  "select": {
+                    "search": {
+                      "show": true
+                    },
+                    "add": {
+                      "show": false
+                    }
+                  }
+                },
                 "width": { "value": "95%" }
               },
               "quantity": {
                 "name": "quantity",
                 "type": "number",
-                "width": { "lg": "8vw" }
+                "width": { "lg": "8" }
               },
               "reservedQuantity": {
                 "name": "reservedQuantity",
@@ -160,42 +196,74 @@
                 "inlineEdit": {
                   "enabled": true,
                   "showAlways": true,
-                  "fxLayoutAlign": "space-around center"
+                  "fxLayoutAlign": "space-between center",
+                  "action": {
+                    "pathVariable": "reserve",
+                    "successMessage": "Operation Successful"
+                  }
                 },
-                "width": { "lg": "10vw" }
+                "width": { "lg": "10" }
               },
               "deliveredQuantity": {
                 "name": "deliveredQuantity",
                 "type": "number",
                 "generated": true,
-                "width": { "lg": "10vw" }
+                "width": { "lg": "10" }
               },
               "price": {
                 "name": "price",
                 "type": "money",
                 "generated": true,
-                "width": { "lg": "15vw" }
+                "width": { "lg": "15" }
               },
               "status": {
                 "name": "status",
                 "type": "enum",
                 "generated": true,
-                "enums": ["Planned", "Released", "Reserved", "PartiallyDelivered", "Delivered"],
-                "width": { "lg": "10vw" }
+                "default": "Planned",
+                "enums": [
+                  "Planned",
+                  "PartiallyReserved",
+                  "Reserved",
+                  "PartiallyDelivered",
+                  "Delivered",
+                  "Cancelled"
+                ],
+                "width": { "lg": "10" }
               },
               "delete": {
                 "name": "delete",
                 "type": "action",
-                "operation": "delete",
+                "actions": [
+                  {
+                    "operation": "delete",
+                    "pre": {
+                      "assert": "NotEqual",
+                      "on": "status",
+                      "value": "Planned",
+                      "message": "Unreserve the reserved quantity first"
+                    },
+                    "post": {}
+                  }
+                ],
                 "icon": "delete",
-                "width": { "lg": "4" }
+                "width": { "lg": "4" },
+                "hide": {
+                  "property": "_links",
+                  "assert": "Null"
+                }
               },
               "remove": {
                 "name": "remove",
                 "type": "action",
-                "operation": "remove",
+                "actions": [{ "operation": "remove" }],
                 "icon": "close",
-                "width": { "lg": "4" }
+                "width": { "lg": "4" },
+                "hide": {
+                  "property": "_links",
+                  "assert": "NotNull",
+                  "emptyValue": false
+                }
               }
             }
           }
@@ -236,17 +304,24 @@
                 "name": "type",
                 "type": "object",
                 "reference": "salesChargeType",
-                "width": { "lg": "20vw" }
+                "width": { "lg": "30" },
+                "config": {
+                  "select": {
+                    "search": {
+                      "show": true
+                    }
+                  }
+                }
               },
               "amount": {
                 "name": "amount",
                 "type": "money",
-                "width": { "lg": "20vw" }
+                "width": { "lg": "15" }
               },
               "description": {
                 "name": "description",
                 "type": "string",
-                "width": { "lg": "20vw" }
+                "width": { "lg": "45" }
               }
             }
           }

@@ -78,6 +78,12 @@
           <span *ngSwitchCase="'image'">
             <img class="image" [src]="e[p.name] || dataTableConfig.placeholderImage" alt="Image" />
           </span>
+
+          <span *ngSwitchCase="'link'">
+            <a href=""> {{ e[p.name] }}</a>
+          </span>
+
+          <!-- Default/string -->
           <span *ngSwitchDefault>
             {{ e[p.name] }}
           </span>

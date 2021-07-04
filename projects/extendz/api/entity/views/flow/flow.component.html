@@ -8,9 +8,10 @@
   <span fxLayoutGap="1vw">
     <span *ngFor="let action of entityMeta.config?.entity?.toolbar?.actions">
       <button
+        [hide]="action?.hide"
+        [entity]="entity"
         mat-raised-button
         color="primary"
-        *ngIf="canHide(action?.hide)"
         (click)="onAction(action)"
       >
         {{ action?.displayName }}
@@ -19,14 +20,14 @@
   </span>
 
   <span fxFlex></span>
-  <!-- <span fxFlex="15">
-    <p style="margin: 0;">Status</p>
-    <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-  </span> -->
+  <span fxFlex="15" *ngIf="entityMeta.config?.entity?.toolbar?.status as status">
+    <p class="toolbar-status">{{ formGroup.controls[status?.text]?.value | camelCase}}</p>
+    <mat-progress-bar mode="determinate" [value]="formGroup.controls[status?.progress]?.value"></mat-progress-bar>
+  </span>
 </mat-toolbar>
 
 <div class="form-wrapper">
-  <!-- {{ formGroup.value | json }} -->
+  <!-- {{ formGroup.value?.orderLines | json }} -->
   <form [formGroup]="formGroup" fxLayout="row wrap" fxLayoutAlign="space-between center">
     <span
       *ngFor="let property of properties"
@@ -89,16 +90,17 @@
         *ngIf="property.type == propertyTypes.object || property.type == propertyTypes.objectList"
         [property]="property"
         [control]="formGroup.controls[property.name]"
-        [events]="eventsSubject.asObservable()"
+        [events]="events"
       >
       </ext-inputs-select>
+
       <!-- Embebed -->
       <ext-embedded
         *ngIf="property.type == propertyTypes.embedded"
         [property]="property"
         [(entity)]="entity"
         [formControlName]="property.name"
-        [events]="eventsSubject.asObservable()"
+        [events]="events"
       >
       </ext-embedded>
 
@@ -186,7 +188,7 @@
             <ext-input-table
               [property]="tab"
               [formControlName]="tab.name"
-              [events]="eventsSubject.asObservable()"
+              [events]="events"
             ></ext-input-table>
           </ng-template>
         </mat-tab>

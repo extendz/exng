@@ -5,7 +5,6 @@
   (mouseleave)="edit = false"
 >
   <p>{{ control?.value }}</p>
-
   <span #trigger="cdkOverlayOrigin" cdkOverlayOrigin>
     <button
       *ngIf="edit || this.property?.inlineEdit?.showAlways"
@@ -17,6 +16,7 @@
       <ng-container [ngTemplateOutlet]="i_save_edit"></ng-container>
     </button>
   </span>
+  <span fxFlex="1"></span>
 </span>
 
 <ng-template

@@ -3,7 +3,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { EntityMeta, EntityMetaResponse, ExtRootConfig, EXT_ROOT_CONFIG } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
-import { Observable, pipe } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
 @Component({
@@ -42,8 +42,6 @@ export class RootComponent implements OnInit {
     this.entityMetaService
       .getModel(modelName)
       .pipe(take(1))
-      .subscribe((model) => {
-        this.select.emit(model);
-      });
+      .subscribe((model) => this.select.emit(model));
   }
 }

@@ -1,14 +1,18 @@
-import { Property } from '../models/property';
+import { Operation, Property } from '../models/property';
 
 export enum Assert {
   NotNull = 'NotNull',
   Null = 'Null',
+  Equal = 'Equal',
+  NotEqual = 'NotEqual',
 }
+
 export class Hidden {
   property: string;
   value?: string;
-  matchTo?: string;
   assert?: Assert;
+  /*** On empty value handle */
+  emptyValue?: boolean;
 }
 
 export interface Action {
@@ -16,9 +20,24 @@ export interface Action {
   entity?: any;
   /*** Display text for the action */
   displayName?: string;
+  /*** Actions associalted with property */
+  operation: Operation;
+
   hide?: Hidden;
   color?: 'primary' | 'accent' | 'warn';
   icon?: string;
+  pre?: {
+    on?: string;
+    value?: string;
+    assert?: Assert;
+    message?: string;
+  };
+  post?: {};
+}
+
+export interface InlineAction {
+  pathVariable?: string;
+  successMessage?: string;
 }
 
 export interface TabAction extends Action {
@@ -44,6 +63,8 @@ export class EntityConfig {
 
   /*** Toolbar customization on entity */
   toolbar?: Toolbar;
+
+  events?: object;
 }
 
 export class SelectConfig {
@@ -79,6 +100,10 @@ export interface ToolbarConfig {
   enabled?: boolean;
   color?: 'primary' | 'accent' | 'warn';
   fab?: Action;
+  status?: {
+    text?: string;
+    progress?: string;
+  };
 }
 
 /***

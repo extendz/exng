@@ -7,7 +7,6 @@ import {
   HostListener,
   Inject,
   Input,
-  OnInit,
   Optional,
   Self,
 } from '@angular/core';

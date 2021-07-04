@@ -14,6 +14,9 @@ export abstract class AbstractEntityService {
   /*** Get single entity by url */
   abstract getOneByUrl(url: string, params: HttpParams): Observable<any>;
 
+  /*** */
+  abstract getOneByEntity(entityMeta: EntityMeta, entity: any): Observable<any>;
+
   /*** Save the current entity  */
   abstract save(
     entityMeta: EntityMeta,
@@ -22,6 +25,8 @@ export abstract class AbstractEntityService {
     original?: any,
     showSnackBar?: boolean
   ): Observable<any>;
+
+  abstract post(url: string, payload: any): Observable<any>;
 
   /*** Navigate the given property with the id  */
   abstract navigate(property: Property, idField: string): void;

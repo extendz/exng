@@ -6,14 +6,28 @@
       "enableProjection": true,
       "projection": "entity",
       "toolbar": {
+        "status": {
+          "text": "status",
+          "progress": "progress"
+        },
         "actions": [
           {
-            "id": "viewSalesOrder",
-            "displayName": "Stat Delivery"
+            "id": "startDelivery",
+            "displayName": "Start Delivery",
+            "hide": {
+              "property": "status",
+              "assert": "NotEqual",
+              "value": "Planned"
+            }
           },
           {
-            "id": "viewSalesOrder",
-            "displayName": "Complete"
+            "id": "completeDelivery",
+            "displayName": "Complete",
+            "hide": {
+              "property": "status",
+              "assert": "NotEqual",
+              "value": "OnRoute"
+            }
           }
         ]
       }
@@ -41,9 +55,10 @@
       "width": { "lg": 30 }
     },
     "note": { "name": "note", "type": "string", "width": { "lg": 30 } },
+    "progress": { "name": "progress", "type": "progress", "width": { "lg": 1 } },
     "status": {
       "name": "status",
-      "type": "enum",
+      "type": "none",
       "required": true,
       "default": "Planned",
       "enums": ["Planned", "OnRoute", "Closed"],
@@ -142,16 +157,24 @@
               "delete": {
                 "name": "delete",
                 "type": "action",
-                "operation": "delete",
+                "actions": [{ "operation": "delete" }],
                 "icon": "delete",
-                "width": { "lg": "4" }
+                "width": { "lg": "4" },
+                "hide": {
+                  "property": "_links",
+                  "assert": "NotNull"
+                }
               },
               "remove": {
                 "name": "remove",
                 "type": "action",
-                "operation": "remove",
+                "actions": [{ "operation": "remove" }],
                 "icon": "close",
-                "width": { "lg": "4" }
+                "width": { "lg": "4" },
+                "hide": {
+                  "property": "_links",
+                  "assert": "Null"
+                }
               }
             }
           }

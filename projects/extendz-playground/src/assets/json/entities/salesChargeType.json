@@ -1,0 +1,16 @@
+{
+  "name": "salesChargeType",
+  "displayName": "Sales Charge Type",
+  "title": "name",
+  "url": "salesChargeTypes",
+  "properties": {
+    "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "48" } },
+    "defaultAmount": {
+      "name": "defaultAmount",
+      "type": "money",
+      "required": true,
+      "width": { "lg": "48" }
+    },
+    "active": { "name": "active", "type": "boolean" }
+  }
+}

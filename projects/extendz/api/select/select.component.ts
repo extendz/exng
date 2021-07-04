@@ -117,6 +117,31 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
     this.autoCompleteData$ = iif(() => this.searchField != null, auto, of());
   }
 
+  private handleEmbedded(result: any | any[], update?: boolean) {
+    let type = this.property.type;
+
+    if (type == PropertyType.object) {
+      this.value = result;
+      this.autoCompleteControl.setValue(result, { emitEvent: false });
+      if (update == true) this.onChange(this.value);
+    } else if (type == PropertyType.objectList) {
+      if (Array.isArray(result)) this.value = result;
+      else this.value = [result];
+      let fun = this.property.config?.select?.displayFunction;
+      if (fun) {
+        const firstItem = this.value[0];
+        if (firstItem) this.displayValue = fun.feilds.map((f) => firstItem[f]).join(fun.delimiter);
+        else this.value = null;
+      } else {
+        let len = (this.value as any[]).length;
+        this.displayValue = `${len} selected`;
+      }
+      this.autoCompleteControl.setValue(this.displayValue);
+      this.onChange(this.value);
+    }
+    // setTimeout(() => this.entityChange.emit(this.value), 0);
+  }
+
   /***
    * This will make the given obejct null or remove the value
    */
@@ -153,7 +178,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
             take(1),
             filter((r) => r != undefined)
           )
-          .subscribe((result: any | any[]) => this.handleEmbedded(result));
+          .subscribe((result: any | any[]) => this.handleEmbedded(result, true));
       });
   }
 
@@ -178,32 +203,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
         take(1),
         filter((r) => r != undefined)
       )
-      .subscribe((result: any | any[]) => this.handleEmbedded(result));
-  }
-
-  private handleEmbedded(result: any | any[]) {
-    let type = this.property.type;
-
-    if (type == PropertyType.object) {
-      this.value = result;
-      this.autoCompleteControl.setValue(result);
-      this.onChange(this.value);
-    } else if (type == PropertyType.objectList) {
-      if (Array.isArray(result)) this.value = result;
-      else this.value = [result];
-      let fun = this.property.config?.select?.displayFunction;
-      if (fun) {
-        const firstItem = this.value[0];
-        if (firstItem) this.displayValue = fun.feilds.map((f) => firstItem[f]).join(fun.delimiter);
-        else this.value = null;
-      } else {
-        let len = (this.value as any[]).length;
-        this.displayValue = `${len} selected`;
-      }
-      this.autoCompleteControl.setValue(this.displayValue);
-      this.onChange(this.value);
-    }
-    setTimeout(() => this.entityChange.emit(this.value), 0);
+      .subscribe((result: any | any[]) => this.handleEmbedded(result, true));
   }
 
   onAutoComple(event: MouseEvent) {
@@ -238,14 +238,14 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
       this.initAutoComplete();
 
       if (obj) {
-        this.handleEmbedded(obj);
+        this.handleEmbedded(obj, false);
         this.showMoreButton = true;
       }
     });
 
     if (obj == undefined) this.showAddButton = true;
 
-    if (this.property?.config?.select?.allowSearch == false) {
+    if (this.property?.config?.select?.search?.show == false) {
       this.allowSearch = false;
       this.showMoreButton = false;
     } else {
@@ -253,7 +253,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
       this.showMoreButton = true;
     }
 
-    if (this.property?.config?.select?.allowAdd == false) {
+    if (this.property?.config?.select?.add?.show == false) {
       this.showAddButton = false;
       this.showMoreButton = true;
     }

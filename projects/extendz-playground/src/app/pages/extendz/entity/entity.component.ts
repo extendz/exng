@@ -17,12 +17,5 @@ export class EntityComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onAction(action: Action) {
-    switch (action.id) {
-      case 'createProject':
-        let saleOrder = action.entity as ObjectWithLinks;
-        console.log(saleOrder._links.self.href);
-        break;
-    }
-  }
+  onAction(action: Action) {}
 }

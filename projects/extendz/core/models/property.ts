@@ -1,4 +1,4 @@
-import { Action } from './config';
+import { Action, Hidden, InlineAction } from './config';
 import { Command } from './command';
 import { EntityMeta } from './entity-meta';
 
@@ -158,9 +158,6 @@ export class Property {
   /*** Default value if not present */
   default: any;
 
-  /*** Actions associalted with property */
-  operation: Operation;
-
   /*** Mutations on form */
   mutations?: {
     [key: string]: Mutate[];
@@ -183,13 +180,21 @@ export class Property {
     enabled?: boolean;
     showAlways?: boolean;
     fxLayoutAlign?: string;
+    action: InlineAction;
   };
 
   /*** config */
   config?: {
     select?: {
-      allowSearch: boolean;
-      allowAdd: boolean;
+      search?: {
+        show?: boolean;
+      };
+      add?: {
+        show?: boolean;
+      };
+      more?: {
+        show?: boolean;
+      };
       autocomplete: boolean;
       displayFunction: {
         feilds: string[];
@@ -197,4 +202,7 @@ export class Property {
       };
     };
   };
+
+  /** Hide based on logic */
+  hide?: Hidden;
 }

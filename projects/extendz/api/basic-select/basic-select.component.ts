@@ -93,7 +93,6 @@ export class ExtBasicSelectComponent extends ExtBaseSelectComponent implements O
     );
 
     this.autoCompleteData$ = iif(() => this.searchField != null, auto, of());
-    
   }
 
   get getDisplayValue() {
@@ -128,7 +127,6 @@ export class ExtBasicSelectComponent extends ExtBaseSelectComponent implements O
       .pipe(take(1))
       .subscribe((entityMeta) => {
         let data: any = { entityMeta };
-        console.log();
 
         let dialogRef = this.dialog.open(AddBasicComponent, {
           data,

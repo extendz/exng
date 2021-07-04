@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ExtDirectvicesModule } from 'extendz/directive';
 import { ExtPipesModule } from 'extendz/pipes';
 import { ExtEmbeddedModule } from '../../../embedded/embedded.module';
 import { ExtImageModule } from '../../../image/image.module';
@@ -33,6 +34,7 @@ import { FlowComponent } from './flow.component';
     ReactiveFormsModule,
     // ext
     ExtPipesModule,
+    ExtDirectvicesModule,
     ExtInputTableModule,
     ExtPhoneModule,
     ExtUnitModule,

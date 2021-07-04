@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { SelectProperty } from 'extendz/core';
+import { EntityEvent, SelectProperty } from 'extendz/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'ext-inputs-select',
@@ -10,7 +11,7 @@ import { SelectProperty } from 'extendz/core';
 export class InputsSelectComponent implements OnInit {
   @Input() property: SelectProperty;
   @Input() control: FormControl;
-  @Input() events: any;
+  @Input() events: Subject<EntityEvent>;
 
   @Output() change = new EventEmitter();
 

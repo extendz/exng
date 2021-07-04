@@ -1,42 +1,55 @@
+import { Command } from './command';
+import { Assert, Config } from './config';
 import { Property } from './property';
 import { Search } from './search';
-import { Config } from './config';
-import { Command } from './command';
 
 export class Validation {
   on?: string;
   value?: string;
   disable?: string[];
+  assert?: Assert;
+}
+
+export class EventAction {
+  action?: string;
 }
 
 export enum EntityEventType {
   LoadStarted = 'LoadStarted',
   Saved = 'Saved',
+  RowAdded = 'RowAdded',
+  RowRemoved = 'RowRemoved',
+  RowUpdated = 'RowUpdated',
 }
 
 export interface EntityEvent {
-  type?: EntityEventType;
+  type: EntityEventType;
+  payload?: any;
+  /*** Index number in case of row related event */
+  index?: number;
 }
 
 export class EntityMeta {
-  /**
-   * Custom action
-   */
+  /*** Custom action */
   actions?: string[];
+
   /***
    *
    */
   dataUrl?: string;
+
   /***
    *
    */
   projections?: {
     [key: string]: Property[];
   };
+
   /*** */
   commands?: {
     [key: string]: Command;
   };
+
   /***
    *
    */
@@ -76,13 +89,26 @@ export class EntityMeta {
    *
    */
   search?: Search;
-  /***
-   *
-   */
+
+  /*** Configurations for different parts*/
   config?: Config;
 
   /*** Validators */
   validators?: Validation[];
 
+  /*** Hide visually */
   hidden?: boolean;
+
+  /*** Cache */
+  cache: {
+    model?: boolean;
+
+    /*** Refernce models need to cache along */
+    references?: string[];
+
+    network?: boolean;
+
+    /*** */
+    endPoints?: string[];
+  };
 }

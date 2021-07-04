@@ -8,11 +8,19 @@
     [events]="events"
   >
   </ext-select>
-  <button *ngIf="property?.showAdd" mat-icon-button matSuffix (click)="extSelect.addNew()">
+
+  <button
+    [disabled]="control.disabled"
+    *ngIf="property?.config?.select?.add?.show"
+    mat-icon-button
+    matSuffix
+    (click)="extSelect.addNew()"
+  >
     <mat-icon svgIcon="api-root:{{ property?.addIcon || 'add' }}"></mat-icon>
   </button>
   <button
-    *ngIf="property?.showSearch"
+    [disabled]="control.disabled"
+    *ngIf="property?.config?.select?.search?.show"
     mat-icon-button
     matSuffix
     (click)="extSelect.onAdvanceSearch()"
@@ -20,7 +28,8 @@
     <mat-icon>search</mat-icon>
   </button>
   <button
-    *ngIf="property?.showMore"
+    [disabled]="control.disabled"
+    *ngIf="property?.config?.select?.more?.show"
     mat-icon-button
     matSuffix
     (click)="extSelect.trigger.openMenu()"

@@ -22,7 +22,9 @@
   "projections": {
     "dataTable": [
       { "name": "image", "type": "image" },
-      { "name": "name", "type": "string" }
+      { "name": "name", "type": "string" },
+      { "name": "onHandQuantity", "type": "number" },
+      { "name": "reservedQuantity", "type": "number" }
     ]
   },
   "properties": {
