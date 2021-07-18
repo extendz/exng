@@ -14,7 +14,7 @@
     *ngIf="property?.config?.select?.add?.show"
     mat-icon-button
     matSuffix
-    (click)="extSelect.addNew()"
+    (click)="$event.preventDefault();extSelect.addNew()"
   >
     <mat-icon svgIcon="api-root:{{ property?.addIcon || 'add' }}"></mat-icon>
   </button>
@@ -23,7 +23,7 @@
     *ngIf="property?.config?.select?.search?.show"
     mat-icon-button
     matSuffix
-    (click)="extSelect.onAdvanceSearch()"
+    (click)="$event.preventDefault(); extSelect.onAdvanceSearch()"
   >
     <mat-icon>search</mat-icon>
   </button>

@@ -5,5 +5,7 @@
         "dist": true,
         "node_modules": true
     },
-    "workbench.colorTheme": "Solarized Dark"
+    "workbench.colorTheme": "Solarized Dark",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true
 }

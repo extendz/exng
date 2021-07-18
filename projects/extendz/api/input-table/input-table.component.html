@@ -22,6 +22,7 @@
         [fxFlex.lg]="p.value?.width?.lg"
       >
         <span [ngSwitch]="p?.value?.type">
+          <!-- index -->
           <span *ngSwitchCase="'index'">
             {{ i + 1 }}
             <input style="display: none" [formControlName]="p?.value?.name" />
@@ -37,7 +38,7 @@
                 [formControlName]="p?.value?.name"
                 (input)="onNumberChange($event, i, p?.value)"
               />
-              <mat-error *ngIf="formGroup.controls[p?.value?.name]?.hasError('required')">
+              <mat-error *ngIf="getController(p?.value?.name, i)?.hasError('required')">
                 {{ p?.value?.name | camelCase }} is <strong>required!</strong>
               </mat-error>
             </mat-form-field>
@@ -51,9 +52,10 @@
           </span>
 
           <!-- display -->
+          <!-- Data binding is easy with input -->
           <span *ngSwitchCase="'display'">
             <input
-              style="outline: none; border: none; background-color: transparent"
+              style="outline: none; border: none; background-color: transparent; width: 100%"
               [formControlName]="p?.value?.name"
               [displayField]="p?.value?.displayField"
               displayMask

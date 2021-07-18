@@ -4,7 +4,7 @@
     "url": "addresses"
   },
   "batch": {
-    "displayName": "Recieve Products",
+    "displayName": "Batch",
     "url": "batches"
   },
   "category": {

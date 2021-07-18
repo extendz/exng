@@ -33,6 +33,7 @@ import { debounceTime, filter, map, switchMap, take } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
 import { ExtAddNewComponent } from './dialog/add-new/add-new.component';
 import { ExtAdvanceSelectComponent } from './dialog/advance-select/advance-select.component';
+import { SelectBasicComponent } from './dialog/select-basic/select-basic.component';
 
 export interface ExtAdvanceSearchData {
   entityMeta: EntityMeta;
@@ -42,6 +43,11 @@ export interface ExtAdvanceSearchData {
 }
 
 export interface ExtAddNewData {
+  entityMeta: EntityMeta;
+}
+
+export interface SelectBasicModel {
+  dataSource: any[];
   entityMeta: EntityMeta;
 }
 
@@ -123,6 +129,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
     if (type == PropertyType.object) {
       this.value = result;
       this.autoCompleteControl.setValue(result, { emitEvent: false });
+
       if (update == true) this.onChange(this.value);
     } else if (type == PropertyType.objectList) {
       if (Array.isArray(result)) this.value = result;
@@ -139,6 +146,9 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
       this.autoCompleteControl.setValue(this.displayValue);
       this.onChange(this.value);
     }
+    console.log(this.value);
+
+    this.entityChange.emit(this.value);
     // setTimeout(() => this.entityChange.emit(this.value), 0);
   }
 
@@ -152,13 +162,23 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
     this.displayValue = null;
   }
 
-  onMore(event: MouseEvent) {
-    event.stopPropagation();
-  }
-
   onView(event: MouseEvent, property: Property) {
-    // this.entityMetaService.navigateToEntity(id, model);
-    this.entityService.navigateExisting(property, this.value);
+    const data: SelectBasicModel = {
+      dataSource: this.value,
+      entityMeta: this.entityMeta,
+    };
+    const dialogRef = this.dialog.open(SelectBasicComponent, {
+      data,
+      panelClass: 'ext-advance-select',
+      width: '90vw',
+    });
+    dialogRef
+      .afterClosed()
+      .pipe(
+        take(1),
+        filter((r) => r != undefined)
+      )
+      .subscribe((result: any) => this.entityService.navigateExisting(property, result));
   }
 
   addNew() {
@@ -188,7 +208,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
       entityMeta: this.entityMeta,
       entity: this.entity,
       multiSelect,
-      // property: this.property,
     };
 
     let dialogRef = this.dialog.open(ExtAdvanceSelectComponent, {
@@ -213,6 +232,8 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
   onOptionSelected(event: MatAutocompleteSelectedEvent) {
     this.value = event.option.value;
     this.onChange(this.value);
+    console.log(event.option.value);
+
     this.entityChange.emit(event.option.value);
   }
 

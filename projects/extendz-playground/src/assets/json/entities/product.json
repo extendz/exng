@@ -23,6 +23,7 @@
     "dataTable": [
       { "name": "image", "type": "image" },
       { "name": "name", "type": "string" },
+      { "name": "unitPrice", "type": "money" },
       { "name": "onHandQuantity", "type": "number" },
       { "name": "reservedQuantity", "type": "number" }
     ]

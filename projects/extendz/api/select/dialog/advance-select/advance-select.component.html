@@ -3,13 +3,14 @@
     [entityMeta]="data.entityMeta"
     [multiSelect]="data.multiSelect"
     [(selected)]="selected"
+    (selectedChange)="onSelect($event)"
     [params]="data.params"
     allowNew="false"
   >
   </ext-data-table>
 </mat-dialog-content>
 
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="data.multiSelect">
   <span fxFlex></span>
   <button mat-button matDialogClose>Cancel</button>
   <span fxFlex="2"></span>

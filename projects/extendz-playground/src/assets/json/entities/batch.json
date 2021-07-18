@@ -1,6 +1,10 @@
 {
   "name": "batch",
   "config": {
+    "entity": {
+      "enableProjection": true,
+      "projection": "entity"
+    },
     "expand": {
       "projection": "expand"
     }
@@ -10,6 +14,8 @@
       { "name": "id", "type": "string" },
       { "name": "product", "type": "string" },
       { "name": "initialQuantity", "type": "number" },
+      { "name": "onHandQuantity", "type": "number" },
+      { "name": "reservedQuantity", "type": "number" },
       { "name": "manufacturedDate", "type": "date" },
       { "name": "note", "type": "string" }
     ],

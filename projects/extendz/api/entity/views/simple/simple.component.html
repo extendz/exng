@@ -10,7 +10,7 @@
 
     <!-- Enums -->
     <mat-form-field *ngIf="property.type == propertyTypes.enum">
-      <mat-select [placeholder]="property.name | camelCase" [formControlName]="property.name">
+      <mat-select [placeholder]="property?.displayName || property.name | camelCase" [formControlName]="property.name">
         <mat-option *ngFor="let enum of property.enums" [value]="enum">
           {{ enum }}
         </mat-option>
@@ -23,7 +23,7 @@
         autocomplete="off"
         matInput
         type="number"
-        [placeholder]="property.name | camelCase"
+        [placeholder]="property?.displayName || property.name | camelCase"
         [formControlName]="property.name"
       />
       <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
@@ -37,7 +37,7 @@
       <input
         type="email"
         matInput
-        [placeholder]="property.name | camelCase"
+        [placeholder]="property?.displayName || property.name | camelCase"
         [formControlName]="property.name"
       />
       <mat-error *ngIf="formGroup.controls[property.name].hasError('email')">
@@ -51,7 +51,7 @@
       *ngIf="property.type == propertyTypes.boolean"
       [formControlName]="property.name"
     >
-      {{ property.name | camelCase }}
+      {{property?.displayName ||  property.name | camelCase }}
     </mat-slide-toggle>
 
     <!-- Date -->
@@ -60,7 +60,7 @@
         matInput
         autocomplete="off"
         [matDatepicker]="picker"
-        [placeholder]="property.name | camelCase"
+        [placeholder]="property?.displayName || property.name | camelCase"
         [formControlName]="property.name"
       />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -88,7 +88,7 @@
 
     <p *ngIf="property.type == propertyTypes.checkbox">
       <mat-checkbox [formControlName]="property.name">
-        {{ property.name | camelCase }}
+        {{ property?.displayName ||  property.name | camelCase }}
       </mat-checkbox>
     </p>
 
@@ -96,7 +96,7 @@
     <mat-form-field *ngIf="property.type == propertyTypes.phone">
       <ext-phone
         [property]="property"
-        [placeholder]="property.name | camelCase"
+        [placeholder]="property?.displayName || property.name | camelCase"
         [formControlName]="property.name"
       ></ext-phone>
       <mat-error *ngIf="formGroup.controls[property.name].hasError('required')">
@@ -109,7 +109,7 @@
     <mat-form-field *ngIf="property.type == propertyTypes.money">
       <ext-money
         [property]="property"
-        [placeholder]="property.name | camelCase"
+        [placeholder]="property?.displayName || property.name | camelCase"
         [formControlName]="property.name"
       >
       </ext-money>

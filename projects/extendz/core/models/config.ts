@@ -5,6 +5,7 @@ export enum Assert {
   Null = 'Null',
   Equal = 'Equal',
   NotEqual = 'NotEqual',
+  GreaterThan = 'GreaterThan',
 }
 
 export class Hidden {

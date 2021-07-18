@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExtPipesModule } from 'extendz/pipes';
 import { ExtAddNewModule } from './dialog/add-new/add-new.module';
 import { ExtAdvanceSelectModule } from './dialog/advance-select/advance-select.module';
+import { SelectBasicModule } from './dialog/select-basic/select-basic.module';
 import { ExtSelectComponent } from './select.component';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ExtSelectComponent } from './select.component';
     CommonModule,
     FlexLayoutModule,
     ReactiveFormsModule,
+    SelectBasicModule,
     // Extendz
     ExtPipesModule,
     ExtAdvanceSelectModule,

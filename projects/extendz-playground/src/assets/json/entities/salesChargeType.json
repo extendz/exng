@@ -3,6 +3,15 @@
   "displayName": "Sales Charge Type",
   "title": "name",
   "url": "salesChargeTypes",
+  "projections": {
+    "dataTable": [
+      { "name": "name", "type": "string" },
+      {
+        "name": "defaultAmount",
+        "type": "money"
+      }
+    ]
+  },
   "properties": {
     "name": { "name": "name", "type": "string", "required": true, "width": { "lg": "48" } },
     "defaultAmount": {

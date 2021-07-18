@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -56,10 +56,13 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
   /*** Emit event on succes save */
   @Output() saved: EventEmitter<any> = new EventEmitter<any>();
 
+  @Input() events: Subject<EntityEvent>;
+  @Output() eventsChange = new EventEmitter<Subject<EntityEvent>>();
+
   private activatedRouteSub: Subscription;
 
   /*** Emmit entity events  */
-  events: Subject<EntityEvent> = new Subject<EntityEvent>();
+  // eventBus: Subject<EntityEvent> = new Subject<EntityEvent>();
   eventsSub: Subscription;
 
   constructor(
@@ -105,9 +108,13 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
       .subscribe((_) => this.init());
 
     const eventsConfig = this.entityMeta?.config?.entity?.events;
+    console.log(eventsConfig);
+    
     if (eventsConfig) {
       const eSub = this.events.subscribe((e) => {
         const actions: EventAction[] = eventsConfig[e.type];
+        console.log(actions);
+        
         if (actions)
           actions.forEach((a) => {
             switch (a.action) {

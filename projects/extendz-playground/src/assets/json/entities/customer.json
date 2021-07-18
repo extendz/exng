@@ -38,15 +38,15 @@
       "required": true,
       "width": { "lg": "33" }
     },
-    
     "addresses": {
       "name": "addresses",
       "type": "objectList",
       "reference": "address",
       "config": {
         "select": {
-          "allowSearch": false,
-          "autocomplete": false,
+          "search": { "show": false },
+          "add": { "show": true },
+          "more": { "show": true },
           "displayFunction": {
             "feilds": ["line1", "line2", "city"],
             "delimiter": ","

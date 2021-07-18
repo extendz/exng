@@ -11,8 +11,16 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Params } from '@angular/router';
-import { Action, EntityMeta } from 'extendz/core';
-import { INPUT_ENTIRY, INPUT_ENTITY_META, INPUT_PARAMS, OUTPUT_ACTION } from '../api.consts';
+import { Action, EntityEvent, EntityMeta } from 'extendz/core';
+import { Subject } from 'rxjs';
+import {
+  EVENTS_ACTION,
+  EVENTS_PARAMS,
+  INPUT_ENTIRY,
+  INPUT_ENTITY_META,
+  INPUT_PARAMS,
+  OUTPUT_ACTION,
+} from '../api.consts';
 import { EntityViewDirective } from './entity-view.directive';
 import { AbstractView } from './views/abstact-view';
 import { ExtAvatarComponent } from './views/avatar/avatar.component';
@@ -34,7 +42,11 @@ export class ExtEntityComponent implements OnInit, OnChanges {
   /*** Parameters to start with */
   @Input(INPUT_PARAMS) params: Params;
 
-  @Output(OUTPUT_ACTION) action: EventEmitter<Action> = new EventEmitter<Action>();
+  @Input(EVENTS_PARAMS) events: Subject<EntityEvent>;
+
+  @Output(EVENTS_ACTION) eventsChange = new EventEmitter<Subject<EntityEvent>>();
+
+  @Output(OUTPUT_ACTION) action = new EventEmitter<Action>();
 
   @ViewChild(EntityViewDirective, { static: true }) view: EntityViewDirective;
 
@@ -60,6 +72,8 @@ export class ExtEntityComponent implements OnInit, OnChanges {
     (<AbstractView>componentRef.instance).entityMeta = this.entityMeta;
     (<AbstractView>componentRef.instance).entity = this.entity;
     (<AbstractView>componentRef.instance).action = this.action;
+    (<AbstractView>componentRef.instance).events = this.events;
+    (<AbstractView>componentRef.instance).eventsChange = this.eventsChange;
     (<AbstractView>componentRef.instance).params = this.params;
   }
 

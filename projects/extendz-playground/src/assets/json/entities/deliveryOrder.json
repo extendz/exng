@@ -28,8 +28,15 @@
               "assert": "NotEqual",
               "value": "OnRoute"
             }
+          },
+          {
+            "id": "printDeliveryOrder",
+            "displayName": "Print"
           }
         ]
+      },
+      "events": {
+        "ActionCompleted": [{ "action": "__fetch_entity__" }]
       }
     }
   },
@@ -52,6 +59,9 @@
       "type": "object",
       "required": true,
       "reference": "deliveryVehicle",
+      "config": {
+        "select": { "search": { "show": true } }
+      },
       "width": { "lg": 30 }
     },
     "note": { "name": "note", "type": "string", "width": { "lg": 30 } },
@@ -59,7 +69,6 @@
     "status": {
       "name": "status",
       "type": "none",
-      "required": true,
       "default": "Planned",
       "enums": ["Planned", "OnRoute", "Closed"],
       "width": { "lg": 30 }
@@ -72,20 +81,30 @@
         {
           "name": "orderLines",
           "displayName": "Delivery Lines",
+          "required": true,
           "type": "objectList",
           "reference": "deliveryOrderLine",
-          "required": true,
           "mutations": {
             "salesOrderLine": [
               {
                 "type": "update",
-                "from": "quantity",
-                "to": ["salesOrderQuantity"]
+                "from": "reservedQuantity",
+                "to": ["reservedQuantity"]
               },
               {
                 "type": "update",
                 "from": "salesOrder",
                 "to": ["salesOrder"]
+              },
+              {
+                "type": "update",
+                "from": "customerAddress",
+                "to": ["customerAddress"]
+              },
+              {
+                "type": "update",
+                "from": "customerName",
+                "to": ["customerName"]
               },
               {
                 "type": "update",
@@ -96,6 +115,19 @@
                 "type": "update",
                 "from": "product",
                 "to": ["product"]
+              },
+              {
+                "type": "update",
+                "from": "reservedQuantity",
+                "to": ["quantity"]
+              }
+            ]
+          },
+          "events": {
+            "Saved": [
+              {
+                "type": "Enable",
+                "to": ["*"]
               }
             ]
           },
@@ -116,43 +148,65 @@
                 }
               }
             },
+            "validators": [
+              {
+                "on": "quantity",
+                "valueSource": "reservedQuantity",
+                "assert": "GreaterThan",
+                "disable": ["."]
+              }
+            ],
             "properties": {
               "lineNumber": {
                 "name": "lineNumber",
+                "displayName": "#",
                 "type": "index",
-                "width": { "lg": "10" }
+                "width": { "lg": "4" }
               },
               "salesOrder": {
                 "name": "salesOrder",
                 "displayName": "Sales Order",
                 "type": "display",
-                "width": { "lg": "10" }
+                "width": { "lg": "6" }
               },
               "salesOrderLine": {
                 "name": "salesOrderLine",
-                "displayName": "Sales Order Line",
+                "displayName": "#",
                 "type": "display",
                 "displayField": "lineNumber",
-                "width": { "lg": "15" }
+                "width": { "lg": "2" }
               },
+              "customerName": {
+                "name": "customerName",
+                "displayName": "Customer Name",
+                "type": "display",
+                "width": { "lg": "20" }
+              },
+              "customerAddress": {
+                "name": "customerAddress",
+                "displayName": "Customer Address",
+                "type": "display",
+                "width": { "lg": "30" }
+              },
+
               "product": {
                 "name": "product",
                 "displayName": "Product",
                 "type": "display",
-                "width": { "lg": "40" }
+                "width": { "lg": "20" }
               },
-              "salesOrderQuantity": {
-                "name": "salesOrderQuantity",
-                "displayName": "Quantity",
+              "reservedQuantity": {
+                "name": "reservedQuantity",
+                "displayName": "Reserved",
                 "type": "display",
-                "width": { "lg": "6" }
+                "width": { "lg": "5" }
               },
               "quantity": {
                 "name": "quantity",
-                "displayName": "Delivery Quantity",
+                "displayName": "Delivery",
                 "type": "number",
                 "required": true,
-                "width": { "lg": "15" }
+                "width": { "lg": "5" }
               },
               "delete": {
                 "name": "delete",
@@ -162,7 +216,7 @@
                 "width": { "lg": "4" },
                 "hide": {
                   "property": "_links",
-                  "assert": "NotNull"
+                  "assert": "Null"
                 }
               },
               "remove": {
@@ -173,7 +227,8 @@
                 "width": { "lg": "4" },
                 "hide": {
                   "property": "_links",
-                  "assert": "Null"
+                  "assert": "NotNull",
+                  "emptyValue": false
                 }
               }
             }

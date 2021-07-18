@@ -53,11 +53,11 @@
     </ng-container>
 
     <ng-container *ngFor="let p of properties" [matColumnDef]="p.name">
-      <mat-header-cell *matHeaderCellDef>
+      <mat-header-cell *matHeaderCellDef [fxFlex.lg]="p?.width?.lg">
         <span>{{ p?.displayName || (p.name | camelCase) }}</span>
       </mat-header-cell>
-      <mat-cell *matCellDef="let e">
-        <span [ngSwitch]="p.type" style="width: 100%">
+      <mat-cell *matCellDef="let e" [fxFlex.lg]="p?.width?.lg">
+        <span [ngSwitch]="p.type">
           <span *ngSwitchCase="'date'">
             <ext-inline-date
               [entity]="e"
@@ -81,6 +81,16 @@
 
           <span *ngSwitchCase="'link'">
             <a href=""> {{ e[p.name] }}</a>
+          </span>
+
+          <span *ngSwitchCase="'money'">
+            {{ e[p.name] | money }}
+          </span>
+
+          <span *ngSwitchCase="'badge'">
+            <span class="badge" [ngStyle]="{ 'background-color': p.colors[e[p.name]] }">{{
+              e[p.name] | camelCase
+            }}</span>
           </span>
 
           <!-- Default/string -->

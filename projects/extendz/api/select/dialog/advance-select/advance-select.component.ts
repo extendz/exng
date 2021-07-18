@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PropertyType } from 'extendz/core';
 import { ExtAdvanceSearchData } from '../../select.component';
 
 @Component({
@@ -15,6 +14,10 @@ export class ExtAdvanceSelectComponent {
     @Inject(MAT_DIALOG_DATA) public data: ExtAdvanceSearchData,
     private dialogRef: MatDialogRef<ExtAdvanceSelectComponent>
   ) {}
+
+  onSelect(selected: any[]) {
+    if (!this.data.multiSelect) this.dialogRef.close(this.selected[0]);
+  }
 
   onOkay() {
     // Retrun one not muti select

@@ -1,0 +1,19 @@
+<mat-table [dataSource]="data.dataSource">
+  <ng-container *ngFor="let p of properties" [matColumnDef]="p">
+    <mat-header-cell *matHeaderCellDef>
+      <span>{{ p | camelCase }}</span>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let e">
+      {{ e[p] }}
+    </mat-cell>
+  </ng-container>
+  <!-- Select Column -->
+  <ng-container matColumnDef="select">
+    <mat-header-cell *matHeaderCellDef fxFlex="48px"> Select </mat-header-cell>
+    <mat-cell *matCellDef="let row" fxFlex="48px">
+      <button mat-stroked-button [mat-dialog-close]="row">Select</button>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="allColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: allColumns"></mat-row>
+</mat-table>

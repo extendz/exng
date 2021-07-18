@@ -27,7 +27,7 @@
 </mat-toolbar>
 
 <div class="form-wrapper">
-  <!-- {{ formGroup.value?.orderLines | json }} -->
+  <!-- {{ formGroup.value| json }} -->
   <form [formGroup]="formGroup" fxLayout="row wrap" fxLayoutAlign="space-between center">
     <span
       *ngFor="let property of properties"

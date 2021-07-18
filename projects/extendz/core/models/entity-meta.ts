@@ -3,11 +3,21 @@ import { Assert, Config } from './config';
 import { Property } from './property';
 import { Search } from './search';
 
-export class Validation {
-  on?: string;
-  value?: string;
-  disable?: string[];
-  assert?: Assert;
+export interface Validation {
+  /*** property to validate */
+  on: string;
+
+  /*** Direct value */
+  value: string;
+
+  /*** Property to refer for value */
+  valueSource: string;
+
+  /*** Disable properties */
+  disable: string[];
+
+  /*** Logic to assert */
+  assert: Assert;
 }
 
 export class EventAction {
@@ -20,6 +30,7 @@ export enum EntityEventType {
   RowAdded = 'RowAdded',
   RowRemoved = 'RowRemoved',
   RowUpdated = 'RowUpdated',
+  ActionCompleted = 'ActionCompleted',
 }
 
 export interface EntityEvent {

@@ -39,11 +39,18 @@
   ],
   "projections": {
     "dataTable": [
-      { "name": "id", "type": "link" },
+      { "name": "id", "type": "string" },
       { "name": "createdDate", "type": "date" },
       { "name": "customer", "type": "string" },
       { "name": "wantedDeliveryDate", "type": "date", "enableInlineEdit": true },
-      { "name": "status", "type": "string" }
+      {
+        "name": "status",
+        "type": "badge",
+        "colors": {
+          "Planned": "#2196F3",
+          "PartiallyReserved": "#1976D2"
+        }
+      }
     ]
   },
   "properties": {
@@ -213,7 +220,7 @@
               "price": {
                 "name": "price",
                 "type": "money",
-                "generated": true,
+                "generated": false,
                 "width": { "lg": "15" }
               },
               "status": {
@@ -305,6 +312,7 @@
                 "type": "object",
                 "reference": "salesChargeType",
                 "width": { "lg": "30" },
+                "labelFloat": false,
                 "config": {
                   "select": {
                     "search": {
@@ -340,6 +348,7 @@
               "deliveryOrder": {
                 "name": "deliveryOrder",
                 "generated": true,
+                "labelFloat": false,
                 "type": "string"
               },
               "deliveryLineNumber": {

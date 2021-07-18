@@ -130,17 +130,16 @@ export class ExtDataTableComponent implements OnInit {
    * loading indicator
    */
   loading: boolean = false;
-  /***
-   * Default search placeholder
-   */
+
+  /*** Default search placeholder*/
   searchField: string;
 
   /*** Search form group */
   searchFormGroup: FormGroup;
-  /***
-   *
-   */
+
+  /*** Search base subscription  */
   private searchSubscription: Subscription;
+
   /***
    *
    */
@@ -187,6 +186,8 @@ export class ExtDataTableComponent implements OnInit {
       .pipe(
         debounceTime(500),
         mergeMap((v) => {
+          const exists = this.searchParams.get(this.searchField);
+          if (exists != null) this.searchParams = this.searchParams.delete(this.searchField);
           this.searchParams = this.searchParams.append(this.searchField, v.text);
           return this.getData(this.entityMeta, this.page).pipe(take(1));
         })
@@ -228,6 +229,8 @@ export class ExtDataTableComponent implements OnInit {
       this.expands = this.entityMeta.config?.dataTable?.expands;
       // if expands are enabled then show arrow
       if (this.expands?.length > 0) this.allColumns = [...this.allColumns, 'expand'];
+
+      console.log(this.allColumns);
 
       this.getData(this.entityMeta, this.page).subscribe();
     }
@@ -290,7 +293,7 @@ export class ExtDataTableComponent implements OnInit {
       }),
       finalize(() => (this.loading = false))
     );
-  } //getData()
+  }
 
   /***
    * When user change the default seach field

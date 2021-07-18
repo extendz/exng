@@ -2,7 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ExtEntityModule } from 'extendz/api';
 import { EXT_DATA_TABLE_CONFIG } from 'extendz/core';
-import { ENTITY_CONFIG, DATA_TABLE_SERVICE, ENTITY_SERVICE, DATA_TABLE_CONFIG } from '../extendz.config';
+import {
+  ENTITY_CONFIG,
+  DATA_TABLE_SERVICE,
+  ENTITY_SERVICE,
+  DATA_TABLE_CONFIG,
+} from '../extendz.config';
+import { PrintPageModule } from '../print-page/print-page.module';
 import { EntityRoutingModule } from './entity-routing.module';
 import { EntityComponent } from './entity.component';
 
@@ -11,6 +17,7 @@ import { EntityComponent } from './entity.component';
   imports: [
     CommonModule,
     EntityRoutingModule,
+    PrintPageModule,
     // Ext
     ExtEntityModule.forFeature(ENTITY_CONFIG),
   ],

@@ -6,13 +6,18 @@
       "projection": "dataTable"
     }
   },
+  "search": {
+    "default": "salesOrder.id"
+  },
   "projections": {
     "dataTable": [
       { "name": "salesOrder", "type": "string" },
       { "name": "lineNumber", "type": "number" },
       { "name": "product", "type": "string" },
       { "name": "quantity", "type": "number" },
-      { "name": "reservedQuantity", "type": "number" }
+      { "name": "reservedQuantity", "type": "number" },
+      { "name": "customerName", "type": "string", "width": { "lg": 20 } },
+      { "name": "customerAddress", "type": "string", "width": { "lg": 25 } }
     ]
   },
   "properties": {

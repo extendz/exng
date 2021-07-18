@@ -20,3 +20,7 @@ td {
 input:focus {
   outline: none;
 }
+
+.error {
+  border-bottom: 3px dotted red;
+}

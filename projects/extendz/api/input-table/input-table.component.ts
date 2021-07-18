@@ -30,6 +30,7 @@ import {
   AbstractDataTableService,
   AbstractEntityService,
   Assert,
+  DefaultProperty,
   EntityEventType,
   ExtEntityConfig,
   EXT_DATA_TABLE_SERVICE,
@@ -37,7 +38,6 @@ import {
   EXT_ENTITY_SERVICE,
   getId,
   getValueByField,
-  Hidden,
   Mutate,
   MutationType,
   Operation,
@@ -50,11 +50,10 @@ import {
 } from 'extendz/core';
 import { EntityMetaService } from 'extendz/service';
 import { Observable, Subscription, throwError } from 'rxjs';
-import { catchError, filter, map, mergeMap, skip, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, take, tap } from 'rxjs/operators';
 import { ExtBaseSelectComponent } from '../base-select/base-select.component';
 import { ExtAdvanceSelectComponent } from '../select/dialog/advance-select/advance-select.component';
 import { ExtAdvanceSearchData } from '../select/select.component';
-import { DefaultProperty } from 'extendz/core';
 
 @Component({
   selector: 'ext-input-table',
@@ -179,6 +178,7 @@ export class InputTableComponent
 
   onSelectionChange(entity: any, key: string, index: number) {
     // if any mutations
+
     if (this.property.mutations) {
       // mutation for given property
       const mutations: Mutate[] = this.property.mutations[key];
@@ -197,7 +197,8 @@ export class InputTableComponent
           }
         });
       });
-      this.rows.controls[index].patchValue(mute, { emitEvent: false });
+
+      this.rows.controls[index].patchValue(mute, { emitEvent: true });
     }
   }
 
@@ -279,7 +280,7 @@ export class InputTableComponent
 
   private removeAll() {
     this.dataSource.splice(0, this.dataSource.length);
-    this.rows.clear()
+    this.rows.clear();
     this.table.renderRows();
   }
 
@@ -418,14 +419,38 @@ export class InputTableComponent
               v.disable.forEach((d) => formGroup.controls[d].disable({ emitEvent: false }));
             else v.disable.forEach((d) => formGroup.controls[d].enable({ emitEvent: false }));
             break;
+          case Assert.GreaterThan:
+            formGroup.setValidators(this.greaterThan(v));
+            break;
         }
       });
+  }
+
+  greaterThan(validation: Validation): ValidatorFn {
+    return (formGroup: FormGroup) => {
+      const onCtrl = formGroup.get(validation.on);
+      const sourceCtrl = formGroup.get(validation.valueSource);
+
+      if (onCtrl == null || sourceCtrl == null) return null;
+      if (onCtrl.value > sourceCtrl.value) {
+        return { greaterThan: true };
+      } else return null;
+    };
   }
 
   getController(propertyName: string, index: number) {
     const array = this.formGroup.controls.data as FormArray;
     const group = array.controls[index] as FormGroup;
     return group.controls[propertyName];
+  }
+
+  getFormGroup(index: number) {
+    const array = this.formGroup.controls.data as FormArray;
+    return array.controls[index] as FormGroup;
+  }
+
+  isValid(row) {
+    console.log('cal', row);
   }
 
   registerOnChange(fn: Function) {
