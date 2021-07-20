@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { ExtDirectvicesModule } from 'extendz/directive';
 import { InlineDateComponent } from './inline-date/inline-date.component';
 import { InlineNumberComponent } from './inline-number/inline-number.component';
 
@@ -18,6 +19,8 @@ import { InlineNumberComponent } from './inline-number/inline-number.component';
     CommonModule,
     ReactiveFormsModule,
     FlexLayoutModule,
+    // Ext
+    ExtDirectvicesModule,
     // CDK
     OverlayModule,
     //

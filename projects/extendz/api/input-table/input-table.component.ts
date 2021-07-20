@@ -177,8 +177,6 @@ export class InputTableComponent
   }
 
   onSelectionChange(entity: any, key: string, index: number) {
-    // if any mutations
-
     if (this.property.mutations) {
       // mutation for given property
       const mutations: Mutate[] = this.property.mutations[key];
@@ -189,7 +187,10 @@ export class InputTableComponent
         m.to.forEach((property) => {
           if (m?.deep == true) {
             mute[property] = getValueByField(m.from, entity);
-          } else mute[property] = entity[m.from];
+          } else {
+            const value = entity[m.from];
+            if (value != undefined) mute[property] = entity[m.from];
+          }
           // Copy current entity
           if (m.from == '.') {
             entity.__update__ = false;
@@ -433,6 +434,7 @@ export class InputTableComponent
 
       if (onCtrl == null || sourceCtrl == null) return null;
       if (onCtrl.value > sourceCtrl.value) {
+        this.snackBar.open(validation.message, 'OK');
         return { greaterThan: true };
       } else return null;
     };

@@ -4,7 +4,7 @@
   (mouseenter)="property?.inlineEdit?.enabled && (edit = true)"
   (mouseleave)="edit = false"
 >
-  <p>{{ control?.value }}</p>
+  <p fxFlex>{{ control?.value }}</p>
   <span #trigger="cdkOverlayOrigin" cdkOverlayOrigin>
     <button
       *ngIf="edit || this.property?.inlineEdit?.showAlways"
@@ -28,20 +28,23 @@
   (backdropClick)="isPopoverOpen = false"
 >
   <mat-card>
-    <mat-form-field>
-      <input type="number" autofocus matInput [formControl]="control" />
-    </mat-form-field>
+    <mat-card-header>
+      <mat-card-title>{{ property?.inlineEdit?.header?.title?.text }}</mat-card-title>
+      <mat-card-subtitle
+        ><p extDynamicGet [request]="property.inlineEdit?.header?.subTitle" [control]="control"></p
+      ></mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field>
+        <input type="number" autofocus matInput [formControl]="control" />
+      </mat-form-field>
+    </mat-card-content>
+
     <mat-card-actions>
       <span fxFlex></span>
-      <button mat-button (click)="isPopoverOpen = !isPopoverOpen">Cancel</button>
-      <button
-        mat-raised-button
-        color="primary"
-        type="button"
-        (click)="isPopoverOpen = !isPopoverOpen; emit()"
-      >
-        Apply
-      </button>
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" type="button" (click)="emit()">Apply</button>
     </mat-card-actions>
   </mat-card>
 </ng-template>

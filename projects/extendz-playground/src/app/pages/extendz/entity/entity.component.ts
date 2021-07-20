@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Action, EntityEvent, EntityEventType } from 'extendz/core';
@@ -12,18 +13,27 @@ import { EntityComponentResolverData } from './entity-component-resolver.service
 export class EntityComponent implements OnInit {
   public data: EntityComponentResolverData;
 
-  events = new Subject<EntityEvent>();
+  eventBus = new Subject<EntityEvent>();
 
-  constructor(private activatedRoute: ActivatedRoute) {
+  constructor(private activatedRoute: ActivatedRoute, private http: HttpClient) {
     this.activatedRoute.data.subscribe((d) => (this.data = d.extendz));
   }
 
   ngOnInit(): void {}
 
   onAction(action: Action) {
-    if (action.id == 'printDeliveryOrder') {
-      console.log(action.entity);
-      window.print();
+    switch (action.id) {
+      case 'printDeliveryOrder':
+        break;
+      case 'startDelivery':
+        this.http.patch('deliveryOrders/DEL-00010', { status: 'OnRoute' }).subscribe((d) => {
+          this.eventBus.next({
+            type: EntityEventType.ActionCompleted,
+            payload: d,
+          });
+        });
+
+        break;
     }
   }
 }

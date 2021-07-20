@@ -10,9 +10,9 @@
   </ext-data-table>
 </mat-dialog-content>
 
-<mat-dialog-actions *ngIf="data.multiSelect">
+<mat-dialog-actions>
   <span fxFlex></span>
   <button mat-button matDialogClose>Cancel</button>
   <span fxFlex="2"></span>
-  <button mat-raised-button color="accent" (click)="onOkay()">Ok</button>
+  <button *ngIf="data.multiSelect" mat-raised-button color="accent" (click)="onOkay()">Ok</button>
 </mat-dialog-actions>

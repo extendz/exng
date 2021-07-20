@@ -181,6 +181,15 @@ export class Property {
     enabled?: boolean;
     showAlways?: boolean;
     fxLayoutAlign?: string;
+    header: {
+      title: {
+        text?: string;
+      };
+      subTitle: {
+        text?: string;
+        url: string;
+      };
+    };
     action: InlineAction;
   };
 

@@ -153,6 +153,7 @@
                 "on": "quantity",
                 "valueSource": "reservedQuantity",
                 "assert": "GreaterThan",
+                "message": "Delivery Quantity should be less than reserved Quantity!",
                 "disable": ["."]
               }
             ],

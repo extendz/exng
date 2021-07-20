@@ -108,18 +108,19 @@ export abstract class ExtBaseViewComponent extends AbstractView implements OnIni
       .subscribe((_) => this.init());
 
     const eventsConfig = this.entityMeta?.config?.entity?.events;
-    console.log(eventsConfig);
-    
+
     if (eventsConfig) {
       const eSub = this.events.subscribe((e) => {
         const actions: EventAction[] = eventsConfig[e.type];
-        console.log(actions);
-        
+
         if (actions)
           actions.forEach((a) => {
+            console.log(a.action);
             switch (a.action) {
               case '__fetch_entity__':
-                this.getCurrentEntity().subscribe();
+                this.getCurrentEntity().subscribe((d) => {
+                  console.log(d);
+                });
                 break;
             }
           });

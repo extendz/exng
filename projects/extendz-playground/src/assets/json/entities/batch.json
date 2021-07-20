@@ -39,12 +39,14 @@
     "initialQuantity": {
       "name": "initialQuantity",
       "type": "number",
+
       "required": true,
       "width": { "lg": "32" }
     },
     "manufacturedDate": {
       "name": "manufacturedDate",
       "type": "date",
+      "default": "",
       "required": true,
       "width": { "lg": "32" }
     },

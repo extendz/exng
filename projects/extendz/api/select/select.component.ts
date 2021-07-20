@@ -146,7 +146,6 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
       this.autoCompleteControl.setValue(this.displayValue);
       this.onChange(this.value);
     }
-    console.log(this.value);
 
     this.entityChange.emit(this.value);
     // setTimeout(() => this.entityChange.emit(this.value), 0);
@@ -232,7 +231,7 @@ export class ExtSelectComponent extends ExtBaseSelectComponent {
   onOptionSelected(event: MatAutocompleteSelectedEvent) {
     this.value = event.option.value;
     this.onChange(this.value);
-    console.log(event.option.value);
+    // console.log(event.option.value);
 
     this.entityChange.emit(event.option.value);
   }

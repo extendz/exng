@@ -33,6 +33,7 @@
             <mat-form-field *ngIf="!p.value?.inlineEdit?.enabled; else inline">
               <input
                 type="number"
+                [readonly]="p.value.generated"
                 matInput
                 autocomplete="off"
                 [formControlName]="p?.value?.name"

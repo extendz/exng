@@ -18,6 +18,9 @@ export interface Validation {
 
   /*** Logic to assert */
   assert: Assert;
+
+  /*** Message to show on validation failed */
+  message: string;
 }
 
 export class EventAction {

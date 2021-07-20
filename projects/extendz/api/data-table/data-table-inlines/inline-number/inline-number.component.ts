@@ -14,6 +14,8 @@ export class InlineNumberComponent implements OnInit {
   @Input() property: Property;
   @Output() change = new EventEmitter();
 
+  private initialValue: number;
+
   formGroup: FormGroup;
   subscription: Subscription;
   isPopoverOpen: boolean;
@@ -24,17 +26,18 @@ export class InlineNumberComponent implements OnInit {
       this.control = new FormControl();
       this.control.setValue(this.entity[this.property.name]);
     }
-  }
-
-  showPopover() {
-    setTimeout(() => {
-      this.isPopoverOpen = !this.isPopoverOpen;
-    }, 100);
+    this.initialValue = this.control.value;
   }
 
   emit() {
     const sending = {};
     sending[this.property.name] = this.control.value;
     this.change.emit(sending);
+    this.isPopoverOpen = !this.isPopoverOpen;
+  }
+
+  onCancel() {
+    this.control.setValue(this.initialValue);
+    this.isPopoverOpen = !this.isPopoverOpen;
   }
 }

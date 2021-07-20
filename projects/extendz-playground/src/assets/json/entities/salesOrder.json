@@ -140,7 +140,7 @@
               {
                 "type": "Update",
                 "from": "unitPrice",
-                "to": ["price"]
+                "to": ["unitPrice"]
               }
             ],
             "quantity": [{ "type": "Disable", "to": ["reservedQuantity"] }]
@@ -204,6 +204,22 @@
                   "enabled": true,
                   "showAlways": true,
                   "fxLayoutAlign": "space-between center",
+                  "header": {
+                    "title": {
+                      "text": "On Hand Quantity"
+                    },
+                    "subTitle": {
+                      "url": "batches/:productId/quantity",
+                      "variables": [
+                        {
+                          "name": ":productId",
+                          "from": "__parent__",
+                          "deep": "product.id",
+                          "extract": "onHandQuantity"
+                        }
+                      ]
+                    }
+                  },
                   "action": {
                     "pathVariable": "reserve",
                     "successMessage": "Operation Successful"
@@ -217,11 +233,12 @@
                 "generated": true,
                 "width": { "lg": "10" }
               },
-              "price": {
-                "name": "price",
+              "unitPrice": {
+                "name": "unitPrice",
                 "type": "money",
+                "displayName": "Price",
                 "generated": false,
-                "width": { "lg": "15" }
+                "width": { "lg": "10" }
               },
               "status": {
                 "name": "status",
